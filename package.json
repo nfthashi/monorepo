@@ -1,0 +1,29 @@
+{
+  "name": "xnfts",
+  "version": "1.0.0",
+  "license": "UNLICENSED",
+  "private": true,
+  "workspaces": [
+    "packages/**"
+  ],
+  "scripts": {
+    "prepare": "husky install",
+    "test": "run-p test:*",
+    "test:contracts": "yarn workspace contracts test",
+    "build": "run-p build:*",
+    "build:contracts": "yarn workspace contracts build",
+    "fix": "run-p fix:*",
+    "fix:contracts": "yarn workspace contracts fix"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^16.2.4",
+    "@commitlint/config-conventional": "^16.2.4",
+    "husky": "^8.0.1",
+    "lint-staged": "^12.4.1",
+    "npm-run-all": "^4.1.5"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": "eslint --cache --fix",
+    "*.--write": "prettier --write"
+  }
+}
