@@ -72,6 +72,7 @@ abstract contract xNFTTarget is xNFTBridge {
     if (!Address.isContract(wrappedNFTContractAddress)) {
       Create2.deploy(0, salt, creationCode);
       contracts[wrappedNFTContractAddress] = originalNFTContractAddress;
+      xWrappedNFT(wrappedNFTContractAddress).initialize();
     }
     xWrappedNFT(wrappedNFTContractAddress).mint(to, tokenId);
   }
