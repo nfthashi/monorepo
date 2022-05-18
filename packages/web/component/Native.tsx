@@ -4,15 +4,22 @@ import { useState } from "react";
 import { ethers } from "ethers";
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
+import { xNatibeNFTABI } from "../lib/web3/abis/xNativeNFTABI";
+import { injected } from "../lib/web3/injected";
 
 const Native: NextPage = () => {
-  const contractABI = [""];
-  const contractAddress = "";
+  const contractABI = xNatibeNFTABI;
+  const [NFTContractAddress, setNFTContractAddress] = useState("");
   const [addressFrom, setAddressFrom] = useState("");
   const [addressTo, setAddressTo] = useState("");
   const [tokenId, setTokenId] = useState("");
   const [domainId, setDomainId] = useState("");
-  const { library } = useWeb3React<Web3Provider>();
+  const { activate, library } = useWeb3React<Web3Provider>();
+
+  const handleNFTContractAddressChange = (e: any) => {
+    const inputValue = e.target.value;
+    setNFTContractAddress(inputValue);
+  };
   const handleAddressFromChange = (e: any) => {
     const inputValue = e.target.value;
     setAddressFrom(inputValue);
@@ -30,11 +37,12 @@ const Native: NextPage = () => {
     setDomainId(inputValue);
   };
 
-  const xCall = async (addressFrom: string, addressTo: string, tokenId: string, domainId: string) => {
-    if (!library) return;
-    const contract = new ethers.Contract(contractAddress, contractABI, library.getSigner());
-    const tx = await contract.xSend(addressFrom, addressTo, tokenId, domainId);
-    console.log(tx);
+  const xCall = async (NFTContractAddress: string, addressFrom: string, addressTo: string, tokenId: string, domainId: string) => {
+    activate(injected).then(async () => {
+      const contract = new ethers.Contract(NFTContractAddress, contractABI, library?.getSigner());
+      const tx = await contract.xSend(addressFrom, addressTo, tokenId, domainId);
+      console.log(tx);
+    });
   };
 
   return (
@@ -43,13 +51,14 @@ const Native: NextPage = () => {
         <Text mt="10" textAlign={"center"}>
           Native Bridge
         </Text>
+        <Input mt="10" placeholder="NFT Contract Address" onChange={handleNFTContractAddressChange}></Input>
         <Input mt="10" placeholder="address from" onChange={handleAddressFromChange}></Input>
         <Input mt="10" placeholder="address to" onChange={handleAddressToChange}></Input>
         <Input mt="10" placeholder="tokenId" onChange={handleTokenIdChange}></Input>
         <Input mt="10" placeholder="DestinationDomainId" onChange={handleDomainIdChange}></Input>
         <Button
           onClick={() => {
-            xCall(addressFrom, addressTo, tokenId, domainId);
+            xCall(NFTContractAddress,addressFrom, addressTo, tokenId, domainId);
           }}
           mt="10"
         >
