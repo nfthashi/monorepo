@@ -1,4 +1,4 @@
-task("register-opponent", "register opponent")
+task("register", "register")
   .addParam("selfContractAddress", "self contract address")
   .addParam("opponentDomain", "opponent domain")
   .addParam("opponentContractAddress", "opponent contract address")
