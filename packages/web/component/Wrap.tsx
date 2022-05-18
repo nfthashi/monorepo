@@ -17,22 +17,22 @@ export const Wrap: React.FC = () => {
   const [tokenId, setTokenId] = useState("");
   const [domainId, setDomainId] = useState("");
 
-  const { activate, library } = useWeb3React<Web3Provider>();
+  const { activate, library, account } = useWeb3React<Web3Provider>();
 
   const handleDirectionChange = (e: any) => {
     const inputValue = e;
     setDirection(inputValue);
   };
 
-  const handleAddressChange = (e: any) => {
+  const handleNFTContractAddressChange = (e: any) => {
     const inputValue = e.target.value;
     setOriginalNFTContractAddress(inputValue);
   };
-  const handleAddressFromChange = (e: any) => {
+  const handleSendFromAddressChange = (e: any) => {
     const inputValue = e.target.value;
     setAddressFrom(inputValue);
   };
-  const handleAddressToChange = (e: any) => {
+  const handleSendToAddressChange = (e: any) => {
     const inputValue = e.target.value;
     setAddressTo(inputValue);
   };
@@ -40,23 +40,26 @@ export const Wrap: React.FC = () => {
     const inputValue = e.target.value;
     setTokenId(inputValue);
   };
-  const handleDomainIdChange = (e: any) => {
+  const handleDestinationDomainIdChange = (e: any) => {
     const inputValue = e.target.value;
     setDomainId(inputValue);
   };
 
+  const connect = async () => {
+    activate(injected);
+  };
+
   const xCall = async () => {
-    console.log(direction);
-    activate(injected).then(async () => {
-      if (!library) return;
-      const { name } = await library.getNetwork();
-      const bridgeContract = (config as any).wrap[name][direction];
-      const nftContract = new ethers.Contract(originalNFTContractAddress, IERC721ABI, library.getSigner());
-      await nftContract.setApprovalForAll(bridgeContract, true);
-      const contract = new ethers.Contract(bridgeContract, wrapperSourceABI, library.getSigner());
-      const tx = await contract.xSend(originalNFTContractAddress, addressFrom, addressTo, tokenId, domainId);
-      console.log(tx);
-    });
+    if (!library) {
+      return;
+    }
+    const { name } = await library.getNetwork();
+    const bridgeContract = (config as any).wrap[name][direction];
+    const nftContract = new ethers.Contract(originalNFTContractAddress, IERC721ABI, library.getSigner());
+    await nftContract.setApprovalForAll(bridgeContract, true);
+    const contract = new ethers.Contract(bridgeContract, wrapperSourceABI, library.getSigner());
+    const tx = await contract.xSend(originalNFTContractAddress, addressFrom, addressTo, tokenId, domainId);
+    console.log(tx);
   };
 
   return (
@@ -71,14 +74,20 @@ export const Wrap: React.FC = () => {
           </Radio>
         </Stack>
       </RadioGroup>
-      <Input placeholder="NFT contract address" onChange={handleAddressChange}></Input>
-      <Input placeholder="Address from" onChange={handleAddressFromChange}></Input>
-      <Input placeholder="Address to" onChange={handleAddressToChange}></Input>
-      <Input placeholder="Token ID" onChange={handleTokenIdChange}></Input>
-      <Input placeholder="Destination domain ID" onChange={handleDomainIdChange}></Input>
-      <Button width="100%" onClick={xCall}>
-        Bridge
-      </Button>
+      <Input placeholder="NFT contract address" onChange={handleNFTContractAddressChange} />
+      <Input placeholder="Send from address" onChange={handleSendFromAddressChange} />
+      <Input placeholder="Send to address" onChange={handleSendToAddressChange} />
+      <Input placeholder="Token ID" onChange={handleTokenIdChange} />
+      <Input placeholder="Destination domain ID" onChange={handleDestinationDomainIdChange} />
+      {!account ? (
+        <Button width="100%" onClick={connect} fontSize={"sm"}>
+          Connect Wallet
+        </Button>
+      ) : (
+        <Button width="100%" onClick={xCall} fontSize={"sm"}>
+          Bridge
+        </Button>
+      )}
     </Box>
   );
 };

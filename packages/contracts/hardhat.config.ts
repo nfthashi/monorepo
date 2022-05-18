@@ -7,8 +7,6 @@ import "@typechain/hardhat";
 import "hardhat-gas-reporter";
 import "solidity-coverage";
 
-dotenv.config();
-
 import "./tasks/native-bridge";
 import "./tasks/native-deploy";
 import "./tasks/native-mint";
@@ -19,6 +17,8 @@ import "./tasks/wrap-deploy-mock-with-mint";
 import "./tasks/wrap-deploy-source";
 import "./tasks/wrap-deploy-target";
 import "./tasks/wrap";
+
+dotenv.config();
 
 const accounts = process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [];
 
