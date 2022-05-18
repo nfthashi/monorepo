@@ -3,8 +3,8 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-import {IExecutor} from "@connext/nxtp-contracts/contracts/interfaces/IExecutor.sol";
-import {IConnextHandler} from "@connext/nxtp-contracts/contracts/interfaces/IConnextHandler.sol";
+import "@connext/nxtp-contracts/contracts/interfaces/IExecutor.sol";
+import "@connext/nxtp-contracts/contracts/interfaces/IConnextHandler.sol";
 
 contract xNFTBridge is Ownable {
   mapping(uint32 => address) public allowList;

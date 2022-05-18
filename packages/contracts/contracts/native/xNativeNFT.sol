@@ -21,7 +21,7 @@ abstract contract xNativeNFT is xNFTBridge, ERC721 {
     string memory _baseTokenURI,
     uint256 _startTokenId,
     uint256 _endTokenId
-  ) xNativeBridge(_selfDomain, _connext, _dummyTransactingAssetId) ERC721(_name, _symbol) {
+  ) xNFTBridge(_selfDomain, _connext, _dummyTransactingAssetId) ERC721(_name, _symbol) {
     baseTokenURI = _baseTokenURI;
     startTokenId = _startTokenId;
     endTokenId = _endTokenId;
@@ -39,15 +39,15 @@ abstract contract xNativeNFT is xNFTBridge, ERC721 {
   }
 
   function xSend(
-    uint32 destinationDomain,
     address from,
     address to,
-    uint256 tokenId
+    uint256 tokenId,
+    uint32 destinationDomain
   ) public {
     address destinationContract = allowList[destinationDomain];
     require(destinationContract != address(0x0), "xNativeNFT: destination not allowed");
     require(_isApprovedOrOwner(_msgSender(), tokenId), "xNativeNFT: send caller is not owner nor approved");
-    require(ERC721.ownerOf(tokenId) == from, "xNativeNFT: send from incorrect owner");
+    require(ownerOf(tokenId) == from, "xNativeNFT: send from incorrect owner");
     _burn(tokenId);
     bytes4 selector = bytes4(keccak256("xReceive(address,uint256)"));
     bytes memory callData = abi.encodeWithSelector(selector, to, tokenId);
