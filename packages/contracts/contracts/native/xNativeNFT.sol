@@ -4,9 +4,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "../xNFTBridge.sol";
 
-abstract contract xNativeNFT is xNFTBridge, ERC721 {
-  string public baseTokenURI;
-
+contract xNativeNFT is xNFTBridge, ERC721 {
   uint256 public immutable startTokenId;
   uint256 public immutable endTokenId;
 
@@ -16,19 +14,11 @@ abstract contract xNativeNFT is xNFTBridge, ERC721 {
     uint32 _selfDomain,
     address _connext,
     address _dummyTransactingAssetId,
-    string memory _name,
-    string memory _symbol,
-    string memory _baseTokenURI,
     uint256 _startTokenId,
     uint256 _endTokenId
-  ) xNFTBridge(_selfDomain, _connext, _dummyTransactingAssetId) ERC721(_name, _symbol) {
-    baseTokenURI = _baseTokenURI;
+  ) xNFTBridge(_selfDomain, _connext, _dummyTransactingAssetId) ERC721("", "") {
     startTokenId = _startTokenId;
     endTokenId = _endTokenId;
-  }
-
-  function _baseURI() internal view virtual override returns (string memory) {
-    return baseTokenURI;
   }
 
   function mint(address to) public {

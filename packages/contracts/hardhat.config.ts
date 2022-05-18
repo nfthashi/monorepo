@@ -9,6 +9,13 @@ import "solidity-coverage";
 
 dotenv.config();
 
+import "./tasks/native-bridge";
+import "./tasks/native-deploy";
+import "./tasks/native-mint";
+import "./tasks/register-opponent";
+
+const accounts = process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [];
+
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
 task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
@@ -25,9 +32,17 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 const config: HardhatUserConfig = {
   solidity: "0.8.11",
   networks: {
-    ropsten: {
-      url: process.env.ROPSTEN_URL || "",
-      accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+    rinkeby: {
+      url: "https://rinkeby.infura.io/v3/95f65ab099894076814e8526f52c9149",
+      accounts,
+    },
+    kovan: {
+      url: "https://kovan.infura.io/v3/95f65ab099894076814e8526f52c9149",
+      accounts,
+    },
+    goerli: {
+      url: "https://goerli.infura.io/v3/95f65ab099894076814e8526f52c9149",
+      accounts,
     },
   },
   gasReporter: {
