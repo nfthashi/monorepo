@@ -19,13 +19,17 @@ abstract contract xNFTSource is xNFTBridge {
     IERC721(nftContractAddress).safeTransferFrom(from, address(this), tokenId);
 
     // Get NFT contract information
-    string memory name = IERC721(nftContractAddress).name();
-    string memory symbol = IERC721(nftContractAddress).symbol();
+    // string memory name = IERC721(nftContractAddress).name();
+    // string memory symbol = IERC721(nftContractAddress).symbol();
     // string memory baseTokenURI = IERC721Metadata(nftContractAddress).tokenURI();
     string memory destHandlerContract = allowList[destinationDomain];
+    bytes4 selector = bytes4(keccak256("xReceive(address,uint256)"));
+
 
     // send xcall
-      bytes memory callData = abi.encodeWithSelector(selector,  name, symbol, contractAddress, receiverAddress);
+      bytes memory callData = abi.encodeWithSelector(selector, 
+      // name, symbol, 
+      contractAddress, receiverAddress);
 
       IConnextHandler.CallParams memory callParams = IConnextHandler.CallParams({
       to: destHandlerContract,
@@ -47,15 +51,8 @@ abstract contract xNFTSource is xNFTBridge {
   }
   
 
-
-  function xReceive(address nftContractAddress, uint256 tokenId, address receiverAddress) public onlyExecutor {
-    // xCallを受け取る
-
-
-    // Transfer
-      // Transfer to Receiver Address
-      IERC721(nftContractAddress).safeTransferFrom(address(this), address receiverAddress, uint256 tokenId);
-
+  function xReceive(address nftContractAddress, address to, uint256 tokenId) public onlyExecutor {
+    IERC721(nftContractAddress).safeTransferFrom(address(this), address to, uint256 tokenId);
   }
 
 

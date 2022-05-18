@@ -5,8 +5,6 @@ import "@openzeppelin/contracts/token/ERC721/presets/ERC721PresetMinterPauserAut
 
 contract MockNFT is ERC721PresetMinterPauserAutoId {
   constructor() ERC721PresetMinterPauserAutoId("NFT", "NFT", "https://localhost:3000") {
-
-
     
   }
 }

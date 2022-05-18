@@ -12,20 +12,25 @@ abstract contract xNFTTarget is xNFTWrapBridge {
 
   }
 
-  function xReceive(address sourceContractAddress, address receiverAddress, uint256 tokenId, uint256 domainId) public onlyExecutor {
+  function xReceive(address sourceNFTContractAddress, address to, uint256 tokenId) public onlyExecutor {
     // xCallを受け取る
 
+    
+    if(contractMap)
     // Deployする
       // Compute ContractAddresss on Chain B using Create2 and deploy
 
+      address wrappedNFTContract = address(this) 
+
       // Make Mapping( AddressA => AddressB)
-      contractMap[sourceContractAddress] = <ContractB>;
+      contractMap[sourceNFTContractAddress] = wrappedContract;
 
     // Mintする
       // Refer mapping and get Contract Address of Chain B
-      targetContractAddress = contractMap[sourceContractAddress];
+      targetContractAddress = contractMap[sourceNFTContractAddress];
       // Mint to ContractB
       IERC721(targetContractAddress)._safemint(receiverAddress, tokenId);
       
   }
+
 }
