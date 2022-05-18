@@ -43,6 +43,7 @@
     "typescript": "^4.6.4"
   },
   "dependencies": {
+    "@connext/nxtp-contracts": "^0.2.0-alpha.16",
     "@openzeppelin/contracts": "^4.6.0"
   }
 }
