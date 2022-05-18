@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/utils/Create2.sol";
 import "../xNFTBridge.sol";
 import "./xWrappedNFT.sol";
 
-abstract contract xNFTTarget is xNFTBridge {
+contract xNFTTarget is xNFTBridge {
   mapping(address => address) public contracts;
 
   constructor(
