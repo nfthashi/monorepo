@@ -2,9 +2,9 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "./xNativeBridge.sol";
+import "../xNFTBridge.sol";
 
-abstract contract xNativeNFT is xNativeBridge, ERC721 {
+abstract contract xNativeNFT is xNFTBridge, ERC721 {
   string public baseTokenURI;
 
   uint256 public immutable startTokenId;
@@ -45,7 +45,7 @@ abstract contract xNativeNFT is xNativeBridge, ERC721 {
     uint256 tokenId
   ) public {
     address destinationContract = allowList[destinationDomain];
-    require(to != address(0x0), "xNativeNFT: destination not allowed");
+    require(destinationContract != address(0x0), "xNativeNFT: destination not allowed");
     require(_isApprovedOrOwner(_msgSender(), tokenId), "xNativeNFT: send caller is not owner nor approved");
     require(ERC721.ownerOf(tokenId) == from, "xNativeNFT: send from incorrect owner");
     _burn(tokenId);
