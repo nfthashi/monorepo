@@ -7,34 +7,34 @@ import {IExecutor} from "@connext/nxtp-contracts/contracts/interfaces/IExecutor.
 import {IConnextHandler} from "@connext/nxtp-contracts/contracts/interfaces/IConnextHandler.sol";
 
 contract xNativeBridge is Ownable {
-  mapping(uint32 => address) public opponentMapper;
+  mapping(uint32 => address) public allowList;
 
   address public immutable connext;
   address public immutable executor;
+  address public immutable dummyTransactingAssetId;
 
-  uint256 public startTokenId;
-  uint256 public endTokenId;
+  uint32 public immutable selfDomain;
 
   modifier onlyExecutor() {
     require(
-      IExecutor(msg.sender).originSender() == opponentMapper[IExecutor(msg.sender).origin()] && msg.sender == executor,
-      "Expected origin contract on origin domain called by Executor"
+      IExecutor(msg.sender).originSender() == allowList[IExecutor(msg.sender).origin()] && msg.sender == executor,
+      "xNativeBridge: Expected origin contract on origin domain called by Executor"
     );
     _;
   }
 
   function register(uint32 _opponentDomain, address _opponentContract) public onlyOwner {
-    opponentMapper[_opponentDomain] = _opponentContract;
+    allowList[_opponentDomain] = _opponentContract;
   }
 
   constructor(
-    uint256 _startTokenId,
-    uint256 _endTokenId,
-    address _connext
+    uint32 _selfDomain,
+    address _connext,
+    address _dummyTransactingAssetId
   ) {
-    startTokenId = _startTokenId;
-    endTokenId = _endTokenId;
+    selfDomain = _selfDomain;
     connext = _connext;
     executor = IConnextHandler(_connext).getExecutor();
+    dummyTransactingAssetId = _dummyTransactingAssetId;
   }
 }
