@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/interfaces/IERC721.sol";
+import "@openzeppelin/contracts/proxy/Clones.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/Create2.sol";
 
@@ -11,11 +12,16 @@ import "./xWrappedNFT.sol";
 contract xNFTTarget is xNFTBridge {
   mapping(address => address) public contracts;
 
+  address public nftImplementation;
+
   constructor(
     uint32 _selfDomain,
     address _connext,
-    address _dummyTransactingAssetId
-  ) xNFTBridge(_selfDomain, _connext, _dummyTransactingAssetId) {}
+    address _dummyTransactingAssetId,
+    address _nftImplementation
+  ) xNFTBridge(_selfDomain, _connext, _dummyTransactingAssetId) {
+    nftImplementation = _nftImplementation;
+  }
 
   function xSend(
     address wrappedNFTContractAddress,
@@ -67,10 +73,9 @@ contract xNFTTarget is xNFTBridge {
     uint32 originDomain = IExecutor(msg.sender).origin();
     address originSender = IExecutor(msg.sender).originSender();
     bytes32 salt = keccak256(abi.encodePacked(originDomain, originSender, originalNFTContractAddress));
-    bytes memory creationCode = type(xWrappedNFT).creationCode;
-    address wrappedNFTContractAddress = Create2.computeAddress(salt, keccak256(creationCode));
+    address wrappedNFTContractAddress = Clones.predictDeterministicAddress(nftImplementation, salt, address(this));
     if (!Address.isContract(wrappedNFTContractAddress)) {
-      Create2.deploy(0, salt, creationCode);
+      Clones.cloneDeterministic(nftImplementation, salt);
       contracts[wrappedNFTContractAddress] = originalNFTContractAddress;
       xWrappedNFT(wrappedNFTContractAddress).initialize();
     }

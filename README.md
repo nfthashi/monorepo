@@ -66,6 +66,20 @@ yarn workspace contracts hardhat native-bridge --network rinkeby --source-contra
 
 ### xWrapNFT
 
+#### Implementation
+
+Rinkeby
+
+```
+yarn workspace contracts hardhat wrap-deploy-implementation --network rinkeby
+```
+
+Kovan
+
+```
+yarn workspace contracts hardhat wrap-deploy-implementation --network kovan
+```
+
 #### Mock NFT
 
 To Kovan
@@ -99,13 +113,13 @@ yarn workspace contracts hardhat wrap-deploy-source --network rinkeby --self-dom
 Kovan
 
 ```
-yarn workspace contracts hardhat wrap-deploy-target --network kovan --self-domain 2221 --connext 0x71a52104739064bc35bED4Fc3ba8D9Fb2a84767f --dummy-transacting-asset-id 0xB5AabB55385bfBe31D627E2A717a7B189ddA4F8F
+yarn workspace contracts hardhat wrap-deploy-target --network kovan --self-domain 2221 --connext 0x71a52104739064bc35bED4Fc3ba8D9Fb2a84767f --dummy-transacting-asset-id 0xB5AabB55385bfBe31D627E2A717a7B189ddA4F8F --nft-implementation <deployed nft implementation>
 ```
 
 Rinkeby
 
 ```
-yarn workspace contracts hardhat wrap-deploy-target --network rinkeby --self-domain 1111 --connext 0x979588965099F4DEA3CAd850d67ca3356284591e --dummy-transacting-asset-id 0xB7b1d3cC52E658922b2aF00c5729001ceA98142C
+yarn workspace contracts hardhat wrap-deploy-target --network rinkeby --self-domain 1111 --connext 0x979588965099F4DEA3CAd850d67ca3356284591e --dummy-transacting-asset-id 0xB7b1d3cC52E658922b2aF00c5729001ceA98142C --nft-implementation <deployed nft implementation>
 ```
 
 #### Register

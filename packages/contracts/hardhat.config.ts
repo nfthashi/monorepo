@@ -14,6 +14,7 @@ import "./tasks/native-deploy";
 import "./tasks/native-mint";
 import "./tasks/register";
 import "./tasks/wrap-bridge";
+import "./tasks/wrap-deploy-implementation";
 import "./tasks/wrap-deploy-mock-with-mint";
 import "./tasks/wrap-deploy-source";
 import "./tasks/wrap-deploy-target";
