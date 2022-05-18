@@ -1,26 +1,32 @@
 import type { NextPage } from "next";
-import Head from "next/head";
-import Image from "next/image";
-import styles from "../styles/Home.module.css";
-import { Flex, Spacer } from "@chakra-ui/react";
-import { useState } from "react";
-import Native from "../component/Native";
-import Wrapper from "../component/Wrapper";
+import { Box, Flex, Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
+import { Native } from "../component/Native";
+import { Wrap } from "../component/Wrap";
+import { Layout } from "../component/Layout";
 
-const Home: NextPage = () => {
-  const [address, setAddress] = useState("");
+const IndexPage: NextPage = () => {
   return (
-    <div>
-      <main>
-        <Flex mr="10" ml="10">
-          <Spacer></Spacer>
-          <Wrapper></Wrapper>
-          <Native></Native>
-          <Spacer></Spacer>
-        </Flex>
-      </main>
-    </div>
+    <Layout>
+      <Flex justifyContent="center">
+        <Box width="xl">
+          <Tabs>
+            <TabList>
+              <Tab>Wrap</Tab>
+              <Tab>Native</Tab>
+            </TabList>
+            <TabPanels>
+              <TabPanel>
+                <Wrap />
+              </TabPanel>
+              <TabPanel>
+                <Native />
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
+        </Box>
+      </Flex>
+    </Layout>
   );
 };
 
-export default Home;
+export default IndexPage;
