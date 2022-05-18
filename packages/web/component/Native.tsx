@@ -14,17 +14,17 @@ export const Native: React.FC = () => {
   const [addressTo, setAddressTo] = useState("");
   const [tokenId, setTokenId] = useState("");
   const [domainId, setDomainId] = useState("");
-  const { activate, library } = useWeb3React<Web3Provider>();
+  const { activate, library, account } = useWeb3React<Web3Provider>();
 
   const handleNFTContractAddressChange = (e: any) => {
     const inputValue = e.target.value;
     setNFTContractAddress(inputValue);
   };
-  const handleAddressFromChange = (e: any) => {
+  const handleSendFromAddressChange = (e: any) => {
     const inputValue = e.target.value;
     setAddressFrom(inputValue);
   };
-  const handleAddressToChange = (e: any) => {
+  const handleSendToAddressChange = (e: any) => {
     const inputValue = e.target.value;
     setAddressTo(inputValue);
   };
@@ -32,29 +32,40 @@ export const Native: React.FC = () => {
     const inputValue = e.target.value;
     setTokenId(inputValue);
   };
-  const handleDomainIdChange = (e: any) => {
+  const handleDestinationDomainIdChange = (e: any) => {
     const inputValue = e.target.value;
     setDomainId(inputValue);
   };
 
+  const connect = async () => {
+    activate(injected);
+  };
+
   const xCall = async () => {
-    activate(injected).then(async () => {
-      const contract = new ethers.Contract(NFTContractAddress, contractABI, library?.getSigner());
-      const tx = await contract.xSend(addressFrom, addressTo, tokenId, domainId);
-      console.log(tx);
-    });
+    if (!library) {
+      return;
+    }
+    const contract = new ethers.Contract(NFTContractAddress, contractABI, library.getSigner());
+    const tx = await contract.xSend(addressFrom, addressTo, tokenId, domainId);
+    console.log(tx);
   };
 
   return (
     <Box textAlign="center" experimental_spaceY="5">
-      <Input placeholder="NFT contract address" onChange={handleNFTContractAddressChange}></Input>
-      <Input placeholder="Address from" onChange={handleAddressFromChange}></Input>
-      <Input placeholder="Address to" onChange={handleAddressToChange}></Input>
-      <Input placeholder="Token ID" onChange={handleTokenIdChange}></Input>
-      <Input placeholder="Destination domain ID" onChange={handleDomainIdChange}></Input>
-      <Button width="100%" onClick={xCall}>
-        Bridge
-      </Button>
+      <Input placeholder="NFT contract address" onChange={handleNFTContractAddressChange} />
+      <Input placeholder="Send from address" onChange={handleSendFromAddressChange} />
+      <Input placeholder="Send to address" onChange={handleSendToAddressChange} />
+      <Input placeholder="Token ID" onChange={handleTokenIdChange} />
+      <Input placeholder="Destination domain ID" onChange={handleDestinationDomainIdChange} />
+      {!account ? (
+        <Button width="100%" onClick={connect} fontSize={"sm"}>
+          Connect Wallet
+        </Button>
+      ) : (
+        <Button width="100%" onClick={xCall} fontSize={"sm"}>
+          Bridge
+        </Button>
+      )}
     </Box>
   );
 };

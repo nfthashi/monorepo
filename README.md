@@ -11,7 +11,7 @@ This is xNFTs repository
 Deploy native xNFT for Kovan
 
 ```
-yarn workspace contracts hardhat native-deploy --network kovan --self-domain 2221 --connext 0x71a52104739064bc35bED4Fc3ba8D9Fb2a84767f --dummy-transacting-asset-id 0xB5AabB55385bfBe31D627E2A717a7B189ddA4F8F --start-token-id 0 --end-token-id 99
+yarn workspace contracts hardhat native-deploy --network kovan --self-domain 2221 --connext 0x71a52104739064bc35bED4Fc3ba8D9Fb2a84767f --dummy-transacting-asset-id 0xB5AabB55385bfBe31D627E2A717a7B189ddA4F8F --start-token-id 0 --end-token-id 100
 ```
 
 Deploy native xNFT for Rinkeby
@@ -149,3 +149,45 @@ From Rinkeby to Kovan
 ```
 yarn workspace contracts hardhat wrap-bridge --network rinkeby --source-contract-address <deployed contract> --original-nft-contract-address <deployed contract> --from <your address> --to <your address> --token-id <minted token id> --destination-domain 2221
 ```
+
+## Sample Contracts
+
+### Native Pattern
+
+#### Kovan
+
+<https://kovan.etherscan.io/address/0xf13E44F5afEB9eC7e3A46484F59BaD811b267026#code>
+
+#### Rinkeby
+
+<https://rinkeby.etherscan.io/address/0x4114B9b30E0EF8D60722cebb9E91948cfa4c850e#code>
+
+### Wrap Pattern
+
+#### Kovan
+
+##### Implementation
+
+<https://kovan.etherscan.io/address/0x347AB7D0411cB47B748f9c81038961eA384A7aEF#code>
+
+##### Target
+
+<https://kovan.etherscan.io/address/0xE9bA21232D0Ece2e550a203b3E5bFC104800e792#code>
+
+##### Source
+
+<https://kovan.etherscan.io/address/0xfF06B57683fd0e0c4fa9871beB483D6E32909FaB#code>
+
+#### Rinkeby
+
+##### Implementation
+
+<https://rinkeby.etherscan.io/address/0xC9944AcbE1553c7E7a876A71165a25220e272b6b#code>
+
+##### Target
+
+<https://rinkeby.etherscan.io/address/0x04411f85d9c85D30CBadD88D3821546d6Df895a4>
+
+##### Source
+
+<https://rinkeby.etherscan.io/address/0xb4c290674eA71C32c0c9699439155274275d9F18#code>

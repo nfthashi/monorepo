@@ -1,37 +1,15 @@
 import React from "react";
-
 import { Box, Flex, Text, Button } from "@chakra-ui/react";
-// import Web3Modal from "web3modal";
-import Web3 from "web3";
-// import WalletConnectProvider from "@walletconnect/web3-provider";
-// import { useRecoilState } from "recoil";
+import { useWeb3React } from "@web3-react/core";
+import { Web3Provider } from "@ethersproject/providers";
 
-// import { accountState } from "../atoms/account";
+import { injected } from "../lib/web3/injected";
 
 export const Header: React.FC = () => {
-  // const [account, setAccount] = useRecoilState(accountState);
+  const { activate, account } = useWeb3React<Web3Provider>();
 
   const connect = async () => {
-    // try {
-    //   const providerOptions = {
-    //     walletconnect: {
-    //       package: WalletConnectProvider,
-    //       options: {
-    //         infuraId: "95f65ab099894076814e8526f52c9149", // required
-    //       },
-    //     },
-    //   };
-    //   const web3Modal = new Web3Modal({
-    //     network: "mainnet", // optional
-    //     providerOptions, // required
-    //   });
-    //   const provider = await web3Modal.connect();
-    //   const web3 = new Web3(provider);
-    //   const [account] = await web3.eth.getAccounts();
-    //   setAccount(account);
-    // } catch (err) {
-    //   console.error(err);
-    // }
+    activate(injected);
   };
 
   return (
@@ -41,13 +19,15 @@ export const Header: React.FC = () => {
           xNFTs
         </Text>
         <Flex gap={"16px"}>
-          {/* {!account ? (
-            <Button onClick={connect} fontSize={"xs"}>
+          {!account ? (
+            <Button onClick={connect} fontSize={"sm"}>
               Connect Wallet
             </Button>
           ) : (
-            <Button fontSize={"xs"}>{account}</Button>
-          )} */}
+            <Button disabled fontSize={"sm"}>
+              {account}
+            </Button>
+          )}
         </Flex>
       </Flex>
     </Box>
