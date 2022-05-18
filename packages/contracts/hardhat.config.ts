@@ -12,7 +12,11 @@ dotenv.config();
 import "./tasks/native-bridge";
 import "./tasks/native-deploy";
 import "./tasks/native-mint";
-import "./tasks/register-opponent";
+import "./tasks/register";
+import "./tasks/wrap-bridge";
+import "./tasks/wrap-deploy-mock-with-mint";
+import "./tasks/wrap-deploy-source";
+import "./tasks/wrap-deploy-target";
 
 const accounts = process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [];
 
