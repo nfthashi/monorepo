@@ -1,0 +1,12 @@
+{
+    "wrap": {
+        "rinkeby" : {
+            "source" : "0xb4c290674ea71c32c0c9699439155274275d9f18",
+            "target" : "0x7031df34025f5b3FF012C5d0B3CBD623106a8eBA"
+        },
+        "kovan" : {
+            "source" : "0xfF06B57683fd0e0c4fa9871beB483D6E32909FaB",
+            "target" : "0x241A33C20fE05EF91799146EEb2D11c59c551D81"
+        }
+    }
+}

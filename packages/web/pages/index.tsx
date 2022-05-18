@@ -4,8 +4,8 @@ import Image from "next/image";
 import styles from "../styles/Home.module.css";
 import { Flex, Spacer } from "@chakra-ui/react";
 import { useState } from "react";
-import Native from "./component/Native";
-import Wrapper from "./component/Wrapper";
+import Native from "../component/Native";
+import Wrapper from "../component/Wrapper";
 
 const Home: NextPage = () => {
   const [address, setAddress] = useState("");
