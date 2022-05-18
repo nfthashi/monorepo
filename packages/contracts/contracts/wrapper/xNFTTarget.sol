@@ -1,4 +1,10 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.0;
 
-contract xNFTTarget {}
+import "./xNFTWrapBridge.sol";
+
+abstract contract xNFTTarget is xNFTWrapBridge {
+  function xSend() public {}
+
+  function xReceive() public onlyExecutor {}
+}

@@ -4,15 +4,17 @@ pragma solidity ^0.8.0;
 import {IExecutor} from "@connext/nxtp-contracts/contracts/interfaces/IExecutor.sol";
 import {IConnextHandler} from "@connext/nxtp-contracts/contracts/interfaces/IConnextHandler.sol";
 
-contract xNFTHandler {
-  address public originContract;
-  uint32 public originDomain;
-  address public executor;
+contract xNFTWrapBridge {
+  address public opponentContract;
+  uint32 public opponentDomain;
+
+  address public immutable connext;
+  address public immutable executor;
 
   modifier onlyExecutor() {
     require(
-      IExecutor(msg.sender).originSender() == originContract &&
-        IExecutor(msg.sender).origin() == originDomain &&
+      IExecutor(msg.sender).originSender() == opponentContract &&
+        IExecutor(msg.sender).origin() == opponentDomain &&
         msg.sender == executor,
       "Expected origin contract on origin domain called by Executor"
     );
@@ -20,12 +22,13 @@ contract xNFTHandler {
   }
 
   constructor(
-    address _originContract,
-    uint32 _originDomain,
-    IConnextHandler _connext
+    address _opponentContract,
+    uint32 _opponentDomain,
+    address _connext
   ) {
-    originContract = _originContract;
-    originDomain = _originDomain;
+    opponentContract = _opponentContract;
+    opponentDomain = _opponentDomain;
+    connext = _connext;
     executor = IConnextHandler(_connext).getExecutor();
   }
 }
