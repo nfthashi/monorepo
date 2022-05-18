@@ -44,6 +44,7 @@
   },
   "dependencies": {
     "@connext/nxtp-contracts": "^0.2.0-alpha.16",
-    "@openzeppelin/contracts": "^4.6.0"
+    "@openzeppelin/contracts": "^4.6.0",
+    "@openzeppelin/contracts-upgradeable": "^4.6.0"
   }
 }
