@@ -23,6 +23,22 @@ contract xNFTTarget is xNFTBridge {
     nftImplementation = _nftImplementation;
   }
 
+  function wrap(
+    uint32 originDomain,
+    address originSender,
+    address originalNFTContractAddress
+  ) public {
+    address originContract = allowList[originDomain];
+    require(originContract != address(0x0), "xNativeNFT: origin not allowed");
+    bytes32 salt = keccak256(abi.encodePacked(originDomain, originSender, originalNFTContractAddress));
+    address wrappedNFTContractAddress = Clones.predictDeterministicAddress(nftImplementation, salt, address(this));
+    if (!Address.isContract(wrappedNFTContractAddress)) {
+      Clones.cloneDeterministic(nftImplementation, salt);
+      contracts[wrappedNFTContractAddress] = originalNFTContractAddress;
+      xWrappedNFT(wrappedNFTContractAddress).initialize();
+    }
+  }
+
   function xSend(
     address wrappedNFTContractAddress,
     address from,
@@ -61,7 +77,6 @@ contract xNFTTarget is xNFTBridge {
       amount: 0,
       relayerFee: 0
     });
-
     IConnextHandler(connext).xcall(xcallArgs);
   }
 

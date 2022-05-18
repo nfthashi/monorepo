@@ -18,6 +18,7 @@ import "./tasks/wrap-deploy-implementation";
 import "./tasks/wrap-deploy-mock-with-mint";
 import "./tasks/wrap-deploy-source";
 import "./tasks/wrap-deploy-target";
+import "./tasks/wrap";
 
 const accounts = process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [];
 
