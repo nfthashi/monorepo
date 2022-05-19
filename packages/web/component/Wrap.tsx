@@ -1,5 +1,15 @@
 import React from "react";
-import { Button, Box, Input, Radio, RadioGroup, Stack, FormControl, FormErrorMessage, useToast } from "@chakra-ui/react";
+import {
+  Button,
+  Box,
+  Input,
+  Radio,
+  RadioGroup,
+  Stack,
+  FormControl,
+  FormErrorMessage,
+  useToast,
+} from "@chakra-ui/react";
 import { useState } from "react";
 import { ethers } from "ethers";
 import { useWeb3React } from "@web3-react/core";
@@ -14,14 +24,10 @@ export const Wrap: React.FC = () => {
   const [nftContractAddress, setNFTContractAddress] = useState("");
   const [isNFTContractAddressInvalid, setIsNFTContractAddressInvalid] = useState(false);
   const [sendFromAddress, setSendFromAddress] = useState("");
-  const [IsSendFromAddressInvalid, setIsSendFromAddressInvalid] = useState(false);
-  const [sendToAddress, setSendToAddress] = useState("");
-  const [IsSendToAddressInvalid, setIsSendToAddressInvalid] = useState(false);
   const [tokenId, setTokenId] = useState("");
   const [isTokenIdInvalid, setTokenIdInvalid] = useState(false);
   const [destinationDomainId, setDestinationDomainId] = useState("");
   const [isDestinationDomainIdInvalid, setDestinationDomainIdInvalid] = useState(false);
-  const [domainId, setDomainId] = useState("");
   const toast = useToast();
 
   const { activate, library, account } = useWeb3React<Web3Provider>();
@@ -35,16 +41,6 @@ export const Wrap: React.FC = () => {
     const inputValue = e.target.value;
     setNFTContractAddress(inputValue);
     setIsNFTContractAddressInvalid(false);
-  };
-  const handleSendFromAddressChange = (e: any) => {
-    const inputValue = e.target.value;
-    setSendFromAddress(inputValue);
-    setIsSendFromAddressInvalid(false);
-  };
-  const handleSendToAddressChange = (e: any) => {
-    const inputValue = e.target.value;
-    setSendToAddress(inputValue);
-    setIsSendToAddressInvalid(false);
   };
   const handleTokenIdChange = (e: any) => {
     const inputValue = e.target.value;
@@ -72,18 +68,6 @@ export const Wrap: React.FC = () => {
     } else {
       setIsNFTContractAddressInvalid(false);
     }
-    if (!sendFromAddress) {
-      setIsSendFromAddressInvalid(true);
-      isError = true;
-    } else {
-      setIsSendFromAddressInvalid(false);
-    }
-    if (!sendToAddress) {
-      setIsSendToAddressInvalid(true);
-      isError = true;
-    } else {
-      setIsSendToAddressInvalid(false);
-    }
     if (!tokenId) {
       setTokenIdInvalid(true);
       isError = true;
@@ -103,7 +87,7 @@ export const Wrap: React.FC = () => {
     const bridgeContract = (config as any).wrap[name][direction];
     const nftContract = new ethers.Contract(nftContractAddress, IERC721ABI, library.getSigner());
     const approvedAddress = await nftContract.getApproved(tokenId);
-    const isApprovedForAll = await nftContract.isApprovedForAll(sendFromAddress, bridgeContract);
+    const isApprovedForAll = await nftContract.isApprovedForAll(account, bridgeContract);
     console.log(approvedAddress, "approvedAddress");
     console.log(isApprovedForAll, "isApprovedForAll");
 
@@ -111,7 +95,7 @@ export const Wrap: React.FC = () => {
       await nftContract.setApprovalForAll(bridgeContract, true);
     }
     const contract = new ethers.Contract(bridgeContract, wrapperSourceABI, library.getSigner());
-    const transaction = await contract.xSend(nftContractAddress, sendFromAddress, sendToAddress, tokenId, domainId);
+    const transaction = await contract.xSend(nftContractAddress, account, account, tokenId, destinationDomainId);
     transaction
       .wait(1)
       .then((tx: any) => {
@@ -145,14 +129,6 @@ export const Wrap: React.FC = () => {
       </RadioGroup>
       <FormControl isInvalid={isNFTContractAddressInvalid}>
         <Input placeholder="NFT contract address" onChange={handleNFTContractAddressChange} />
-        <FormErrorMessage>Required</FormErrorMessage>
-      </FormControl>
-      <FormControl isInvalid={IsSendFromAddressInvalid}>
-        <Input placeholder="Send from address" onChange={handleSendFromAddressChange} />
-        <FormErrorMessage>Required</FormErrorMessage>
-      </FormControl>
-      <FormControl isInvalid={IsSendToAddressInvalid}>
-        <Input placeholder="Send to address" onChange={handleSendToAddressChange} />
         <FormErrorMessage>Required</FormErrorMessage>
       </FormControl>
       <FormControl isInvalid={isTokenIdInvalid}>

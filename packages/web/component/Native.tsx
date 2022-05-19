@@ -11,10 +11,6 @@ export const Native: React.FC = () => {
   const contractABI = xNatibeNFTABI;
   const [nftContractAddress, setNFTContractAddress] = useState("");
   const [isNFTContractAddressInvalid, setIsNFTContractAddressInvalid] = useState(false);
-  const [sendFromAddress, setSendFromAddress] = useState("");
-  const [IsSendFromAddressInvalid, setIsSendFromAddressInvalid] = useState(false);
-  const [sendToAddress, setSendToAddress] = useState("");
-  const [IsSendToAddressInvalid, setIsSendToAddressInvalid] = useState(false);
   const [tokenId, setTokenId] = useState("");
   const [isTokenIdInvalid, setTokenIdInvalid] = useState(false);
   const [destinationDomainId, setDestinationDomainId] = useState("");
@@ -26,16 +22,6 @@ export const Native: React.FC = () => {
     const inputValue = e.target.value;
     setNFTContractAddress(inputValue);
     setIsNFTContractAddressInvalid(false);
-  };
-  const handleSendFromAddressChange = (e: any) => {
-    const inputValue = e.target.value;
-    setSendFromAddress(inputValue);
-    setIsSendFromAddressInvalid(false);
-  };
-  const handleSendToAddressChange = (e: any) => {
-    const inputValue = e.target.value;
-    setSendToAddress(inputValue);
-    setIsSendToAddressInvalid(false);
   };
   const handleTokenIdChange = (e: any) => {
     const inputValue = e.target.value;
@@ -63,18 +49,6 @@ export const Native: React.FC = () => {
     } else {
       setIsNFTContractAddressInvalid(false);
     }
-    if (!sendFromAddress) {
-      setIsSendFromAddressInvalid(true);
-      isError = true;
-    } else {
-      setIsSendFromAddressInvalid(false);
-    }
-    if (!sendToAddress) {
-      setIsSendToAddressInvalid(true);
-      isError = true;
-    } else {
-      setIsSendToAddressInvalid(false);
-    }
     if (!tokenId) {
       setTokenIdInvalid(true);
       isError = true;
@@ -91,18 +65,17 @@ export const Native: React.FC = () => {
       return;
     }
     const contract = new ethers.Contract(nftContractAddress, contractABI, library.getSigner());
-    const transaction = await contract.xSend(sendFromAddress, sendToAddress, tokenId, destinationDomainId);
+    const transaction = await contract.xSend(account, account, tokenId, destinationDomainId);
     transaction
       .wait(1)
       .then((tx: any) => {
-        console.log(tx)
         toast({
           title: `Bridge Tx Hash: ${tx.transactionHash}`,
           status: "success",
           isClosable: true,
         });
       })
-      .catch((err:any) => {
+      .catch((err: any) => {
         toast({
           title: `${err.message}`,
           status: "error",
@@ -133,14 +106,6 @@ export const Native: React.FC = () => {
       </Text>
       <FormControl isInvalid={isNFTContractAddressInvalid}>
         <Input placeholder="NFT contract address" onChange={handleNFTContractAddressChange} />
-        <FormErrorMessage>Required</FormErrorMessage>
-      </FormControl>
-      <FormControl isInvalid={IsSendFromAddressInvalid}>
-        <Input placeholder="Send from address" onChange={handleSendFromAddressChange} />
-        <FormErrorMessage>Required</FormErrorMessage>
-      </FormControl>
-      <FormControl isInvalid={IsSendToAddressInvalid}>
-        <Input placeholder="Send to address" onChange={handleSendToAddressChange} />
         <FormErrorMessage>Required</FormErrorMessage>
       </FormControl>
       <FormControl isInvalid={isTokenIdInvalid}>
