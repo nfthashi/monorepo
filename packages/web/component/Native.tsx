@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Box, Input, FormErrorMessage, FormControl } from "@chakra-ui/react";
+import { Button, Box, Input, FormErrorMessage, FormControl, Text, Link } from "@chakra-ui/react";
 import { useState } from "react";
 import { ethers } from "ethers";
 import { useWeb3React } from "@web3-react/core";
@@ -96,6 +96,24 @@ export const Native: React.FC = () => {
 
   return (
     <Box textAlign="center" experimental_spaceY="5">
+      <Text>
+        <Link
+          isExternal
+          href="https://kovan.etherscan.io/address/0xf13E44F5afEB9eC7e3A46484F59BaD811b267026#code"
+          color="blue"
+        >
+          Mint kovan xNFTs
+        </Link>
+      </Text>
+      <Text>
+        <Link
+          isExternal
+          href="https://rinkeby.etherscan.io/address/0x4114B9b30E0EF8D60722cebb9E91948cfa4c850e#code"
+          color="blue"
+        >
+          Mint rinkeby xNFTs
+        </Link>
+      </Text>
       <FormControl isInvalid={isNFTContractAddressInvalid}>
         <Input placeholder="NFT contract address" onChange={handleNFTContractAddressChange} />
         <FormErrorMessage>Required</FormErrorMessage>
