@@ -8,7 +8,7 @@ const IndexPage: NextPage = () => {
   return (
     <Layout>
       <Flex justifyContent="center">
-        <Box width="xl">
+        <Box width="xl" border="1px" borderColor="gray.300" paddingY={10} paddingX={4} rounded="2xl" boxShadow={"xl"}>
           <Tabs>
             <TabList>
               <Tab>Wrap</Tab>
