@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Box, Input } from "@chakra-ui/react";
+import { Button, Box, Input, Spinner, useToast } from "@chakra-ui/react";
 import { useState } from "react";
 import { ethers } from "ethers";
 import { useWeb3React } from "@web3-react/core";
@@ -15,6 +15,7 @@ export const Native: React.FC = () => {
   const [tokenId, setTokenId] = useState("");
   const [domainId, setDomainId] = useState("");
   const { activate, library, account } = useWeb3React<Web3Provider>();
+  const toast = useToast();
 
   const handleNFTContractAddressChange = (e: any) => {
     const inputValue = e.target.value;
@@ -46,8 +47,24 @@ export const Native: React.FC = () => {
       return;
     }
     const contract = new ethers.Contract(NFTContractAddress, contractABI, library.getSigner());
-    const tx = await contract.xSend(addressFrom, addressTo, tokenId, domainId);
-    console.log(tx);
+    const transaction = await contract.xSend(addressFrom, addressTo, tokenId, domainId);
+    transaction
+      .wait(1)
+      .then((tx: any) => {
+        console.log(tx)
+        toast({
+          title: `Bridge Tx Hash: ${tx.transactionHash}`,
+          status: "success",
+          isClosable: true,
+        });
+      })
+      .catch((err:any) => {
+        toast({
+          title: `${err.message}`,
+          status: "error",
+          isClosable: true,
+        });
+      });
   };
 
   return (
