@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Box, Input, Radio, RadioGroup, Stack, FormControl, FormErrorMessage } from "@chakra-ui/react";
+import { Button, Box, Input, Radio, RadioGroup, Stack, FormControl, FormErrorMessage, useToast } from "@chakra-ui/react";
 import { useState } from "react";
 import { ethers } from "ethers";
 import { useWeb3React } from "@web3-react/core";
@@ -21,6 +21,8 @@ export const Wrap: React.FC = () => {
   const [isTokenIdInvalid, setTokenIdInvalid] = useState(false);
   const [destinationDomainId, setDestinationDomainId] = useState("");
   const [isDestinationDomainIdInvalid, setDestinationDomainIdInvalid] = useState(false);
+  const [domainId, setDomainId] = useState("");
+  const toast = useToast();
 
   const { activate, library, account } = useWeb3React<Web3Provider>();
 
@@ -99,11 +101,34 @@ export const Wrap: React.FC = () => {
     }
     const { name } = await library.getNetwork();
     const bridgeContract = (config as any).wrap[name][direction];
-    const nftContract = new ethers.Contract(nftContractAddress, IERC721ABI, library.getSigner());
-    await nftContract.setApprovalForAll(bridgeContract, true);
+    const nftContract = new ethers.Contract(originalNFTContractAddress, IERC721ABI, library.getSigner());
+    const approvedAddress = await nftContract.getApproved(tokenId);
+    const isApprovedForAll = await nftContract.isApprovedForAll(addressFrom, bridgeContract);
+    console.log(approvedAddress, "approvedAddress");
+    console.log(isApprovedForAll, "isApprovedForAll");
+
+    if (approvedAddress != bridgeContract && isApprovedForAll != true) {
+      await nftContract.setApprovalForAll(bridgeContract, true);
+    }
     const contract = new ethers.Contract(bridgeContract, wrapperSourceABI, library.getSigner());
-    const tx = await contract.xSend(nftContractAddress, sendFromAddress, sendToAddress, tokenId, destinationDomainId);
-    console.log(tx);
+    const transaction = await contract.xSend(originalNFTContractAddress, addressFrom, addressTo, tokenId, domainId);
+    transaction
+      .wait(1)
+      .then((tx: any) => {
+        console.log(tx);
+        toast({
+          title: `Bridge Tx Hash: ${tx.transactionHash}`,
+          status: "success",
+          isClosable: true,
+        });
+      })
+      .catch((err: any) => {
+        toast({
+          title: `${err.message}`,
+          status: "error",
+          isClosable: true,
+        });
+      });
   };
 
   return (
