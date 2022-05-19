@@ -9,6 +9,11 @@ import {
   FormControl,
   FormErrorMessage,
   useToast,
+  HStack,
+  Text,
+  Select,
+  Spacer,
+  VStack,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { ethers } from "ethers";
@@ -23,7 +28,6 @@ export const Wrap: React.FC = () => {
   const [direction, setDirection] = useState("source");
   const [nftContractAddress, setNFTContractAddress] = useState("");
   const [isNFTContractAddressInvalid, setIsNFTContractAddressInvalid] = useState(false);
-  const [sendFromAddress, setSendFromAddress] = useState("");
   const [tokenId, setTokenId] = useState("");
   const [isTokenIdInvalid, setTokenIdInvalid] = useState(false);
   const [destinationDomainId, setDestinationDomainId] = useState("");
@@ -127,18 +131,34 @@ export const Wrap: React.FC = () => {
           </Radio>
         </Stack>
       </RadioGroup>
-      <FormControl isInvalid={isNFTContractAddressInvalid}>
-        <Input placeholder="NFT contract address" onChange={handleNFTContractAddressChange} />
-        <FormErrorMessage>Required</FormErrorMessage>
-      </FormControl>
-      <FormControl isInvalid={isTokenIdInvalid}>
-        <Input placeholder="Token ID" onChange={handleTokenIdChange} />
-        <FormErrorMessage>Required</FormErrorMessage>
-      </FormControl>
-      <FormControl isInvalid={isDestinationDomainIdInvalid}>
-        <Input placeholder="Destination domain ID" onChange={handleDestinationDomainIdChange} />
-        <FormErrorMessage>Required</FormErrorMessage>
-      </FormControl>
+      <HStack align="start">
+        <VStack spacing="2">
+          <Text fontWeight="bold">Source</Text>
+          <Select width="60">
+            <option value="4">Rinkeby</option>
+            <option value="42">Kovan</option>
+          </Select>
+          <FormControl isInvalid={isNFTContractAddressInvalid}>
+            <Input placeholder="NFT contract address" onChange={handleNFTContractAddressChange} />
+            <FormErrorMessage>Required</FormErrorMessage>
+          </FormControl>
+          <FormControl isInvalid={isTokenIdInvalid}>
+            <Input placeholder="Token ID" onChange={handleTokenIdChange} />
+            <FormErrorMessage>Required</FormErrorMessage>
+          </FormControl>
+        </VStack>
+        <Spacer />
+        <VStack spacing="2">
+          <Text fontWeight="bold">Destination</Text>
+          <FormControl isInvalid={isDestinationDomainIdInvalid}>
+            <Select width="60" onChange={handleDestinationDomainIdChange}>
+              <option value="1111">Rinkeby</option>
+              <option value="2221">Kovan</option>
+            </Select>
+            <FormErrorMessage>Required</FormErrorMessage>
+          </FormControl>
+        </VStack>
+      </HStack>
       {!account ? (
         <Button width="100%" onClick={connect} fontSize={"sm"}>
           Connect Wallet
