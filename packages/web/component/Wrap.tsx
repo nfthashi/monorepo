@@ -21,7 +21,6 @@ export const Wrap: React.FC = () => {
   const [isTokenIdInvalid, setTokenIdInvalid] = useState(false);
   const [destinationDomainId, setDestinationDomainId] = useState("");
   const [isDestinationDomainIdInvalid, setDestinationDomainIdInvalid] = useState(false);
-  const [domainId, setDomainId] = useState("");
   const toast = useToast();
 
   const { activate, library, account } = useWeb3React<Web3Provider>();
@@ -111,7 +110,13 @@ export const Wrap: React.FC = () => {
       await nftContract.setApprovalForAll(bridgeContract, true);
     }
     const contract = new ethers.Contract(bridgeContract, wrapperSourceABI, library.getSigner());
-    const transaction = await contract.xSend(nftContractAddress, sendFromAddress, sendToAddress, tokenId, domainId);
+    const transaction = await contract.xSend(
+      nftContractAddress,
+      sendFromAddress,
+      sendToAddress,
+      tokenId,
+      destinationDomainId
+    );
     transaction
       .wait(1)
       .then((tx: any) => {
