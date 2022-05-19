@@ -24,6 +24,12 @@ import config from "../lib/web3/config.json";
 import { wrapperSourceABI } from "../lib/web3/abis/wrapperSourceABI";
 import { IERC721ABI } from "../lib/web3/abis/IERC721ABI";
 
+declare global {
+  interface Window {
+    ethereum: any;
+  }
+}
+
 export const Wrap: React.FC = () => {
   const [direction, setDirection] = useState("source");
   const [nftContractAddress, setNFTContractAddress] = useState("");
@@ -55,6 +61,18 @@ export const Wrap: React.FC = () => {
     const inputValue = e.target.value;
     setDestinationDomainId(inputValue);
     setDestinationDomainIdInvalid(false);
+  };
+
+  const handleNetwork = async (e: any) => {
+    const { ethereum } = window;
+    const inputValue = e.target.value;
+    const network = await library?.detectNetwork();
+    if (network?.chainId != inputValue) {
+      await ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: ethers.utils.hexValue(Number(inputValue)) }],
+      });
+    }
   };
 
   const connect = async () => {
@@ -134,7 +152,7 @@ export const Wrap: React.FC = () => {
       <HStack align="start">
         <VStack spacing="2">
           <Text fontWeight="bold">Source</Text>
-          <Select width="60">
+          <Select width="60" onChange={handleNetwork}>
             <option value="4">Rinkeby</option>
             <option value="42">Kovan</option>
           </Select>
