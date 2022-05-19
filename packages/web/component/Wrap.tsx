@@ -101,9 +101,9 @@ export const Wrap: React.FC = () => {
     }
     const { name } = await library.getNetwork();
     const bridgeContract = (config as any).wrap[name][direction];
-    const nftContract = new ethers.Contract(originalNFTContractAddress, IERC721ABI, library.getSigner());
+    const nftContract = new ethers.Contract(nftContractAddress, IERC721ABI, library.getSigner());
     const approvedAddress = await nftContract.getApproved(tokenId);
-    const isApprovedForAll = await nftContract.isApprovedForAll(addressFrom, bridgeContract);
+    const isApprovedForAll = await nftContract.isApprovedForAll(sendFromAddress, bridgeContract);
     console.log(approvedAddress, "approvedAddress");
     console.log(isApprovedForAll, "isApprovedForAll");
 
@@ -111,7 +111,7 @@ export const Wrap: React.FC = () => {
       await nftContract.setApprovalForAll(bridgeContract, true);
     }
     const contract = new ethers.Contract(bridgeContract, wrapperSourceABI, library.getSigner());
-    const transaction = await contract.xSend(originalNFTContractAddress, addressFrom, addressTo, tokenId, domainId);
+    const transaction = await contract.xSend(nftContractAddress, sendFromAddress, sendToAddress, tokenId, domainId);
     transaction
       .wait(1)
       .then((tx: any) => {

@@ -90,8 +90,8 @@ export const Native: React.FC = () => {
     if (isError) {
       return;
     }
-    const contract = new ethers.Contract(NFTContractAddress, contractABI, library.getSigner());
-    const transaction = await contract.xSend(addressFrom, addressTo, tokenId, domainId);
+    const contract = new ethers.Contract(nftContractAddress, contractABI, library.getSigner());
+    const transaction = await contract.xSend(sendFromAddress, sendToAddress, tokenId, destinationDomainId);
     transaction
       .wait(1)
       .then((tx: any) => {
