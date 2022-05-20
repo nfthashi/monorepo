@@ -1,5 +1,19 @@
 import React from "react";
-import { Button, Box, Input, Radio, RadioGroup, Stack, FormControl, FormErrorMessage, useToast } from "@chakra-ui/react";
+import {
+  Button,
+  Box,
+  Input,
+  Radio,
+  RadioGroup,
+  Stack,
+  FormControl,
+  FormErrorMessage,
+  useToast,
+  HStack,
+  Text,
+  Select,
+  VStack,
+} from "@chakra-ui/react";
 import { useState } from "react";
 import { ethers } from "ethers";
 import { useWeb3React } from "@web3-react/core";
@@ -8,15 +22,19 @@ import { injected } from "../lib/web3/injected";
 import config from "../lib/web3/config.json";
 import { wrapperSourceABI } from "../lib/web3/abis/wrapperSourceABI";
 import { IERC721ABI } from "../lib/web3/abis/IERC721ABI";
+import { ArrowRightIcon } from "@chakra-ui/icons";
+
+declare global {
+  interface Window {
+    ethereum: any;
+  }
+}
 
 export const Wrap: React.FC = () => {
   const [direction, setDirection] = useState("source");
+  const [sourceChainId, setSourceChainId] = useState("4");
   const [nftContractAddress, setNFTContractAddress] = useState("");
   const [isNFTContractAddressInvalid, setIsNFTContractAddressInvalid] = useState(false);
-  const [sendFromAddress, setSendFromAddress] = useState("");
-  const [IsSendFromAddressInvalid, setIsSendFromAddressInvalid] = useState(false);
-  const [sendToAddress, setSendToAddress] = useState("");
-  const [IsSendToAddressInvalid, setIsSendToAddressInvalid] = useState(false);
   const [tokenId, setTokenId] = useState("");
   const [isTokenIdInvalid, setTokenIdInvalid] = useState(false);
   const [destinationDomainId, setDestinationDomainId] = useState("");
@@ -35,16 +53,6 @@ export const Wrap: React.FC = () => {
     setNFTContractAddress(inputValue);
     setIsNFTContractAddressInvalid(false);
   };
-  const handleSendFromAddressChange = (e: any) => {
-    const inputValue = e.target.value;
-    setSendFromAddress(inputValue);
-    setIsSendFromAddressInvalid(false);
-  };
-  const handleSendToAddressChange = (e: any) => {
-    const inputValue = e.target.value;
-    setSendToAddress(inputValue);
-    setIsSendToAddressInvalid(false);
-  };
   const handleTokenIdChange = (e: any) => {
     const inputValue = e.target.value;
     setTokenId(inputValue);
@@ -54,6 +62,11 @@ export const Wrap: React.FC = () => {
     const inputValue = e.target.value;
     setDestinationDomainId(inputValue);
     setDestinationDomainIdInvalid(false);
+  };
+
+  const handleNetwork = async (e: any) => {
+    const inputValue = e.target.value;
+    setSourceChainId(inputValue);
   };
 
   const connect = async () => {
@@ -71,18 +84,6 @@ export const Wrap: React.FC = () => {
     } else {
       setIsNFTContractAddressInvalid(false);
     }
-    if (!sendFromAddress) {
-      setIsSendFromAddressInvalid(true);
-      isError = true;
-    } else {
-      setIsSendFromAddressInvalid(false);
-    }
-    if (!sendToAddress) {
-      setIsSendToAddressInvalid(true);
-      isError = true;
-    } else {
-      setIsSendToAddressInvalid(false);
-    }
     if (!tokenId) {
       setTokenIdInvalid(true);
       isError = true;
@@ -98,11 +99,18 @@ export const Wrap: React.FC = () => {
     if (isError) {
       return;
     }
-    const { name } = await library.getNetwork();
+    const { name, chainId } = await library.getNetwork();
+    const { ethereum } = window;
+    if (chainId != Number(sourceChainId)) {
+      await ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: ethers.utils.hexValue(Number(sourceChainId)) }],
+      });
+    }
     const bridgeContract = (config as any).wrap[name][direction];
     const nftContract = new ethers.Contract(nftContractAddress, IERC721ABI, library.getSigner());
     const approvedAddress = await nftContract.getApproved(tokenId);
-    const isApprovedForAll = await nftContract.isApprovedForAll(sendFromAddress, bridgeContract);
+    const isApprovedForAll = await nftContract.isApprovedForAll(account, bridgeContract);
     console.log(approvedAddress, "approvedAddress");
     console.log(isApprovedForAll, "isApprovedForAll");
 
@@ -110,13 +118,7 @@ export const Wrap: React.FC = () => {
       await nftContract.setApprovalForAll(bridgeContract, true);
     }
     const contract = new ethers.Contract(bridgeContract, wrapperSourceABI, library.getSigner());
-    const transaction = await contract.xSend(
-      nftContractAddress,
-      sendFromAddress,
-      sendToAddress,
-      tokenId,
-      destinationDomainId
-    );
+    const transaction = await contract.xSend(nftContractAddress, account, account, tokenId, destinationDomainId);
     transaction
       .wait(1)
       .then((tx: any) => {
@@ -148,32 +150,47 @@ export const Wrap: React.FC = () => {
           </Radio>
         </Stack>
       </RadioGroup>
-      <FormControl isInvalid={isNFTContractAddressInvalid}>
-        <Input placeholder="NFT contract address" onChange={handleNFTContractAddressChange} />
-        <FormErrorMessage>Required</FormErrorMessage>
-      </FormControl>
-      <FormControl isInvalid={IsSendFromAddressInvalid}>
-        <Input placeholder="Send from address" onChange={handleSendFromAddressChange} />
-        <FormErrorMessage>Required</FormErrorMessage>
-      </FormControl>
-      <FormControl isInvalid={IsSendToAddressInvalid}>
-        <Input placeholder="Send to address" onChange={handleSendToAddressChange} />
-        <FormErrorMessage>Required</FormErrorMessage>
-      </FormControl>
-      <FormControl isInvalid={isTokenIdInvalid}>
-        <Input placeholder="Token ID" onChange={handleTokenIdChange} />
-        <FormErrorMessage>Required</FormErrorMessage>
-      </FormControl>
-      <FormControl isInvalid={isDestinationDomainIdInvalid}>
-        <Input placeholder="Destination domain ID" onChange={handleDestinationDomainIdChange} />
-        <FormErrorMessage>Required</FormErrorMessage>
-      </FormControl>
+      <HStack align="start">
+        <VStack spacing="2">
+          <Text fontWeight="bold">Source</Text>
+          <Select variant="filled" width="60" onChange={handleNetwork} rounded="2xl">
+            <option value="4">Rinkeby</option>
+            <option value="42">Kovan</option>
+          </Select>
+          <FormControl isInvalid={isNFTContractAddressInvalid}>
+            <Input
+              variant="filled"
+              placeholder="NFT contract address"
+              onChange={handleNFTContractAddressChange}
+              rounded="2xl"
+            />
+            <FormErrorMessage>Required</FormErrorMessage>
+          </FormControl>
+          <FormControl isInvalid={isTokenIdInvalid}>
+            <Input variant="filled" placeholder="Token ID" onChange={handleTokenIdChange} rounded="2xl" />
+            <FormErrorMessage>Required</FormErrorMessage>
+          </FormControl>
+        </VStack>
+        <Box pt="10">
+          <ArrowRightIcon />
+        </Box>
+        <VStack spacing="2">
+          <Text fontWeight="bold">Destination</Text>
+          <FormControl isInvalid={isDestinationDomainIdInvalid}>
+            <Select variant="filled" width="60" onChange={handleDestinationDomainIdChange} rounded="2xl">
+              <option value="1111">Rinkeby</option>
+              <option value="2221">Kovan</option>
+            </Select>
+            <FormErrorMessage>Required</FormErrorMessage>
+          </FormControl>
+        </VStack>
+      </HStack>
       {!account ? (
-        <Button width="100%" onClick={connect} fontSize={"sm"}>
+        <Button width="100%" onClick={connect} fontSize={"sm"} rounded="2xl">
           Connect Wallet
         </Button>
       ) : (
-        <Button width="100%" onClick={xCall} fontSize={"sm"}>
+        <Button width="100%" onClick={xCall} fontSize={"sm"} colorScheme="blue" rounded="2xl">
           Bridge
         </Button>
       )}
