@@ -16,6 +16,7 @@ contract xNFTBridge is Ownable {
   uint32 public immutable selfDomain;
 
   modifier onlyExecutor() {
+    IExecutor(msg.sender).originSender();
     require(
       IExecutor(msg.sender).originSender() == allowList[IExecutor(msg.sender).origin()] && msg.sender == executor,
       "xNativeBridge: Expected origin contract on origin domain called by Executor"
