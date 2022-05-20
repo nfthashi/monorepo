@@ -10,12 +10,11 @@ const IndexPage: NextPage = () => {
       <Flex justifyContent="center">
         <Box
           width="xl"
-          border="1px"
-          borderColor={useColorModeValue("gray.300", "gray.500")}
+          bgColor={useColorModeValue("white", "gray.700")}
           paddingY={10}
           paddingX={4}
           rounded="2xl"
-          boxShadow={"xl"}
+          shadow="xl"
         >
           <Tabs>
             <TabList>

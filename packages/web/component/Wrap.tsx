@@ -12,7 +12,6 @@ import {
   HStack,
   Text,
   Select,
-  Spacer,
   VStack,
 } from "@chakra-ui/react";
 import { useState } from "react";
@@ -23,6 +22,7 @@ import { injected } from "../lib/web3/injected";
 import config from "../lib/web3/config.json";
 import { wrapperSourceABI } from "../lib/web3/abis/wrapperSourceABI";
 import { IERC721ABI } from "../lib/web3/abis/IERC721ABI";
+import { ArrowRightIcon } from "@chakra-ui/icons";
 
 declare global {
   interface Window {
@@ -32,6 +32,7 @@ declare global {
 
 export const Wrap: React.FC = () => {
   const [direction, setDirection] = useState("source");
+  const [sourceChainId, setSourceChainId] = useState("4");
   const [nftContractAddress, setNFTContractAddress] = useState("");
   const [isNFTContractAddressInvalid, setIsNFTContractAddressInvalid] = useState(false);
   const [tokenId, setTokenId] = useState("");
@@ -64,15 +65,8 @@ export const Wrap: React.FC = () => {
   };
 
   const handleNetwork = async (e: any) => {
-    const { ethereum } = window;
     const inputValue = e.target.value;
-    const network = await library?.detectNetwork();
-    if (network?.chainId != inputValue) {
-      await ethereum.request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId: ethers.utils.hexValue(Number(inputValue)) }],
-      });
-    }
+    setSourceChainId(inputValue);
   };
 
   const connect = async () => {
@@ -105,7 +99,14 @@ export const Wrap: React.FC = () => {
     if (isError) {
       return;
     }
-    const { name } = await library.getNetwork();
+    const { name, chainId } = await library.getNetwork();
+    const { ethereum } = window;
+    if (chainId != Number(sourceChainId)) {
+      await ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: ethers.utils.hexValue(Number(sourceChainId)) }],
+      });
+    }
     const bridgeContract = (config as any).wrap[name][direction];
     const nftContract = new ethers.Contract(nftContractAddress, IERC721ABI, library.getSigner());
     const approvedAddress = await nftContract.getApproved(tokenId);
@@ -152,24 +153,31 @@ export const Wrap: React.FC = () => {
       <HStack align="start">
         <VStack spacing="2">
           <Text fontWeight="bold">Source</Text>
-          <Select width="60" onChange={handleNetwork}>
+          <Select variant="filled" width="60" onChange={handleNetwork} rounded="2xl">
             <option value="4">Rinkeby</option>
             <option value="42">Kovan</option>
           </Select>
           <FormControl isInvalid={isNFTContractAddressInvalid}>
-            <Input placeholder="NFT contract address" onChange={handleNFTContractAddressChange} />
+            <Input
+              variant="filled"
+              placeholder="NFT contract address"
+              onChange={handleNFTContractAddressChange}
+              rounded="2xl"
+            />
             <FormErrorMessage>Required</FormErrorMessage>
           </FormControl>
           <FormControl isInvalid={isTokenIdInvalid}>
-            <Input placeholder="Token ID" onChange={handleTokenIdChange} />
+            <Input variant="filled" placeholder="Token ID" onChange={handleTokenIdChange} rounded="2xl" />
             <FormErrorMessage>Required</FormErrorMessage>
           </FormControl>
         </VStack>
-        <Spacer />
+        <Box pt="10">
+          <ArrowRightIcon />
+        </Box>
         <VStack spacing="2">
           <Text fontWeight="bold">Destination</Text>
           <FormControl isInvalid={isDestinationDomainIdInvalid}>
-            <Select width="60" onChange={handleDestinationDomainIdChange}>
+            <Select variant="filled" width="60" onChange={handleDestinationDomainIdChange} rounded="2xl">
               <option value="1111">Rinkeby</option>
               <option value="2221">Kovan</option>
             </Select>
@@ -178,11 +186,11 @@ export const Wrap: React.FC = () => {
         </VStack>
       </HStack>
       {!account ? (
-        <Button width="100%" onClick={connect} fontSize={"sm"}>
+        <Button width="100%" onClick={connect} fontSize={"sm"} rounded="2xl">
           Connect Wallet
         </Button>
       ) : (
-        <Button width="100%" onClick={xCall} fontSize={"sm"}>
+        <Button width="100%" onClick={xCall} fontSize={"sm"} colorScheme="blue" rounded="2xl">
           Bridge
         </Button>
       )}

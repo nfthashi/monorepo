@@ -7,12 +7,11 @@ import {
   FormControl,
   Text,
   Link,
-  Spinner,
   useToast,
   HStack,
   VStack,
   Select,
-  Spacer,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { ethers } from "ethers";
@@ -20,9 +19,11 @@ import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 import { xNatibeNFTABI } from "../lib/web3/abis/xNativeNFTABI";
 import { injected } from "../lib/web3/injected";
+import { ArrowRightIcon } from "@chakra-ui/icons";
 
 export const Native: React.FC = () => {
   const contractABI = xNatibeNFTABI;
+  const [sourceChainId, setSourceChainId] = useState<"4" | "42">("4");
   const [nftContractAddress, setNFTContractAddress] = useState("");
   const [isNFTContractAddressInvalid, setIsNFTContractAddressInvalid] = useState(false);
   const [tokenId, setTokenId] = useState("");
@@ -31,6 +32,10 @@ export const Native: React.FC = () => {
   const [isDestinationDomainIdInvalid, setDestinationDomainIdInvalid] = useState(false);
   const { activate, library, account } = useWeb3React<Web3Provider>();
   const toast = useToast();
+  const testNFTs = {
+    "4": "https://rinkeby.etherscan.io/address/0x4114B9b30E0EF8D60722cebb9E91948cfa4c850e#code",
+    "42": "https://kovan.etherscan.io/address/0xf13E44F5afEB9eC7e3A46484F59BaD811b267026#code",
+  };
 
   const handleNFTContractAddressChange = (e: any) => {
     const inputValue = e.target.value;
@@ -49,15 +54,8 @@ export const Native: React.FC = () => {
   };
 
   const handleNetwork = async (e: any) => {
-    const { ethereum } = window;
     const inputValue = e.target.value;
-    const network = await library?.detectNetwork();
-    if (network?.chainId != inputValue) {
-      await ethereum.request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId: ethers.utils.hexValue(Number(inputValue)) }],
-      });
-    }
+    setSourceChainId(inputValue);
   };
 
   const connect = async () => {
@@ -90,6 +88,14 @@ export const Native: React.FC = () => {
     if (isError) {
       return;
     }
+    const { chainId } = await library.getNetwork();
+    const { ethereum } = window;
+    if (chainId != Number(sourceChainId)) {
+      await ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: ethers.utils.hexValue(Number(sourceChainId)) }],
+      });
+    }
     const contract = new ethers.Contract(nftContractAddress, contractABI, library.getSigner());
     const transaction = await contract.xSend(account, account, tokenId, destinationDomainId);
     transaction
@@ -112,45 +118,34 @@ export const Native: React.FC = () => {
 
   return (
     <Box textAlign="center" experimental_spaceY="5">
-      <Text>
-        <Link
-          isExternal
-          href="https://kovan.etherscan.io/address/0xf13E44F5afEB9eC7e3A46484F59BaD811b267026#code"
-          color="blue"
-        >
-          Mint kovan xNFTs
-        </Link>
-      </Text>
-      <Text>
-        <Link
-          isExternal
-          href="https://rinkeby.etherscan.io/address/0x4114B9b30E0EF8D60722cebb9E91948cfa4c850e#code"
-          color="blue"
-        >
-          Mint rinkeby xNFTs
-        </Link>
-      </Text>
       <HStack align="start">
         <VStack spacing="2">
           <Text fontWeight="bold">Source</Text>
-          <Select width="60" onChange={handleNetwork}>
+          <Select variant="filled" width="60" onChange={handleNetwork} rounded="2xl">
             <option value="4">Rinkeby</option>
             <option value="42">Kovan</option>
           </Select>
           <FormControl isInvalid={isNFTContractAddressInvalid}>
-            <Input placeholder="NFT contract address" onChange={handleNFTContractAddressChange} />
+            <Input
+              variant="filled"
+              placeholder="NFT contract address"
+              onChange={handleNFTContractAddressChange}
+              rounded="2xl"
+            />
             <FormErrorMessage>Required</FormErrorMessage>
           </FormControl>
           <FormControl isInvalid={isTokenIdInvalid}>
-            <Input placeholder="Token ID" onChange={handleTokenIdChange} />
+            <Input variant="filled" placeholder="Token ID" onChange={handleTokenIdChange} rounded="2xl" />
             <FormErrorMessage>Required</FormErrorMessage>
           </FormControl>
         </VStack>
-        <Spacer />
+        <Box pt="10">
+          <ArrowRightIcon />
+        </Box>
         <VStack spacing="2">
           <Text fontWeight="bold">Destination</Text>
           <FormControl isInvalid={isDestinationDomainIdInvalid}>
-            <Select width="60" onChange={handleDestinationDomainIdChange}>
+            <Select variant="filled" width="60" onChange={handleDestinationDomainIdChange} rounded="2xl">
               <option value="1111">Rinkeby</option>
               <option value="2221">Kovan</option>
             </Select>
@@ -159,14 +154,19 @@ export const Native: React.FC = () => {
         </VStack>
       </HStack>
       {!account ? (
-        <Button width="100%" onClick={connect} fontSize={"sm"}>
+        <Button width="100%" onClick={connect} fontSize={"sm"} rounded="2xl">
           Connect Wallet
         </Button>
       ) : (
-        <Button width="100%" onClick={xCall} fontSize={"sm"}>
+        <Button width="100%" onClick={xCall} fontSize={"sm"} colorScheme="blue" rounded="2xl">
           Bridge
         </Button>
       )}
+      <Text>
+        <Link isExternal href={testNFTs[sourceChainId]} color={useColorModeValue("blue.500", "blue.300")}>
+          Mint your test xNFTs
+        </Link>
+      </Text>
     </Box>
   );
 };

@@ -23,20 +23,21 @@ export const Header: React.FC = () => {
         </Text>
         <Flex gap={"16px"}>
           {!account ? (
-            <Button onClick={connect} fontSize={"sm"}>
+            <Button onClick={connect} fontSize={"sm"} rounded="2xl">
               Connect Wallet
             </Button>
           ) : (
             <>
-              <Button disabled fontSize={"sm"} maxWidth="40">
+              <Button disabled fontSize={"sm"} maxWidth="40" rounded="2xl">
                 <Text noOfLines={1}>{account} ...</Text>
               </Button>
-              <Button fontSize={"xs"} colorScheme="yellow" onClick={deactivate}>
+              <Button fontSize={"xs"} colorScheme="yellow" onClick={deactivate} rounded="2xl">
                 Disconnect
               </Button>
             </>
           )}
           <IconButton
+            rounded="2xl"
             aria-label="DarkMode Switch"
             icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />} //自分の好みでSunアイコンはreact-iconsを使用しています
             onClick={toggleColorMode}
