@@ -31,9 +31,6 @@ contract xNFTWrapBridge is xNFTBridge {
     uint256 tokenId,
     uint32 destinationDomain
   ) public {
-    address destinationContract = allowList[destinationDomain];
-    require(destinationContract != address(0x0), "xNativeNFT: destination not allowed");
-
     require(
       IERC721(processingNFTContractAddress).ownerOf(tokenId) == _msgSender() ||
         IERC721(processingNFTContractAddress).getApproved(tokenId) == _msgSender() ||
@@ -56,6 +53,7 @@ contract xNFTWrapBridge is xNFTBridge {
     }
 
     bytes4 selector = bytes4(keccak256("xReceive(address,address,uint256,uint32,uint32)"));
+
     bytes memory callData = abi.encodeWithSelector(
       selector,
       birthChainNFTContractAddress,
@@ -64,23 +62,7 @@ contract xNFTWrapBridge is xNFTBridge {
       birthChainDomain,
       destinationDomain
     );
-
-    IConnextHandler.CallParams memory callParams = IConnextHandler.CallParams({
-      to: destinationContract,
-      callData: callData,
-      originDomain: selfDomain,
-      destinationDomain: destinationDomain,
-      forceSlow: true,
-      receiveLocal: false
-    });
-
-    IConnextHandler.XCallArgs memory xcallArgs = IConnextHandler.XCallArgs({
-      params: callParams,
-      transactingAssetId: dummyTransactingAssetId,
-      amount: 0,
-      relayerFee: 0
-    });
-    IConnextHandler(connext).xcall(xcallArgs);
+    _xcall(destinationDomain, callData);
   }
 
   function xReceive(
@@ -94,9 +76,6 @@ contract xNFTWrapBridge is xNFTBridge {
       if (destinationDomain == selfDomain) {
         IERC721(birthChainNFTContractAddress).safeTransferFrom(address(this), to, tokenId);
       } else {
-        address destinationContract = allowList[destinationDomain];
-        require(destinationContract != address(0x0), "xNativeNFT: destination not allowed");
-
         bytes4 selector = bytes4(keccak256("xReceive(address,address,uint256,uint32)"));
         bytes memory callData = abi.encodeWithSelector(
           selector,
@@ -105,23 +84,7 @@ contract xNFTWrapBridge is xNFTBridge {
           tokenId,
           birthChainDomain
         );
-
-        IConnextHandler.CallParams memory callParams = IConnextHandler.CallParams({
-          to: destinationContract,
-          callData: callData,
-          originDomain: selfDomain,
-          destinationDomain: destinationDomain,
-          forceSlow: true,
-          receiveLocal: false
-        });
-
-        IConnextHandler.XCallArgs memory xcallArgs = IConnextHandler.XCallArgs({
-          params: callParams,
-          transactingAssetId: dummyTransactingAssetId,
-          amount: 0,
-          relayerFee: 0
-        });
-        IConnextHandler(connext).xcall(xcallArgs);
+        _xcall(destinationDomain, callData);
       }
     } else {
       bytes32 salt = keccak256(abi.encodePacked(birthChainDomain, birthChainNFTContractAddress));

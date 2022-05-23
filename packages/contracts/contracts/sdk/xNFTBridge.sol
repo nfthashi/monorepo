@@ -24,10 +24,6 @@ contract xNFTBridge is Ownable {
     _;
   }
 
-  function register(uint32 _opponentDomain, address _opponentContract) public onlyOwner {
-    allowList[_opponentDomain] = _opponentContract;
-  }
-
   constructor(
     uint32 _selfDomain,
     address _connext,
@@ -37,5 +33,30 @@ contract xNFTBridge is Ownable {
     connext = _connext;
     executor = IConnextHandler(_connext).getExecutor();
     dummyTransactingAssetId = _dummyTransactingAssetId;
+  }
+
+  function register(uint32 _opponentDomain, address _opponentContract) public onlyOwner {
+    allowList[_opponentDomain] = _opponentContract;
+  }
+
+  function _xcall(uint32 destinationDomain, bytes memory callData) internal {
+    address destinationContract = allowList[destinationDomain];
+    require(destinationContract != address(0x0), "xNFTBridge: destination not allowed");
+
+    IConnextHandler.CallParams memory callParams = IConnextHandler.CallParams({
+      to: destinationContract,
+      callData: callData,
+      originDomain: selfDomain,
+      destinationDomain: destinationDomain,
+      forceSlow: true,
+      receiveLocal: false
+    });
+    IConnextHandler.XCallArgs memory xcallArgs = IConnextHandler.XCallArgs({
+      params: callParams,
+      transactingAssetId: dummyTransactingAssetId,
+      amount: 0,
+      relayerFee: 0
+    });
+    IConnextHandler(connext).xcall(xcallArgs);
   }
 }

@@ -34,31 +34,12 @@ contract xNativeNFT is xNFTBridge, ERC721 {
     uint256 tokenId,
     uint32 destinationDomain
   ) public {
-    address destinationContract = allowList[destinationDomain];
-    require(destinationContract != address(0x0), "xNativeNFT: destination not allowed");
     require(_isApprovedOrOwner(_msgSender(), tokenId), "xNativeNFT: send caller is not owner nor approved");
     require(ownerOf(tokenId) == from, "xNativeNFT: send from incorrect owner");
     _burn(tokenId);
     bytes4 selector = bytes4(keccak256("xReceive(address,uint256)"));
     bytes memory callData = abi.encodeWithSelector(selector, to, tokenId);
-
-    IConnextHandler.CallParams memory callParams = IConnextHandler.CallParams({
-      to: destinationContract,
-      callData: callData,
-      originDomain: selfDomain,
-      destinationDomain: destinationDomain,
-      forceSlow: true,
-      receiveLocal: false
-    });
-
-    IConnextHandler.XCallArgs memory xcallArgs = IConnextHandler.XCallArgs({
-      params: callParams,
-      transactingAssetId: dummyTransactingAssetId,
-      amount: 0,
-      relayerFee: 0
-    });
-
-    IConnextHandler(connext).xcall(xcallArgs);
+    _xcall(destinationDomain, callData);
   }
 
   function xReceive(address to, uint256 tokenId) public onlyExecutor {
