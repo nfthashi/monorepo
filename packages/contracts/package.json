@@ -1,7 +1,6 @@
 {
   "name": "contracts",
-  "version": "1.0.0",
-  "license": "UNLICENSED",
+  "version": "0.1.1",
   "scripts": {
     "test": "hardhat test",
     "build": "npx hardhat compile",
