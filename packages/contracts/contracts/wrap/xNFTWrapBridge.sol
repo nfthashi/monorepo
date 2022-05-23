@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/proxy/Clones.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/Create2.sol";
 
-import "../../sdk/xNFTBridge.sol";
+import "../core/xNFTBridge.sol";
 import "./xWrappedNFT.sol";
 
 contract xNFTWrapBridge is xNFTBridge {
