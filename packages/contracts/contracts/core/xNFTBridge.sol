@@ -35,8 +35,8 @@ contract xNFTBridge is Ownable {
     dummyTransactingAssetId = _dummyTransactingAssetId;
   }
 
-  function register(uint32 _opponentDomain, address _opponentContract) public onlyOwner {
-    allowList[_opponentDomain] = _opponentContract;
+  function register(uint32 _allowedDomain, address _allowedContract) public onlyOwner {
+    allowList[_allowedDomain] = _allowedContract;
   }
 
   function _xcall(uint32 destinationDomain, bytes memory callData) internal {

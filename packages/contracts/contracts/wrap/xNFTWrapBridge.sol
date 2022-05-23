@@ -28,7 +28,7 @@ contract xNFTWrapBridge is xNFTBridge {
     address from,
     address to,
     uint256 tokenId,
-    uint32 moveToDomain
+    uint32 toDomain
   ) public {
     require(
       IERC721(processingNFTContractAddress).ownerOf(tokenId) == _msgSender() ||
@@ -50,7 +50,7 @@ contract xNFTWrapBridge is xNFTBridge {
     } else {
       birthChainNFTContractAddress = processingNFTContractAddress;
       birthChainDomain = selfDomain;
-      destinationDomain = moveToDomain;
+      destinationDomain = toDomain;
       IERC721(birthChainNFTContractAddress).transferFrom(from, address(this), tokenId);
     }
     bytes4 selector = bytes4(keccak256("xReceive(address,address,uint256,uint32,uint32)"));
@@ -60,7 +60,7 @@ contract xNFTWrapBridge is xNFTBridge {
       to,
       tokenId,
       birthChainDomain,
-      moveToDomain
+      toDomain
     );
     _xcall(destinationDomain, callData);
   }
@@ -70,10 +70,10 @@ contract xNFTWrapBridge is xNFTBridge {
     address to,
     uint256 tokenId,
     uint32 birthChainDomain,
-    uint32 moveToDomain
+    uint32 toDomain
   ) public onlyExecutor {
     if (birthChainDomain == selfDomain) {
-      if (moveToDomain == selfDomain) {
+      if (toDomain == selfDomain) {
         IERC721(birthChainNFTContractAddress).safeTransferFrom(address(this), to, tokenId);
       } else {
         bytes4 selector = bytes4(keccak256("xReceive(address,address,uint256,uint32)"));
@@ -84,7 +84,7 @@ contract xNFTWrapBridge is xNFTBridge {
           tokenId,
           birthChainDomain
         );
-        _xcall(moveToDomain, callData);
+        _xcall(toDomain, callData);
       }
     } else {
       bytes32 salt = keccak256(abi.encodePacked(birthChainDomain, birthChainNFTContractAddress));

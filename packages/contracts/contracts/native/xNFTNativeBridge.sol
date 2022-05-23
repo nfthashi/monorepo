@@ -15,14 +15,14 @@ abstract contract xNFTNativeBridge is xNFTBridge, ERC721 {
     address from,
     address to,
     uint256 tokenId,
-    uint32 destinationDomain
+    uint32 toDomain
   ) public {
     require(_isApprovedOrOwner(_msgSender(), tokenId), "xNativeNFTCore: send caller is not owner nor approved");
     require(ownerOf(tokenId) == from, "xNativeNFTCore: send from incorrect owner");
     _burn(tokenId);
     bytes4 selector = bytes4(keccak256("xReceive(address,uint256)"));
     bytes memory callData = abi.encodeWithSelector(selector, to, tokenId);
-    _xcall(destinationDomain, callData);
+    _xcall(toDomain, callData);
   }
 
   function xReceive(address to, uint256 tokenId) public onlyExecutor {
