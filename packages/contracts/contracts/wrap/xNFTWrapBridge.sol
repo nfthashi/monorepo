@@ -4,7 +4,6 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/interfaces/IERC721.sol";
 import "@openzeppelin/contracts/proxy/Clones.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
-import "@openzeppelin/contracts/utils/Create2.sol";
 
 import "../core/xNFTBridge.sol";
 import "./xWrappedNFT.sol";
@@ -29,7 +28,7 @@ contract xNFTWrapBridge is xNFTBridge {
     address from,
     address to,
     uint256 tokenId,
-    uint32 destinationDomain
+    uint32 moveToDomain
   ) public {
     require(
       IERC721(processingNFTContractAddress).ownerOf(tokenId) == _msgSender() ||
@@ -41,26 +40,27 @@ contract xNFTWrapBridge is xNFTBridge {
 
     address birthChainNFTContractAddress;
     uint32 birthChainDomain;
+    uint32 destinationDomain;
 
-    if (contracts[processingNFTContractAddress] == address(0x0) && domains[processingNFTContractAddress] == 0) {
-      birthChainNFTContractAddress = processingNFTContractAddress;
-      birthChainDomain = selfDomain;
-      IERC721(birthChainNFTContractAddress).transferFrom(from, address(this), tokenId);
-    } else {
+    if (contracts[processingNFTContractAddress] != address(0x0) && domains[processingNFTContractAddress] != 0) {
       birthChainNFTContractAddress = contracts[processingNFTContractAddress];
       birthChainDomain = domains[processingNFTContractAddress];
+      destinationDomain = birthChainDomain;
       xWrappedNFT(birthChainNFTContractAddress).burn(tokenId);
+    } else {
+      birthChainNFTContractAddress = processingNFTContractAddress;
+      birthChainDomain = selfDomain;
+      destinationDomain = moveToDomain;
+      IERC721(birthChainNFTContractAddress).transferFrom(from, address(this), tokenId);
     }
-
     bytes4 selector = bytes4(keccak256("xReceive(address,address,uint256,uint32,uint32)"));
-
     bytes memory callData = abi.encodeWithSelector(
       selector,
       birthChainNFTContractAddress,
       to,
       tokenId,
       birthChainDomain,
-      destinationDomain
+      moveToDomain
     );
     _xcall(destinationDomain, callData);
   }
@@ -70,10 +70,10 @@ contract xNFTWrapBridge is xNFTBridge {
     address to,
     uint256 tokenId,
     uint32 birthChainDomain,
-    uint32 destinationDomain
+    uint32 moveToDomain
   ) public onlyExecutor {
     if (birthChainDomain == selfDomain) {
-      if (destinationDomain == selfDomain) {
+      if (moveToDomain == selfDomain) {
         IERC721(birthChainNFTContractAddress).safeTransferFrom(address(this), to, tokenId);
       } else {
         bytes4 selector = bytes4(keccak256("xReceive(address,address,uint256,uint32)"));
@@ -84,7 +84,7 @@ contract xNFTWrapBridge is xNFTBridge {
           tokenId,
           birthChainDomain
         );
-        _xcall(destinationDomain, callData);
+        _xcall(moveToDomain, callData);
       }
     } else {
       bytes32 salt = keccak256(abi.encodePacked(birthChainDomain, birthChainNFTContractAddress));

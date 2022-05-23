@@ -7,8 +7,7 @@ describe("xNativeNFT", function () {
   let mockExecuter: any;
   let signer: any;
 
-  const sourceDomain = "0";
-
+  const selfDomain = "0";
   const opponentDomain = "1";
   const opponentContract = ADDRESS_1;
   const dummyTransactingAssetId = ADDRESS_1;
@@ -27,14 +26,14 @@ describe("xNativeNFT", function () {
 
     const XNativeNFT = await ethers.getContractFactory("xNativeNFT");
     xNativeNFT = await XNativeNFT.deploy(
-      sourceDomain,
+      selfDomain,
       mockConnextHandler.address,
       dummyTransactingAssetId,
       startTokenId,
       endTokenId
     );
-    await xNativeNFT.mint(signer.address);
     await xNativeNFT.register(opponentDomain, opponentContract);
+    await xNativeNFT.mint(signer.address);
   });
 
   it("xSend", async function () {
