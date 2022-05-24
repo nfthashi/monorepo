@@ -3,10 +3,12 @@ import { Box, Flex, Tabs, TabList, TabPanels, Tab, TabPanel, useColorModeValue }
 import { Native } from "../component/Native";
 import { Wrap } from "../component/Wrap";
 import { Layout } from "../component/Layout";
+import { Seo } from "../component/Seo";
 
 const IndexPage: NextPage = () => {
   return (
     <Layout>
+      <Seo />
       <Flex justifyContent="center">
         <Box
           width="xl"
