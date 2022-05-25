@@ -1,22 +1,22 @@
-# xNFTs Read Me
+# NFT Hashi Read Me
  This is a simple description of how to use this bridge application
  For a detailed functional description, architecture, and developer guide, please check our documentation
  http://docs.nfthashi.com/
 
-- What is xNFTs?
-- How to use xNFTs
+- What is NFT Hashi?
+- How to use NFT Hashi
     - How to bridge
     - How to check the bridge status
 
 
 
-# What is xNFTs
+# What is NFT Hashi
 
-xNFTs is a NFT bridge protocol that support transferring the NFTs between the deferent chains. We provide two types of bridge system, Wrap Pattern and Native Support Pattern, that can be used for different use cases.
+NFT Hashi is a NFT bridge protocol that support transferring the NFTs between the deferent chains. We provide two types of bridge system, Wrap Pattern and Native Support Pattern, that can be used for different use cases.
 
 
 
-# How to use xNFTs
+# How to use NFT Hashi
 ## How to bridge
 
 #### Wrap Pattern
