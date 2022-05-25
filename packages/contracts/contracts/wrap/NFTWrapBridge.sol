@@ -5,22 +5,22 @@ import "@openzeppelin/contracts/interfaces/IERC721.sol";
 import "@openzeppelin/contracts/proxy/Clones.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 
-import "../core/xNFTBridge.sol";
-import "./xWrappedNFT.sol";
+import "../core/NFTBridge.sol";
+import "./WrappedNFT.sol";
 
-contract xNFTWrapBridge is xNFTBridge {
-  mapping(address => address) public contracts;
-  mapping(address => uint32) public domains;
+contract NFTWrapBridge is NFTBridge {
+  mapping(address => address) private _contracts;
+  mapping(address => uint32) private _domains;
 
-  address public nftImplementation;
+  address private _nftImplementation;
 
   constructor(
-    uint32 _selfDomain,
-    address _connext,
-    address _dummyTransactingAssetId,
-    address _nftImplementation
-  ) xNFTBridge(_selfDomain, _connext, _dummyTransactingAssetId) {
-    nftImplementation = _nftImplementation;
+    uint32 selfDomain,
+    address connext,
+    address dummyTransactingAssetId,
+    address nftImplementation
+  ) NFTBridge(selfDomain, connext, dummyTransactingAssetId) {
+    _nftImplementation = nftImplementation;
   }
 
   function xSend(
@@ -28,29 +28,29 @@ contract xNFTWrapBridge is xNFTBridge {
     address from,
     address to,
     uint256 tokenId,
-    uint32 toDomain
+    uint32 sendToDomain
   ) public {
     require(
       IERC721(processingNFTContractAddress).ownerOf(tokenId) == _msgSender() ||
         IERC721(processingNFTContractAddress).getApproved(tokenId) == _msgSender() ||
         IERC721(processingNFTContractAddress).isApprovedForAll(from, _msgSender()),
-      "xNativeNFT: send caller is not owner nor approved"
+      "NativeNFT: send caller is not owner nor approved"
     );
-    require(IERC721(processingNFTContractAddress).ownerOf(tokenId) == from, "xNativeNFT: send from incorrect owner");
+    require(IERC721(processingNFTContractAddress).ownerOf(tokenId) == from, "NativeNFT: send from incorrect owner");
 
     address birthChainNFTContractAddress;
     uint32 birthChainDomain;
     uint32 destinationDomain;
 
-    if (contracts[processingNFTContractAddress] != address(0x0) && domains[processingNFTContractAddress] != 0) {
-      birthChainNFTContractAddress = contracts[processingNFTContractAddress];
-      birthChainDomain = domains[processingNFTContractAddress];
+    if (_contracts[processingNFTContractAddress] != address(0x0) && _domains[processingNFTContractAddress] != 0) {
+      birthChainNFTContractAddress = _contracts[processingNFTContractAddress];
+      birthChainDomain = _domains[processingNFTContractAddress];
       destinationDomain = birthChainDomain;
-      xWrappedNFT(birthChainNFTContractAddress).burn(tokenId);
+      WrappedNFT(birthChainNFTContractAddress).burn(tokenId);
     } else {
       birthChainNFTContractAddress = processingNFTContractAddress;
-      birthChainDomain = selfDomain;
-      destinationDomain = toDomain;
+      birthChainDomain = getSelfDomain();
+      destinationDomain = sendToDomain;
       IERC721(birthChainNFTContractAddress).transferFrom(from, address(this), tokenId);
     }
     bytes4 selector = bytes4(keccak256("xReceive(address,address,uint256,uint32,uint32)"));
@@ -60,7 +60,7 @@ contract xNFTWrapBridge is xNFTBridge {
       to,
       tokenId,
       birthChainDomain,
-      toDomain
+      sendToDomain
     );
     _xcall(destinationDomain, callData);
   }
@@ -70,10 +70,11 @@ contract xNFTWrapBridge is xNFTBridge {
     address to,
     uint256 tokenId,
     uint32 birthChainDomain,
-    uint32 toDomain
+    uint32 sendToDomain
   ) public onlyExecutor {
+    uint32 selfDomain = getSelfDomain();
     if (birthChainDomain == selfDomain) {
-      if (toDomain == selfDomain) {
+      if (sendToDomain == selfDomain) {
         IERC721(birthChainNFTContractAddress).safeTransferFrom(address(this), to, tokenId);
       } else {
         bytes4 selector = bytes4(keccak256("xReceive(address,address,uint256,uint32)"));
@@ -84,18 +85,22 @@ contract xNFTWrapBridge is xNFTBridge {
           tokenId,
           birthChainDomain
         );
-        _xcall(toDomain, callData);
+        _xcall(sendToDomain, callData);
       }
     } else {
       bytes32 salt = keccak256(abi.encodePacked(birthChainDomain, birthChainNFTContractAddress));
-      address processingNFTContractAddress = Clones.predictDeterministicAddress(nftImplementation, salt, address(this));
+      address processingNFTContractAddress = Clones.predictDeterministicAddress(
+        _nftImplementation,
+        salt,
+        address(this)
+      );
       if (!Address.isContract(processingNFTContractAddress)) {
-        Clones.cloneDeterministic(nftImplementation, salt);
-        contracts[processingNFTContractAddress] = birthChainNFTContractAddress;
-        domains[processingNFTContractAddress] = birthChainDomain;
-        xWrappedNFT(processingNFTContractAddress).initialize();
+        Clones.cloneDeterministic(_nftImplementation, salt);
+        _contracts[processingNFTContractAddress] = birthChainNFTContractAddress;
+        _domains[processingNFTContractAddress] = birthChainDomain;
+        WrappedNFT(processingNFTContractAddress).initialize();
       }
-      xWrappedNFT(processingNFTContractAddress).mint(to, tokenId);
+      WrappedNFT(processingNFTContractAddress).mint(to, tokenId);
     }
   }
 }

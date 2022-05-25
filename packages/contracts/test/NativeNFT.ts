@@ -2,8 +2,8 @@ import { expect } from "chai";
 import { ethers } from "hardhat";
 import { NULL_ADDRESS, ADDRESS_1 } from "../lib/constant";
 
-describe("xNativeNFT", function () {
-  let xNativeNFT: any;
+describe("NativeNFT", function () {
+  let NativeNFT: any;
   let mockExecuter: any;
   let signer: any;
 
@@ -14,32 +14,30 @@ describe("xNativeNFT", function () {
   const startTokenId = "0";
   const endTokenId = "10";
 
-  this.beforeEach(async function () {
+  beforeEach(async function () {
     [signer] = await ethers.getSigners();
 
     const MockConnextHandler = await ethers.getContractFactory("MockConnextHandler");
     const mockConnextHandler = await MockConnextHandler.deploy();
-
     const MockExecuter = await ethers.getContractFactory("MockExecuter");
     mockExecuter = await MockExecuter.deploy();
     await mockConnextHandler.setExecuter(mockExecuter.address);
-
-    const XNativeNFT = await ethers.getContractFactory("xNativeNFT");
-    xNativeNFT = await XNativeNFT.deploy(
+    const XNativeNFT = await ethers.getContractFactory("NativeNFT");
+    NativeNFT = await XNativeNFT.deploy(
       selfDomain,
       mockConnextHandler.address,
       dummyTransactingAssetId,
       startTokenId,
       endTokenId
     );
-    await xNativeNFT.register(opponentDomain, opponentContract);
-    await xNativeNFT.mint(signer.address);
+    await NativeNFT.setBridgeContract(opponentDomain, opponentContract);
+    await NativeNFT.mint(signer.address);
   });
 
   it("xSend", async function () {
     const tokenId = startTokenId;
-    await expect(xNativeNFT.xSend(signer.address, ADDRESS_1, tokenId, opponentDomain))
-      .to.emit(xNativeNFT, "Transfer")
+    await expect(NativeNFT.xSend(signer.address, ADDRESS_1, tokenId, opponentDomain))
+      .to.emit(NativeNFT, "Transfer")
       .withArgs(signer.address, NULL_ADDRESS, tokenId);
   });
 
@@ -47,8 +45,8 @@ describe("xNativeNFT", function () {
     const tokenId = endTokenId + 1;
     await mockExecuter.setOriginSender(opponentContract);
     await mockExecuter.setOrigin(opponentDomain);
-    const data = xNativeNFT.interface.encodeFunctionData("xReceive", [signer.address, tokenId]);
-    await mockExecuter.execute(xNativeNFT.address, data);
-    expect(await xNativeNFT.ownerOf(tokenId)).to.equal(signer.address);
+    const data = NativeNFT.interface.encodeFunctionData("xReceive", [signer.address, tokenId]);
+    await mockExecuter.execute(NativeNFT.address, data);
+    expect(await NativeNFT.ownerOf(tokenId)).to.equal(signer.address);
   });
 });

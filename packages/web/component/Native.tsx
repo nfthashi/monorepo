@@ -25,7 +25,7 @@ import { useState } from "react";
 import { ethers } from "ethers";
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
-import { xNatibeNFTABI } from "../lib/web3/abis/xNativeNFTABI";
+import { xNatibeNFTABI } from "../lib/web3/abis/NativeNFTABI";
 import { injected } from "../lib/web3/injected";
 import { ArrowRightIcon } from "@chakra-ui/icons";
 import { NFTList } from "./NFTList";

@@ -2,11 +2,11 @@ import { expect } from "chai";
 import { ethers } from "hardhat";
 import { NULL_ADDRESS, ADDRESS_1 } from "../lib/constant";
 
-describe("xNativeNFT", function () {
-  let xNFTWrapBridge: any;
+describe("NativeNFT", function () {
+  let NFTWrapBridge: any;
   let mockExecuter: any;
   let XWrappedNFT: any;
-  let xWrappedNFT: any;
+  let WrappedNFT: any;
   let mockNFT: any;
   let mockClone: any;
   let signer: any;
@@ -16,7 +16,7 @@ describe("xNativeNFT", function () {
   const selfDomain = "0";
   const dummyTransactingAssetId = ADDRESS_1;
 
-  this.beforeEach(async function () {
+  beforeEach(async function () {
     [signer] = await ethers.getSigners();
 
     const MockConnextHandler = await ethers.getContractFactory("MockConnextHandler");
@@ -26,21 +26,21 @@ describe("xNativeNFT", function () {
     mockExecuter = await MockExecuter.deploy();
     await mockConnextHandler.setExecuter(mockExecuter.address);
 
-    XWrappedNFT = await ethers.getContractFactory("xWrappedNFT");
-    xWrappedNFT = await XWrappedNFT.deploy();
+    XWrappedNFT = await ethers.getContractFactory("WrappedNFT");
+    WrappedNFT = await XWrappedNFT.deploy();
 
-    const XNFTWrapBridge = await ethers.getContractFactory("xNFTWrapBridge");
-    xNFTWrapBridge = await XNFTWrapBridge.deploy(
+    const XNFTWrapBridge = await ethers.getContractFactory("NFTWrapBridge");
+    NFTWrapBridge = await XNFTWrapBridge.deploy(
       selfDomain,
       mockConnextHandler.address,
       dummyTransactingAssetId,
-      xWrappedNFT.address
+      WrappedNFT.address
     );
 
     const MockNFT = await ethers.getContractFactory("MockNFT");
     mockNFT = await MockNFT.deploy();
     await mockNFT.mint(signer.address);
-    await mockNFT.setApprovalForAll(xNFTWrapBridge.address, true);
+    await mockNFT.setApprovalForAll(NFTWrapBridge.address, true);
 
     const MockClone = await ethers.getContractFactory("MockClone");
     mockClone = await MockClone.deploy();
@@ -49,13 +49,13 @@ describe("xNativeNFT", function () {
   it("xSend - sender is in birth chain", async function () {
     const tokenId = startTokenId;
 
-    const toDomain = "1";
+    const sendToDomain = "1";
     const toContract = ADDRESS_1;
 
-    await xNFTWrapBridge.register(toDomain, toContract);
-    await expect(xNFTWrapBridge.xSend(mockNFT.address, signer.address, ADDRESS_1, tokenId, toDomain))
+    await NFTWrapBridge.setBridgeContract(sendToDomain, toContract);
+    await expect(NFTWrapBridge.xSend(mockNFT.address, signer.address, ADDRESS_1, tokenId, sendToDomain))
       .to.emit(mockNFT, "Transfer")
-      .withArgs(signer.address, xNFTWrapBridge.address, tokenId);
+      .withArgs(signer.address, NFTWrapBridge.address, tokenId);
   });
 
   it("xSend - sender is not in birth chain", async function () {
@@ -66,31 +66,31 @@ describe("xNativeNFT", function () {
     const fromDomain = birthDomain;
     const fromContract = ADDRESS_1;
 
-    const toDomain = selfDomain;
+    const sendToDomain = selfDomain;
 
-    await xNFTWrapBridge.register(fromDomain, fromContract);
+    await NFTWrapBridge.setBridgeContract(fromDomain, fromContract);
 
     await mockExecuter.setOriginSender(fromContract);
     await mockExecuter.setOrigin(fromDomain);
 
-    const data = xNFTWrapBridge.interface.encodeFunctionData("xReceive", [
+    const data = NFTWrapBridge.interface.encodeFunctionData("xReceive", [
       mockNFT.address,
       signer.address,
       tokenId,
       birthDomain,
-      toDomain,
+      sendToDomain,
     ]);
 
-    await mockExecuter.execute(xNFTWrapBridge.address, data);
+    await mockExecuter.execute(NFTWrapBridge.address, data);
     const salt = ethers.utils.solidityKeccak256(["uint32", "address"], [birthDomain, mockNFT.address]);
     const deployedContractAddress = await mockClone.predictDeterministicAddress(
-      xWrappedNFT.address,
+      WrappedNFT.address,
       salt,
-      xNFTWrapBridge.address
+      NFTWrapBridge.address
     );
     const deployedContract = XWrappedNFT.attach(deployedContractAddress);
 
-    await expect(xNFTWrapBridge.xSend(deployedContract.address, signer.address, ADDRESS_1, tokenId, fromDomain))
+    await expect(NFTWrapBridge.xSend(deployedContract.address, signer.address, ADDRESS_1, tokenId, fromDomain))
       .to.emit(mockNFT, "Transfer")
       .withArgs(signer.address, NULL_ADDRESS, tokenId);
   });
@@ -103,26 +103,26 @@ describe("xNativeNFT", function () {
     const fromDomain = "2";
     const fromContract = ADDRESS_1;
 
-    const toDomain = selfDomain;
+    const sendToDomain = selfDomain;
 
-    await xNFTWrapBridge.register(fromDomain, fromContract);
+    await NFTWrapBridge.setBridgeContract(fromDomain, fromContract);
 
     await mockExecuter.setOriginSender(fromContract);
     await mockExecuter.setOrigin(fromDomain);
 
-    const data = xNFTWrapBridge.interface.encodeFunctionData("xReceive", [
+    const data = NFTWrapBridge.interface.encodeFunctionData("xReceive", [
       mockNFT.address,
       signer.address,
       tokenId,
       birthDomain,
-      toDomain,
+      sendToDomain,
     ]);
-    await mockExecuter.execute(xNFTWrapBridge.address, data);
+    await mockExecuter.execute(NFTWrapBridge.address, data);
     const salt = ethers.utils.solidityKeccak256(["uint32", "address"], [birthDomain, mockNFT.address]);
     const deployedContractAddress = await mockClone.predictDeterministicAddress(
-      xWrappedNFT.address,
+      WrappedNFT.address,
       salt,
-      xNFTWrapBridge.address
+      NFTWrapBridge.address
     );
     const deployedContract = XWrappedNFT.attach(deployedContractAddress);
     expect(await deployedContract.ownerOf(tokenId)).to.equal(signer.address);
@@ -130,55 +130,55 @@ describe("xNativeNFT", function () {
 
   it("xReceive - receiver is in birth chain - unwrap", async function () {
     const tokenId = startTokenId;
-    await mockNFT.transferFrom(signer.address, xNFTWrapBridge.address, tokenId);
+    await mockNFT.transferFrom(signer.address, NFTWrapBridge.address, tokenId);
 
     const birthDomain = selfDomain;
 
     const fromDomain = "1";
     const fromContract = ADDRESS_1;
 
-    const toDomain = selfDomain;
+    const sendToDomain = selfDomain;
 
-    await xNFTWrapBridge.register(fromDomain, fromContract);
+    await NFTWrapBridge.setBridgeContract(fromDomain, fromContract);
     await mockExecuter.setOriginSender(fromContract);
     await mockExecuter.setOrigin(fromDomain);
 
-    const data = xNFTWrapBridge.interface.encodeFunctionData("xReceive", [
+    const data = NFTWrapBridge.interface.encodeFunctionData("xReceive", [
       mockNFT.address,
       signer.address,
       tokenId,
       birthDomain,
-      toDomain,
+      sendToDomain,
     ]);
-    await mockExecuter.execute(xNFTWrapBridge.address, data);
+    await mockExecuter.execute(NFTWrapBridge.address, data);
     expect(await mockNFT.ownerOf(tokenId)).to.equal(signer.address);
   });
 
   it("xReceive - receiver is in birth chain - proxy", async function () {
     const tokenId = startTokenId;
-    await mockNFT.transferFrom(signer.address, xNFTWrapBridge.address, tokenId);
+    await mockNFT.transferFrom(signer.address, NFTWrapBridge.address, tokenId);
 
     const birthDomain = selfDomain;
 
     const fromDomain = "1";
     const fromContract = ADDRESS_1;
 
-    const toDomain = "2";
+    const sendToDomain = "2";
     const toContract = ADDRESS_1;
 
-    await xNFTWrapBridge.register(fromDomain, fromContract);
-    await xNFTWrapBridge.register(toDomain, toContract);
+    await NFTWrapBridge.setBridgeContract(fromDomain, fromContract);
+    await NFTWrapBridge.setBridgeContract(sendToDomain, toContract);
     await mockExecuter.setOriginSender(fromContract);
     await mockExecuter.setOrigin(fromDomain);
 
-    const data = xNFTWrapBridge.interface.encodeFunctionData("xReceive", [
+    const data = NFTWrapBridge.interface.encodeFunctionData("xReceive", [
       mockNFT.address,
       signer.address,
       tokenId,
       birthDomain,
-      toDomain,
+      sendToDomain,
     ]);
-    await mockExecuter.execute(xNFTWrapBridge.address, data);
-    expect(await mockNFT.ownerOf(tokenId)).to.equal(xNFTWrapBridge.address);
+    await mockExecuter.execute(NFTWrapBridge.address, data);
+    expect(await mockNFT.ownerOf(tokenId)).to.equal(NFTWrapBridge.address);
   });
 });

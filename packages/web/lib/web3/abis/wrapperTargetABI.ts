@@ -47,7 +47,7 @@ export const wrapperTargetABI = [
         type: "uint32",
       },
     ],
-    name: "allowList",
+    name: "_bridges",
     outputs: [
       {
         internalType: "address",

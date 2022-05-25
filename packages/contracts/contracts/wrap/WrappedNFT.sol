@@ -5,7 +5,7 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 
-contract xWrappedNFT is Initializable, OwnableUpgradeable, ERC721Upgradeable {
+contract WrappedNFT is Initializable, OwnableUpgradeable, ERC721Upgradeable {
   //TODO: manage metadata
   function initialize() public initializer {
     __Ownable_init_unchained();

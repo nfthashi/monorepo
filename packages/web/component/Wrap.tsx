@@ -45,7 +45,7 @@ declare global {
 }
 
 export const Wrap: React.FC = () => {
-  const [bridgeCategory, setBridgeCategory] = useState<"source" | "target">("source");
+  const [bridgeCategory, setBridgeContractCategory] = useState<"source" | "target">("source");
   const [selectedNFTImage, setSelectedNFTImage] = useState("");
   const [sourceChain, setSourceChain] = useState<Chain>("rinkeby");
   const [nftContractAddress, setNFTContractAddress] = useState("");
@@ -65,7 +65,7 @@ export const Wrap: React.FC = () => {
 
   const handleBridgeCategoryChange = (e: any) => {
     const inputValue = e;
-    setBridgeCategory(inputValue);
+    setBridgeContractCategory(inputValue);
   };
 
   const handleDestinationChainChange = (e: any) => {
