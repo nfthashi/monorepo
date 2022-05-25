@@ -1,12 +1,26 @@
 {
-  "wrap": {
-    "rinkeby": {
-      "source": "0xb4c290674eA71C32c0c9699439155274275d9F18",
-      "target": "0x04411f85d9c85D30CBadD88D3821546d6Df895a4"
+  "rinkeby": {
+    "chainId": 4,
+    "domainId": 1111,
+    "contracts": {
+      "wrap": {
+        "source": "0xb4c290674eA71C32c0c9699439155274275d9F18",
+        "target": "0x04411f85d9c85D30CBadD88D3821546d6Df895a4"
+      },
+      "native": "0x4114B9b30E0EF8D60722cebb9E91948cfa4c850e"
     },
-    "kovan": {
-      "source": "0xfF06B57683fd0e0c4fa9871beB483D6E32909FaB",
-      "target": "0xE9bA21232D0Ece2e550a203b3E5bFC104800e792"
-    }
+    "exproler": "https://rinkeby.etherscan.io/"
+  },
+  "kovan": {
+    "chainId": 42,
+    "domainId": 2221,
+    "contracts": {
+      "wrap": {
+        "source": "0xfF06B57683fd0e0c4fa9871beB483D6E32909FaB",
+        "target": "0xE9bA21232D0Ece2e550a203b3E5bFC104800e792"
+      },
+      "native": "0xf13E44F5afEB9eC7e3A46484F59BaD811b267026"
+    },
+    "exproler": "https://kovan.etherscan.io/"
   }
 }

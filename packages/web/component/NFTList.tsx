@@ -1,11 +1,11 @@
 import { NFT } from "../types/nft";
-import { Box, Grid, GridItem, Image, LinkBox, LinkOverlay, Text } from "@chakra-ui/react";
+import { Grid, Image, LinkBox, LinkOverlay, Text } from "@chakra-ui/react";
 
 export interface NFTListProps {
   nfts: NFT[];
-  setNFTContractAddress: (arg: string) => void;
-  setTokenId: (arg: string) => void;
-  setSelectedNFTImage: (arg: string) => void;
+  setNFTContractAddress: (nftContractAddress: string) => void;
+  setTokenId: (tokenId: string) => void;
+  setSelectedNFTImage: (selectedNFTImage: string) => void;
   onClose: () => void;
 }
 
@@ -17,25 +17,33 @@ export const NFTList: React.FC<NFTListProps> = ({
   onClose,
 }) => {
   const handleNFTContractAddressChange = (index: number) => {
-    setNFTContractAddress(nfts[index].tokenAddress);
-    setTokenId(nfts[index].tokenId);
-    setSelectedNFTImage(nfts[index].image);
+    const nft = nfts[index];
+    setNFTContractAddress(nft.nftContractAddress);
+    setTokenId(nft.tokenId);
+    setSelectedNFTImage(nft.image);
     onClose();
   };
 
   return (
-    <Grid templateColumns="repeat(2, 1fr)" gap={2}>
+    <Grid templateColumns="repeat(2, 1fr)" gap={8}>
       {nfts.map((nft, index) => {
-        const { image, name, tokenAddress, tokenId } = nft;
+        const { image, name, nftContractAddress, tokenId } = nft;
         return (
-          <LinkBox key={index} width="40">
+          <LinkBox key={index} cursor="pointer" width="40">
             <LinkOverlay onClick={() => handleNFTContractAddressChange(index)}>
-              <Image src={image} alt={name} width="40" />
-              <Text>{name}</Text>
+              <Image
+                src={image}
+                alt={name}
+                height="40"
+                width="40"
+                fallbackSrc="/assets/placeholder.png"
+                fit="cover"
+                mb="2"
+              />
               <Text fontSize="xs" noOfLines={1}>
-                {tokenAddress}
+                {nftContractAddress}
               </Text>
-              <Text>{tokenId}</Text>
+              <Text fontSize="xs">ID: {tokenId}</Text>
             </LinkOverlay>
           </LinkBox>
         );

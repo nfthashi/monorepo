@@ -12,12 +12,15 @@ export const initMorarils = async () => {
   }
 };
 
-export const getNFTs = async (address: string, chain: Chain): Promise<NFT[]> => {
+export const getNFTs = async (userAddress: string, chain: Chain, nftAddress?: string): Promise<NFT[]> => {
   await initMorarils();
-  const options = { address, chain };
-  const { result } = await Moralis.Web3API.account.getNFTs(options);
+  const options = { address: userAddress, chain };
+  let { result } = await Moralis.Web3API.account.getNFTs(options);
   if (!result) {
     return [];
+  }
+  if (nftAddress) {
+    result = result.filter((nft) => nft.token_address.toLowerCase() == nftAddress.toLowerCase());
   }
   const nfts = result.map((nft) => {
     let metadata = {
@@ -30,7 +33,7 @@ export const getNFTs = async (address: string, chain: Chain): Promise<NFT[]> => 
       metadata.image = parsedMetadata.image || "";
     }
     return {
-      tokenAddress: nft.token_address,
+      nftContractAddress: nft.token_address,
       tokenId: nft.token_id,
       ...metadata,
     };

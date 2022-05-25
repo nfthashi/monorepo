@@ -1,5 +1,5 @@
 export interface NFT {
-  tokenAddress: string;
+  nftContractAddress: string;
   tokenId: string;
   name: string;
   image: string;

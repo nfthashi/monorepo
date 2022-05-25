@@ -3,7 +3,7 @@ import Head from "next/head";
 export const Seo = () => {
   return (
     <Head>
-      <title>xNFTs</title>
+      <title>NFTHashi</title>
       <meta name="viewport" content="width=device-width,initial-scale=1.0" />
       <meta property="og:url" content="https://nfthashi.com" />
       <meta property="og:type" content="website" />
