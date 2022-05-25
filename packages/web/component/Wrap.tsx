@@ -13,6 +13,15 @@ import {
   Text,
   Select,
   VStack,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
+  Image,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { ethers } from "ethers";
@@ -23,6 +32,8 @@ import config from "../lib/web3/config.json";
 import { wrapperSourceABI } from "../lib/web3/abis/wrapperSourceABI";
 import { IERC721ABI } from "../lib/web3/abis/IERC721ABI";
 import { ArrowRightIcon } from "@chakra-ui/icons";
+import { NFTList } from "./NFTList";
+import { NFT } from "../types/nft";
 
 declare global {
   interface Window {
@@ -32,6 +43,7 @@ declare global {
 
 export const Wrap: React.FC = () => {
   const [direction, setDirection] = useState("source");
+  const [selectedNFTImage, setSelectedNFTImage] = useState("");
   const [sourceChainId, setSourceChainId] = useState("4");
   const [nftContractAddress, setNFTContractAddress] = useState("");
   const [isNFTContractAddressInvalid, setIsNFTContractAddressInvalid] = useState(false);
@@ -40,6 +52,7 @@ export const Wrap: React.FC = () => {
   const [destinationDomainId, setDestinationDomainId] = useState("");
   const [isDestinationDomainIdInvalid, setDestinationDomainIdInvalid] = useState(false);
   const toast = useToast();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const { activate, library, account } = useWeb3React<Web3Provider>();
 
@@ -48,16 +61,6 @@ export const Wrap: React.FC = () => {
     setDirection(inputValue);
   };
 
-  const handleNFTContractAddressChange = (e: any) => {
-    const inputValue = e.target.value;
-    setNFTContractAddress(inputValue);
-    setIsNFTContractAddressInvalid(false);
-  };
-  const handleTokenIdChange = (e: any) => {
-    const inputValue = e.target.value;
-    setTokenId(inputValue);
-    setTokenIdInvalid(false);
-  };
   const handleDestinationDomainIdChange = (e: any) => {
     const inputValue = e.target.value;
     setDestinationDomainId(inputValue);
@@ -138,6 +141,57 @@ export const Wrap: React.FC = () => {
       });
   };
 
+  const dummyList: NFT[] = [
+    {
+      tokenAddress: "0xB6Ac3Fe610d1A4af359FE8078d4c350AB95E812b",
+      tokenId: "1001",
+      name: "Bored Ape #1001",
+      image: "https://bit.ly/dan-abramov",
+    },
+    {
+      tokenAddress: "0xB6Ac3Fe610d1A4af359FE8078d4c350AB95E812b",
+      tokenId: "1002",
+      name: "Bored Ape #1002",
+      image: "https://bit.ly/dan-abramov",
+    },
+    {
+      tokenAddress: "0xB6Ac3Fe610d1A4af359FE8078d4c350AB95E812b",
+      tokenId: "1003",
+      name: "Bored Ape #1003",
+      image: "https://bit.ly/dan-abramov",
+    },
+    {
+      tokenAddress: "0xB6Ac3Fe610d1A4af359FE8078d4c350AB95E812b",
+      tokenId: "1004",
+      name: "Bored Ape #1004",
+      image: "https://bit.ly/dan-abramov",
+    },
+    {
+      tokenAddress: "0xB6Ac3Fe610d1A4af359FE8078d4c350AB95E812b",
+      tokenId: "1004",
+      name: "Bored Ape #1004",
+      image: "https://bit.ly/dan-abramov",
+    },
+    {
+      tokenAddress: "0xB6Ac3Fe610d1A4af359FE8078d4c350AB95E812b",
+      tokenId: "1004",
+      name: "Bored Ape #1004",
+      image: "https://bit.ly/dan-abramov",
+    },
+    {
+      tokenAddress: "0xB6Ac3Fe610d1A4af359FE8078d4c350AB95E812b",
+      tokenId: "1004",
+      name: "Bored Ape #1004",
+      image: "https://bit.ly/dan-abramov",
+    },
+    {
+      tokenAddress: "0xB6Ac3Fe610d1A4af359FE8078d4c350AB95E812b",
+      tokenId: "1004",
+      name: "Bored Ape #1004",
+      image: "https://bit.ly/dan-abramov",
+    },
+  ];
+
   return (
     <Box textAlign="center" experimental_spaceY="5">
       <RadioGroup defaultValue="source" onChange={handleDirectionChange}>
@@ -157,19 +211,32 @@ export const Wrap: React.FC = () => {
             <option value="4">Rinkeby</option>
             <option value="42">Kovan</option>
           </Select>
-          <FormControl isInvalid={isNFTContractAddressInvalid}>
-            <Input
-              variant="filled"
-              placeholder="NFT contract address"
-              onChange={handleNFTContractAddressChange}
-              rounded="2xl"
-            />
-            <FormErrorMessage>Required</FormErrorMessage>
-          </FormControl>
-          <FormControl isInvalid={isTokenIdInvalid}>
-            <Input variant="filled" placeholder="Token ID" onChange={handleTokenIdChange} rounded="2xl" />
-            <FormErrorMessage>Required</FormErrorMessage>
-          </FormControl>
+          <Button width="48" onClick={onOpen} rounded="2xl">
+            Select NFT
+          </Button>
+          <Modal isOpen={isOpen} onClose={onClose} scrollBehavior="inside">
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Select NFT</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                <NFTList
+                  nfts={dummyList}
+                  setNFTContractAddress={setNFTContractAddress}
+                  setTokenId={setTokenId}
+                  setSelectedNFTImage={setSelectedNFTImage}
+                  onClose={onClose}
+                />
+              </ModalBody>
+              <ModalFooter>
+                <Button colorScheme="blue" mr={3} onClick={onClose}>
+                  Close
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
+          {selectedNFTImage ? <Image src={selectedNFTImage} alt={selectedNFTImage} width="40" /> : <></>}
+          {tokenId ? <Text>{tokenId}</Text> : <></>}
         </VStack>
         <Box pt="10">
           <ArrowRightIcon />
