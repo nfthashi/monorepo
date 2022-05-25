@@ -3,8 +3,9 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "../core/xNFTBridge.sol";
+import "../interfaces/IxNFTNativeBridge.sol";
 
-abstract contract xNFTNativeBridge is xNFTBridge, ERC721 {
+abstract contract xNFTNativeBridge is xNFTBridge, ERC721, IxNFTNativeBridge {
   constructor(
     uint32 _selfDomain,
     address _connext,

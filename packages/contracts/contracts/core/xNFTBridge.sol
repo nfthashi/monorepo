@@ -5,8 +5,9 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "@connext/nxtp-contracts/contracts/interfaces/IExecutor.sol";
 import "@connext/nxtp-contracts/contracts/interfaces/IConnextHandler.sol";
+import "../interfaces/IxNFTBridge.sol";
 
-contract xNFTBridge is Ownable {
+contract xNFTBridge is Ownable, IxNFTBridge {
   mapping(uint32 => address) public allowList;
 
   address public immutable connext;
