@@ -11,6 +11,7 @@ export const Seo = () => {
       <meta property="og:site_name" content="NFTHashi" />
       <meta property="og:description" content="Trust minimized cross-chain NFT Bridge powered by Connext Amarok" />
       <meta property="og:image" content="https://nfthashi.com/assets/banner.png" />
+      <meta name="twitter:card" content="summary_large_image" />
     </Head>
   );
 };
