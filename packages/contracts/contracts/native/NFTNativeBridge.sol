@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.0;
 
+import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "../core/NFTBridge.sol";
 import "../interface/INFTNativeBridge.sol";
 
-abstract contract NFTNativeBridge is NFTBridge, ERC721, INFTNativeBridge {
+abstract contract NFTNativeBridge is ERC165, INFTNativeBridge, NFTBridge, ERC721 {
   constructor(
     uint32 selfDomain,
     address connext,
@@ -28,5 +29,19 @@ abstract contract NFTNativeBridge is NFTBridge, ERC721, INFTNativeBridge {
 
   function xReceive(address to, uint256 tokenId) public onlyExecutor {
     _mint(to, tokenId);
+  }
+
+  function isNFTHashiNativeBridge() public pure returns (bool) {
+    return true;
+  }
+
+  function supportsInterface(bytes4 interfaceId)
+    public
+    view
+    virtual
+    override(NFTBridge, ERC721, ERC165, IERC165)
+    returns (bool)
+  {
+    return interfaceId == type(INFTNativeBridge).interfaceId || super.supportsInterface(interfaceId);
   }
 }

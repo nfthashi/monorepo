@@ -2,13 +2,15 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 
 import "@connext/nxtp-contracts/contracts/libraries/LibConnextStorage.sol";
 import "@connext/nxtp-contracts/contracts/interfaces/IExecutor.sol";
 import "@connext/nxtp-contracts/contracts/interfaces/IConnextHandler.sol";
+
 import "../interface/INFTBridge.sol";
 
-contract NFTBridge is Ownable, INFTBridge {
+contract NFTBridge is Ownable, ERC165, INFTBridge {
   mapping(uint32 => address) private _bridgeContracts;
 
   address private immutable _connext;
@@ -44,8 +46,7 @@ contract NFTBridge is Ownable, INFTBridge {
 
   function _xcall(uint32 destinationDomain, bytes memory callData) internal {
     address destinationContract = _bridgeContracts[destinationDomain];
-    require(destinationContract != address(0x0), "NFTBridge: destination not allowed");
-
+    require(destinationContract != address(0x0), "NFTBridge: bridge not set");
     CallParams memory callParams = CallParams({
       to: destinationContract,
       callData: callData,
@@ -57,7 +58,6 @@ contract NFTBridge is Ownable, INFTBridge {
       forceSlow: true,
       receiveLocal: false
     });
-
     XCallArgs memory xcallArgs = XCallArgs({
       params: callParams,
       transactingAssetId: _transactingAssetId,
@@ -81,5 +81,13 @@ contract NFTBridge is Ownable, INFTBridge {
 
   function getExecutor() public view returns (address) {
     return _executor;
+  }
+
+  function isNFTHashiBridge() public pure returns (bool) {
+    return true;
+  }
+
+  function supportsInterface(bytes4 interfaceId) public view virtual override(ERC165, IERC165) returns (bool) {
+    return interfaceId == type(INFTBridge).interfaceId || super.supportsInterface(interfaceId);
   }
 }

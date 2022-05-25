@@ -4,11 +4,13 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/interfaces/IERC721.sol";
 import "@openzeppelin/contracts/proxy/Clones.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
+import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
+import "../interface/INFTWrapBridge.sol";
 
 import "../core/NFTBridge.sol";
 import "./WrappedNFT.sol";
 
-contract NFTWrapBridge is NFTBridge {
+contract NFTWrapBridge is ERC165, INFTWrapBridge, NFTBridge {
   mapping(address => address) private _contracts;
   mapping(address => uint32) private _domains;
 
@@ -98,9 +100,23 @@ contract NFTWrapBridge is NFTBridge {
         Clones.cloneDeterministic(_nftImplementation, salt);
         _contracts[processingNFTContractAddress] = birthChainNFTContractAddress;
         _domains[processingNFTContractAddress] = birthChainDomain;
-        WrappedNFT(processingNFTContractAddress).initialize();
+        IWappedNFT(processingNFTContractAddress).initialize();
       }
       WrappedNFT(processingNFTContractAddress).mint(to, tokenId);
     }
+  }
+
+  function isNFTHashiWrapBridge() public pure returns (bool) {
+    return true;
+  }
+
+  function supportsInterface(bytes4 interfaceId)
+    public
+    view
+    virtual
+    override(NFTBridge, ERC165, IERC165)
+    returns (bool)
+  {
+    return interfaceId == type(INFTWrapBridge).interfaceId || super.supportsInterface(interfaceId);
   }
 }
