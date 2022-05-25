@@ -19,7 +19,7 @@ export const Header: React.FC = () => {
     <Box>
       <Flex minH={"64px"} alignItems={"center"} justifyContent={"space-between"} p={{ base: 8 }}>
         <Text fontSize={"lg"} fontWeight={"bold"}>
-          xNFTs
+          NFT Hashi
         </Text>
         <Flex gap={"16px"}>
           {!account ? (
