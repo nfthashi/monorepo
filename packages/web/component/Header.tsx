@@ -3,43 +3,37 @@ import { Box, Flex, Text, Button, IconButton, useColorMode } from "@chakra-ui/re
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
-
 import { injected } from "../lib/web3/injected";
 
 export const Header: React.FC = () => {
   const { activate, account, deactivate } = useWeb3React<Web3Provider>();
-
   const connect = async () => {
     activate(injected);
   };
-
   const { colorMode, toggleColorMode } = useColorMode();
 
   return (
     <Box>
       <Flex minH={"64px"} alignItems={"center"} justifyContent={"space-between"} p={{ base: 8 }}>
         <Text fontSize={"lg"} fontWeight={"bold"}>
-          NFT Hashi
+          NFTHashi
         </Text>
         <Flex gap={"16px"}>
           {!account ? (
-            <Button onClick={connect} fontSize={"sm"} rounded="2xl">
+            <Button onClick={connect} fontSize={"xs"} rounded={"2xl"}>
               Connect Wallet
             </Button>
           ) : (
             <>
-              <Button disabled fontSize={"sm"} maxWidth="40" rounded="2xl">
-                <Text noOfLines={1}>{account} ...</Text>
-              </Button>
-              <Button fontSize={"xs"} colorScheme="yellow" onClick={deactivate} rounded="2xl">
-                Disconnect
+              <Button fontSize={"xs"} maxWidth={"40"} rounded={"2xl"} onClick={deactivate}>
+                <Text noOfLines={1}>{account}</Text>
               </Button>
             </>
           )}
           <IconButton
-            rounded="2xl"
-            aria-label="DarkMode Switch"
-            icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />} //自分の好みでSunアイコンはreact-iconsを使用しています
+            rounded={"2xl"}
+            aria-label={"dark mode switch"}
+            icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
             onClick={toggleColorMode}
           />
         </Flex>

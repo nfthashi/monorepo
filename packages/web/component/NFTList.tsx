@@ -1,5 +1,5 @@
 import { NFT } from "../types/nft";
-import { Grid, Image, LinkBox, LinkOverlay, Text } from "@chakra-ui/react";
+import { SimpleGrid, Image, LinkBox, LinkOverlay, Text } from "@chakra-ui/react";
 
 export interface NFTListProps {
   nfts: NFT[];
@@ -25,7 +25,7 @@ export const NFTList: React.FC<NFTListProps> = ({
   };
 
   return (
-    <Grid templateColumns="repeat(2, 1fr)" gap={8}>
+    <SimpleGrid columns={2} gap={8}>
       {nfts.map((nft, index) => {
         const { image, name, nftContractAddress, tokenId } = nft;
         return (
@@ -48,6 +48,6 @@ export const NFTList: React.FC<NFTListProps> = ({
           </LinkBox>
         );
       })}
-    </Grid>
+    </SimpleGrid>
   );
 };

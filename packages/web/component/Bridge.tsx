@@ -2,22 +2,14 @@ import React from "react";
 import {
   Button,
   Box,
-  Radio,
-  RadioGroup,
-  Stack,
   FormControl,
   useToast,
-  HStack,
-  Text,
   Select,
-  VStack,
   Modal,
   ModalOverlay,
   ModalContent,
-  ModalHeader,
   ModalCloseButton,
   ModalBody,
-  ModalFooter,
   useDisclosure,
   Flex,
   Image,
@@ -33,10 +25,10 @@ import { injected } from "../lib/web3/injected";
 import config from "../lib/web3/config.json";
 import { wrapperSourceABI } from "../lib/web3/abis/wrapperSourceABI";
 import { IERC721ABI } from "../lib/web3/abis/IERC721ABI";
-import { ArrowRightIcon } from "@chakra-ui/icons";
 import { NFTList } from "./NFTList";
 import { NFT } from "../types/nft";
 import { Chain } from "../types/chain";
+import { ArrowDownIcon } from "@chakra-ui/icons";
 
 declare global {
   interface Window {
@@ -44,8 +36,7 @@ declare global {
   }
 }
 
-export const Wrap: React.FC = () => {
-  const [bridgeCategory, setBridgeContractCategory] = useState<"source" | "target">("source");
+export const Bridge: React.FC = () => {
   const [selectedNFTImage, setSelectedNFTImage] = useState("");
   const [sourceChain, setSourceChain] = useState<Chain>("rinkeby");
   const [nftContractAddress, setNFTContractAddress] = useState("");
@@ -61,11 +52,6 @@ export const Wrap: React.FC = () => {
   const clearSelectedNFT = () => {
     setTokenId("");
     setNFTContractAddress("");
-  };
-
-  const handleBridgeCategoryChange = (e: any) => {
-    const inputValue = e;
-    setBridgeContractCategory(inputValue);
   };
 
   const handleDestinationChainChange = (e: any) => {
@@ -116,6 +102,10 @@ export const Wrap: React.FC = () => {
         params: [{ chainId: ethers.utils.hexValue(sourceChainId) }],
       });
     }
+
+    //TODO: update category detection
+    const bridgeCategory = "source";
+
     const bridgeContract = config[sourceChain].contracts.wrap[bridgeCategory];
     const nftContract = new ethers.Contract(nftContractAddress, IERC721ABI, library.getSigner());
     const approvedAddress = await nftContract.getApproved(tokenId);
@@ -155,51 +145,43 @@ export const Wrap: React.FC = () => {
   };
 
   return (
-    <Box textAlign="center" experimental_spaceY="5">
-      <RadioGroup defaultValue="source" onChange={handleBridgeCategoryChange}>
-        <Stack spacing={5} direction="row">
-          <Radio name="bridgeCategory" value="source">
-            Wrap
-          </Radio>
-          <Radio name="bridgeCategory" value="target">
-            Unwrap
-          </Radio>
-        </Stack>
-      </RadioGroup>
-      <HStack align="start">
-        <VStack spacing="2">
-          <Text fontWeight="bold">Source</Text>
-          <Select variant="filled" width="60" onChange={handleSourceChainChange} value={sourceChain} rounded="2xl">
-            <option value="rinkeby">Rinkeby</option>
-            <option value="kovan">Kovan</option>
-          </Select>
-          {tokenId ? (
-            <Box width="40" padding="4">
-              <Flex justify="center">
-                <Image
-                  src={selectedNFTImage}
-                  alt={selectedNFTImage}
-                  height="24"
-                  width="24"
-                  fallbackSrc="/assets/placeholder.png"
-                  mb="2"
-                />
-              </Flex>
-              <Text fontSize="xs" noOfLines={1}>
-                {nftContractAddress}
-              </Text>
-              <Text fontSize="xs">ID: {tokenId}</Text>
+    <Box>
+      {!tokenId ? (
+        <Box>
+          <Flex mb={"8"} gap={"1"} direction={"column"}>
+            <Box width={"100%"}>
+              <Select
+                variant={"filled"}
+                onChange={handleSourceChainChange}
+                value={sourceChain}
+                rounded={"2xl"}
+                fontSize={"sm"}
+              >
+                <option value={"rinkeby"}>Rinkeby</option>
+                <option value={"kovan"}>Kovan</option>
+              </Select>
             </Box>
-          ) : (
-            <></>
-          )}
-          <Button width="60" onClick={openModal} rounded="2xl" fontSize={"sm"} variant="outline" disabled={!account}>
-            Select NFT
-          </Button>
-          <Modal isOpen={isOpen} onClose={onClose} scrollBehavior="inside">
+            <Box textAlign={"center"}>
+              <ArrowDownIcon />
+            </Box>
+            <Box width={"100%"}>
+              <FormControl>
+                <Select
+                  variant={"filled"}
+                  onChange={handleDestinationChainChange}
+                  value={destinationChain}
+                  rounded={"2xl"}
+                  fontSize={"sm"}
+                >
+                  <option value={"rinkeby"}>Rinkeby</option>
+                  <option value={"kovan"}>Kovan</option>
+                </Select>
+              </FormControl>
+            </Box>
+          </Flex>
+          <Modal isOpen={isOpen} onClose={onClose} scrollBehavior={"inside"}>
             <ModalOverlay />
-            <ModalContent>
-              <ModalHeader>Select NFT</ModalHeader>
+            <ModalContent padding={"4"}>
               <ModalCloseButton />
               <ModalBody>
                 <Flex justify={"center"}>
@@ -212,41 +194,42 @@ export const Wrap: React.FC = () => {
                   />
                 </Flex>
               </ModalBody>
-              <ModalFooter>
-                <Button colorScheme="blue" mr={3} onClick={onClose}>
-                  Close
-                </Button>
-              </ModalFooter>
             </ModalContent>
           </Modal>
-        </VStack>
-        <Box pt="10">
-          <ArrowRightIcon w={2} h={2} />
+          {!account ? (
+            <Button width={"100%"} onClick={connect} fontSize={"sm"} rounded={"2xl"}>
+              Connect Wallet
+            </Button>
+          ) : (
+            <Button width={"100%"} onClick={openModal} fontSize={"sm"} colorScheme={"blue"} rounded={"2xl"}>
+              Select NFT
+            </Button>
+          )}
         </Box>
-        <VStack spacing="2">
-          <Text fontWeight="bold">Destination</Text>
-          <FormControl>
-            <Select
-              variant="filled"
-              width="60"
-              onChange={handleDestinationChainChange}
-              value={destinationChain}
-              rounded="2xl"
-            >
-              <option value="rinkeby">Rinkeby</option>
-              <option value="kovan">Kovan</option>
-            </Select>
-          </FormControl>
-        </VStack>
-      </HStack>
-      {!account ? (
-        <Button width="100%" onClick={connect} fontSize={"sm"} rounded="2xl">
-          Connect Wallet
-        </Button>
       ) : (
-        <Button width="100%" onClick={xCall} fontSize={"sm"} colorScheme="blue" rounded="2xl">
-          Bridge
-        </Button>
+        <Box>
+          <Flex justify={"center"}>
+            <Box padding="8">
+              <Image
+                src={selectedNFTImage}
+                alt={selectedNFTImage}
+                height={"48"}
+                width={"48"}
+                fit="cover"
+                fallbackSrc={"/assets/placeholder.png"}
+                mb={"2"}
+              />
+            </Box>
+          </Flex>
+          <Flex gap="4">
+            <Button width={"50%"} onClick={clearSelectedNFT} fontSize={"sm"} rounded={"2xl"} variant="outline">
+              Back
+            </Button>
+            <Button width={"50%"} onClick={xCall} fontSize={"sm"} colorScheme={"blue"} rounded={"2xl"}>
+              Bridge NFT
+            </Button>
+          </Flex>
+        </Box>
       )}
     </Box>
   );

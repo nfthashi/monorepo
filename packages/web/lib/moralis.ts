@@ -12,15 +12,12 @@ export const initMorarils = async () => {
   }
 };
 
-export const getNFTs = async (userAddress: string, chain: Chain, nftAddress?: string): Promise<NFT[]> => {
+export const getNFTs = async (userAddress: string, chain: Chain): Promise<NFT[]> => {
   await initMorarils();
   const options = { address: userAddress, chain };
   let { result } = await Moralis.Web3API.account.getNFTs(options);
   if (!result) {
     return [];
-  }
-  if (nftAddress) {
-    result = result.filter((nft) => nft.token_address.toLowerCase() == nftAddress.toLowerCase());
   }
   const nfts = result.map((nft) => {
     let metadata = {
