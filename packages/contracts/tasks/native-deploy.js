@@ -6,7 +6,16 @@ task("native-deploy", "deploy native xNFTs contract")
   .addParam("endTokenId", "end token id")
   .setAction(async ({ selfDomain, connext, dummyTransactingAssetId, startTokenId, endTokenId }) => {
     const XNativeNFT = await ethers.getContractFactory("NativeNFT");
-    const NativeNFT = await XNativeNFT.deploy(selfDomain, connext, dummyTransactingAssetId, startTokenId, endTokenId);
+    const NativeNFT = await XNativeNFT.deploy(
+      selfDomain,
+      connext,
+      dummyTransactingAssetId,
+      startTokenId,
+      endTokenId,
+      "TEST",
+      "TEST",
+      "http:localhost:3000/"
+    );
     await NativeNFT.deployed();
     console.log("Deployed to: ", NativeNFT.address);
   });

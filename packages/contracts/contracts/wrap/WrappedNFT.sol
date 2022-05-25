@@ -25,9 +25,10 @@ contract WrappedNFT is
   function mint(
     address to,
     uint256 tokenId,
-    string memory tokenURI
+    string memory _tokenURI
   ) public onlyOwner {
     _mint(to, tokenId);
+    _setTokenURI(tokenId, _tokenURI);
   }
 
   function burn(uint256 tokenId) public onlyOwner {

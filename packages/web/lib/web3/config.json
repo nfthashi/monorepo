@@ -4,22 +4,40 @@
     "domainId": 1111,
     "contracts": {
       "wrap": {
-        "source": "0xb4c290674eA71C32c0c9699439155274275d9F18",
-        "target": "0x04411f85d9c85D30CBadD88D3821546d6Df895a4"
+        "source": "",
+        "target": ""
       },
-      "native": "0x4114B9b30E0EF8D60722cebb9E91948cfa4c850e"
+      "native": "",
+      "connext": "0x3e99898Da8A01Ed909976AF13e4Fa6094326cB10",
+      "testToken": "0x3FFc03F05D1869f493c7dbf913E636C6280e0ff9"
     },
     "exproler": "https://rinkeby.etherscan.io/"
+  },
+  "goerli": {
+    "chainId": 5,
+    "domainId": 3331,
+    "contracts": {
+      "wrap": {
+        "source": "",
+        "target": ""
+      },
+      "native": "",
+      "connext": "0x2307Ed9f152FA9b3DcDfe2385d279D8C2A9DF2b0",
+      "testToken": "0x3FFc03F05D1869f493c7dbf913E636C6280e0ff9"
+    },
+    "exproler": "https://goerli.etherscan.io/"
   },
   "kovan": {
     "chainId": 42,
     "domainId": 2221,
     "contracts": {
       "wrap": {
-        "source": "0xfF06B57683fd0e0c4fa9871beB483D6E32909FaB",
-        "target": "0xE9bA21232D0Ece2e550a203b3E5bFC104800e792"
+        "source": "",
+        "target": ""
       },
-      "native": "0xf13E44F5afEB9eC7e3A46484F59BaD811b267026"
+      "native": "",
+      "connext": "0x3366A61A701FA84A86448225471Ec53c5c4ad49f",
+      "testToken": "0x3FFc03F05D1869f493c7dbf913E636C6280e0ff9"
     },
     "exproler": "https://kovan.etherscan.io/"
   }

@@ -5,6 +5,6 @@ task("register", "register")
   .setAction(async ({ selfContractAddress, opponentDomain, opponentContractAddress }) => {
     const XNFTBridge = await ethers.getContractFactory("NFTBridge");
     const NFTBridge = await XNFTBridge.attach(selfContractAddress);
-    const { hash } = await NFTBridge.register(opponentDomain, opponentContractAddress);
+    const { hash } = await NFTBridge.setBridgeContract(opponentDomain, opponentContractAddress);
     console.log("Registered at:", hash);
   });
