@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/interfaces/IERC721.sol";
+import "@openzeppelin/contracts/interfaces/IERC721Metadata.sol";
 import "@openzeppelin/contracts/proxy/Clones.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
@@ -55,14 +56,22 @@ contract NFTWrapBridge is ERC165, INFTWrapBridge, NFTBridge {
       destinationDomain = sendToDomain;
       IERC721(birthChainNFTContractAddress).transferFrom(from, address(this), tokenId);
     }
-    bytes4 selector = bytes4(keccak256("xReceive(address,address,uint256,uint32,uint32)"));
+
+    string memory name = IERC721Metadata(processingNFTContractAddress).name();
+    string memory symbol = IERC721Metadata(processingNFTContractAddress).symbol();
+    string memory tokenURI = IERC721Metadata(processingNFTContractAddress).tokenURI(tokenId);
+
+    bytes4 selector = bytes4(keccak256("xReceive(address,address,uint256,uint32,uint32,string,string,string)"));
     bytes memory callData = abi.encodeWithSelector(
       selector,
       birthChainNFTContractAddress,
       to,
       tokenId,
       birthChainDomain,
-      sendToDomain
+      sendToDomain,
+      name,
+      symbol,
+      tokenURI
     );
     _xcall(destinationDomain, callData);
   }
@@ -72,20 +81,26 @@ contract NFTWrapBridge is ERC165, INFTWrapBridge, NFTBridge {
     address to,
     uint256 tokenId,
     uint32 birthChainDomain,
-    uint32 sendToDomain
+    uint32 sendToDomain,
+    string memory name,
+    string memory symbol,
+    string memory tokenURI
   ) public onlyExecutor {
     uint32 selfDomain = getSelfDomain();
     if (birthChainDomain == selfDomain) {
       if (sendToDomain == selfDomain) {
         IERC721(birthChainNFTContractAddress).safeTransferFrom(address(this), to, tokenId);
       } else {
-        bytes4 selector = bytes4(keccak256("xReceive(address,address,uint256,uint32)"));
+        bytes4 selector = bytes4(keccak256("xReceive(address,address,uint256,uint32,string,string,string)"));
         bytes memory callData = abi.encodeWithSelector(
           selector,
           birthChainNFTContractAddress,
           to,
           tokenId,
-          birthChainDomain
+          birthChainDomain,
+          name,
+          symbol,
+          tokenURI
         );
         _xcall(sendToDomain, callData);
       }
@@ -100,9 +115,9 @@ contract NFTWrapBridge is ERC165, INFTWrapBridge, NFTBridge {
         Clones.cloneDeterministic(_nftImplementation, salt);
         _contracts[processingNFTContractAddress] = birthChainNFTContractAddress;
         _domains[processingNFTContractAddress] = birthChainDomain;
-        IWappedNFT(processingNFTContractAddress).initialize();
+        IWappedNFT(processingNFTContractAddress).initialize(name, symbol);
       }
-      WrappedNFT(processingNFTContractAddress).mint(to, tokenId);
+      WrappedNFT(processingNFTContractAddress).mint(to, tokenId, tokenURI);
     }
   }
 

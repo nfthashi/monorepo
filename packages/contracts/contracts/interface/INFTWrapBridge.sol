@@ -18,7 +18,10 @@ interface INFTWrapBridge is IERC165, INFTBridge {
     address to,
     uint256 tokenId,
     uint32 birthChainDomain,
-    uint32 sendToDomain
+    uint32 sendToDomain,
+    string memory name,
+    string memory symbol,
+    string memory tokenURI
   ) external;
 
   function isNFTHashiWrapBridge() external view returns (bool);

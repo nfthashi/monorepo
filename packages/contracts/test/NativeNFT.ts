@@ -13,6 +13,9 @@ describe("NativeNFT", function () {
   const dummyTransactingAssetId = ADDRESS_1;
   const startTokenId = "0";
   const endTokenId = "10";
+  const name = "name";
+  const symbol = "symbol";
+  const baseTokenURL = "http://localhost:3000/";
 
   beforeEach(async function () {
     [signer] = await ethers.getSigners();
@@ -28,7 +31,10 @@ describe("NativeNFT", function () {
       mockConnextHandler.address,
       dummyTransactingAssetId,
       startTokenId,
-      endTokenId
+      endTokenId,
+      name,
+      symbol,
+      baseTokenURL
     );
     await NativeNFT.setBridgeContract(opponentDomain, opponentContract);
     await NativeNFT.mint(signer.address);

@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { ethers } from "hardhat";
 import { NULL_ADDRESS, ADDRESS_1 } from "../lib/constant";
 
-describe("NativeNFT", function () {
+describe("NFTWrapBridge", function () {
   let NFTWrapBridge: any;
   let mockExecuter: any;
   let XWrappedNFT: any;
@@ -10,6 +10,10 @@ describe("NativeNFT", function () {
   let mockNFT: any;
   let mockClone: any;
   let signer: any;
+
+  const name = "name";
+  const symbol = "symbol";
+  const baseTokenURL = "http://localhost:3000/";
 
   const startTokenId = 0;
 
@@ -79,6 +83,9 @@ describe("NativeNFT", function () {
       tokenId,
       birthDomain,
       sendToDomain,
+      name,
+      symbol,
+      baseTokenURL,
     ]);
 
     await mockExecuter.execute(NFTWrapBridge.address, data);
@@ -116,6 +123,9 @@ describe("NativeNFT", function () {
       tokenId,
       birthDomain,
       sendToDomain,
+      name,
+      symbol,
+      baseTokenURL,
     ]);
     await mockExecuter.execute(NFTWrapBridge.address, data);
     const salt = ethers.utils.solidityKeccak256(["uint32", "address"], [birthDomain, mockNFT.address]);
@@ -149,6 +159,9 @@ describe("NativeNFT", function () {
       tokenId,
       birthDomain,
       sendToDomain,
+      name,
+      symbol,
+      baseTokenURL,
     ]);
     await mockExecuter.execute(NFTWrapBridge.address, data);
     expect(await mockNFT.ownerOf(tokenId)).to.equal(signer.address);
@@ -177,6 +190,9 @@ describe("NativeNFT", function () {
       tokenId,
       birthDomain,
       sendToDomain,
+      name,
+      symbol,
+      baseTokenURL,
     ]);
     await mockExecuter.execute(NFTWrapBridge.address, data);
     expect(await mockNFT.ownerOf(tokenId)).to.equal(NFTWrapBridge.address);
