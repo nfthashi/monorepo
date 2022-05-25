@@ -61,14 +61,13 @@ contract NFTWrapBridge is ERC165, INFTWrapBridge, NFTBridge {
     string memory symbol = IERC721Metadata(processingNFTContractAddress).symbol();
     string memory tokenURI = IERC721Metadata(processingNFTContractAddress).tokenURI(tokenId);
 
-    bytes4 selector = bytes4(keccak256("xReceive(address,address,uint256,uint32,uint32,string,string,string)"));
+    bytes4 selector = bytes4(keccak256("xReceive(address,address,uint256,uint32,string,string,string)"));
     bytes memory callData = abi.encodeWithSelector(
       selector,
       birthChainNFTContractAddress,
       to,
       tokenId,
       birthChainDomain,
-      sendToDomain,
       name,
       symbol,
       tokenURI
@@ -81,29 +80,13 @@ contract NFTWrapBridge is ERC165, INFTWrapBridge, NFTBridge {
     address to,
     uint256 tokenId,
     uint32 birthChainDomain,
-    uint32 sendToDomain,
     string memory name,
     string memory symbol,
     string memory tokenURI
   ) public onlyExecutor {
     uint32 selfDomain = getSelfDomain();
     if (birthChainDomain == selfDomain) {
-      if (sendToDomain == selfDomain) {
-        IERC721(birthChainNFTContractAddress).safeTransferFrom(address(this), to, tokenId);
-      } else {
-        bytes4 selector = bytes4(keccak256("xReceive(address,address,uint256,uint32,string,string,string)"));
-        bytes memory callData = abi.encodeWithSelector(
-          selector,
-          birthChainNFTContractAddress,
-          to,
-          tokenId,
-          birthChainDomain,
-          name,
-          symbol,
-          tokenURI
-        );
-        _xcall(sendToDomain, callData);
-      }
+      IERC721(birthChainNFTContractAddress).safeTransferFrom(address(this), to, tokenId);
     } else {
       bytes32 salt = keccak256(abi.encodePacked(birthChainDomain, birthChainNFTContractAddress));
       address processingNFTContractAddress = Clones.predictDeterministicAddress(
