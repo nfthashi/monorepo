@@ -37,9 +37,9 @@ contract NFTWrapBridge is ERC165, INFTWrapBridge, NFTBridge {
       IERC721(processingNFTContractAddress).ownerOf(tokenId) == _msgSender() ||
         IERC721(processingNFTContractAddress).getApproved(tokenId) == _msgSender() ||
         IERC721(processingNFTContractAddress).isApprovedForAll(from, _msgSender()),
-      "NativeNFT: send caller is not owner nor approved"
+      "NativeNFT: invalid sender"
     );
-    require(IERC721(processingNFTContractAddress).ownerOf(tokenId) == from, "NativeNFT: send from incorrect owner");
+    require(IERC721(processingNFTContractAddress).ownerOf(tokenId) == from, "NativeNFT: invalid from");
 
     address birthChainNFTContractAddress;
     uint32 birthChainDomain;
@@ -60,10 +60,8 @@ contract NFTWrapBridge is ERC165, INFTWrapBridge, NFTBridge {
     string memory name = IERC721Metadata(processingNFTContractAddress).name();
     string memory symbol = IERC721Metadata(processingNFTContractAddress).symbol();
     string memory tokenURI = IERC721Metadata(processingNFTContractAddress).tokenURI(tokenId);
-
-    bytes4 selector = bytes4(keccak256("xReceive(address,address,uint256,uint32,string,string,string)"));
     bytes memory callData = abi.encodeWithSelector(
-      selector,
+      this.xReceive.selector,
       birthChainNFTContractAddress,
       to,
       tokenId,

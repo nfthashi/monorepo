@@ -11,7 +11,7 @@ abstract contract NFTNativeBridge is ERC165, INFTNativeBridge, NFTBridge, ERC721
     uint32 selfDomain,
     address connext,
     address dummyTransactingAssetId
-  ) NFTBridge(selfDomain, connext, dummyTransactingAssetId) {}
+  ) NFTBridge(selfDomain, connext, dummyTransactingAssetId) {} // solhint-disable-line no-empty-blocks
 
   function xSend(
     address from,
@@ -19,11 +19,10 @@ abstract contract NFTNativeBridge is ERC165, INFTNativeBridge, NFTBridge, ERC721
     uint256 tokenId,
     uint32 sendToDomain
   ) public {
-    require(_isApprovedOrOwner(_msgSender(), tokenId), "NativeNFTCore: send caller is not owner nor approved");
-    require(ownerOf(tokenId) == from, "NativeNFTCore: send from incorrect owner");
+    require(_isApprovedOrOwner(_msgSender(), tokenId), "NFTNativeBridge: invalid sender");
+    require(ownerOf(tokenId) == from, "NFTNativeBridge: invalid from");
     _burn(tokenId);
-    bytes4 selector = bytes4(keccak256("xReceive(address,uint256)"));
-    bytes memory callData = abi.encodeWithSelector(selector, to, tokenId);
+    bytes memory callData = abi.encodeWithSelector(this.xReceive.selector, to, tokenId);
     _xcall(sendToDomain, callData);
   }
 

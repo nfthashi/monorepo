@@ -39,10 +39,6 @@ contract WrappedNFT is
     return super._burn(tokenId);
   }
 
-  function isNFTHashiWrappedNFT() public pure returns (bool) {
-    return true;
-  }
-
   function tokenURI(uint256 tokenId)
     public
     view
@@ -51,6 +47,10 @@ contract WrappedNFT is
     returns (string memory)
   {
     return super.tokenURI(tokenId);
+  }
+
+  function isNFTHashiWrappedNFT() public pure returns (bool) {
+    return true;
   }
 
   function supportsInterface(bytes4 interfaceId)

@@ -3,10 +3,11 @@ module.exports = {
     browser: false,
     es2021: true,
     mocha: true,
+
     node: true,
   },
   plugins: ["@typescript-eslint"],
-  extends: ["standard", "plugin:prettier/recommended", "plugin:node/recommended"],
+  extends: ["standard", "plugin:prettier/recommended"],
   parser: "@typescript-eslint/parser",
   parserOptions: {
     ecmaVersion: 12,

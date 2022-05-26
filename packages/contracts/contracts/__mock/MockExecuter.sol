@@ -14,6 +14,7 @@ contract MockExecuter {
   }
 
   function execute(address to, bytes memory data) public {
+    // solhint-disable-next-line avoid-low-level-calls
     (bool success, ) = to.call(data);
     require(success, "MockExecuter: execute failed");
   }

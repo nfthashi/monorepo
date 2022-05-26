@@ -6,6 +6,7 @@ import {
   useToast,
   Select,
   Modal,
+  Text,
   ModalOverlay,
   ModalContent,
   ModalCloseButton,
@@ -27,7 +28,7 @@ import config from "../lib/web3/config.json";
 import { NFTList } from "./NFTList";
 import { NFT } from "../types/nft";
 import { Chain } from "../types/chain";
-import { ArrowDownIcon } from "@chakra-ui/icons";
+import { ArrowRightIcon } from "@chakra-ui/icons";
 
 import NFTWrapBridge from "../../contracts/artifacts/contracts/wrap/NFTWrapBridge.sol/NFTWrapBridge.json";
 import NFTNativeBridge from "../../contracts/artifacts/contracts/native/NFTNativeBridge.sol/NFTNativeBridge.json";
@@ -160,39 +161,47 @@ export const Bridge: React.FC = () => {
 
   return (
     <Box>
+      <Flex mb={"8"} gap={"1"} justify={"space-between"}>
+        <Box width={"45%"}>
+          <Text align={"center"} fontWeight="bold" mb={2} fontSize={"sm"}>
+            Source
+          </Text>
+          <Select
+            variant={"filled"}
+            onChange={handleSourceChainChange}
+            value={sourceChain}
+            rounded={"2xl"}
+            fontSize={"sm"}
+            disabled={!!tokenId}
+          >
+            <option value={"rinkeby"}>Rinkeby</option>
+            <option value={"kovan"}>Kovan</option>
+          </Select>
+        </Box>
+        <Box textAlign={"center"} mt={9}>
+          <ArrowRightIcon w={2} h={2} />
+        </Box>
+        <Box width={"45%"}>
+          <Text align={"center"} fontWeight="bold" mb={2} fontSize={"sm"}>
+            Destination
+          </Text>
+          <FormControl>
+            <Select
+              variant={"filled"}
+              onChange={handleDestinationChainChange}
+              value={destinationChain}
+              rounded={"2xl"}
+              fontSize={"sm"}
+              disabled={!!tokenId}
+            >
+              <option value={"rinkeby"}>Rinkeby</option>
+              <option value={"kovan"}>Kovan</option>
+            </Select>
+          </FormControl>
+        </Box>
+      </Flex>
       {!tokenId ? (
         <Box>
-          <Flex mb={"8"} gap={"1"} direction={"column"}>
-            <Box width={"100%"}>
-              <Select
-                variant={"filled"}
-                onChange={handleSourceChainChange}
-                value={sourceChain}
-                rounded={"2xl"}
-                fontSize={"sm"}
-              >
-                <option value={"rinkeby"}>Rinkeby</option>
-                <option value={"kovan"}>Kovan</option>
-              </Select>
-            </Box>
-            <Box textAlign={"center"}>
-              <ArrowDownIcon />
-            </Box>
-            <Box width={"100%"}>
-              <FormControl>
-                <Select
-                  variant={"filled"}
-                  onChange={handleDestinationChainChange}
-                  value={destinationChain}
-                  rounded={"2xl"}
-                  fontSize={"sm"}
-                >
-                  <option value={"rinkeby"}>Rinkeby</option>
-                  <option value={"kovan"}>Kovan</option>
-                </Select>
-              </FormControl>
-            </Box>
-          </Flex>
           <Modal isOpen={isOpen} onClose={onClose} scrollBehavior={"inside"}>
             <ModalOverlay />
             <ModalContent padding={"4"}>

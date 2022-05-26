@@ -24,7 +24,7 @@ contract NFTBridge is Ownable, ERC165, INFTBridge {
     require(
       IExecutor(msg.sender).originSender() == _bridgeContracts[IExecutor(msg.sender).origin()] &&
         msg.sender == _executor,
-      "xNativeBridge: Expected origin contract on origin domain called by Executor"
+      "NFTBridge: invalid executor"
     );
     _;
   }
@@ -46,7 +46,7 @@ contract NFTBridge is Ownable, ERC165, INFTBridge {
 
   function _xcall(uint32 destinationDomain, bytes memory callData) internal {
     address destinationContract = _bridgeContracts[destinationDomain];
-    require(destinationContract != address(0x0), "NFTBridge: bridge not set");
+    require(destinationContract != address(0x0), "NFTBridge: invalid bridge");
     CallParams memory callParams = CallParams({
       to: destinationContract,
       callData: callData,

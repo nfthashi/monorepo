@@ -11,6 +11,7 @@ contract MockConnextHandler {
     _executor = executor;
   }
 
+  // solhint-disable-next-line no-unused-vars
   function xcall(XCallArgs memory xCallArgs) public payable returns (bytes32) {
     return "";
   }

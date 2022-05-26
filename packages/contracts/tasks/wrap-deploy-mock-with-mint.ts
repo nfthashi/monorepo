@@ -1,7 +1,9 @@
+import { task } from "hardhat/config";
+
 task("wrap-deploy-mock-with-mint", "deploy wrap mock xNFTs and mint")
   .addParam("amount", "amount")
   .addParam("to", "to")
-  .setAction(async ({ amount, to }) => {
+  .setAction(async ({ amount, to }, { ethers }) => {
     const MockNFT = await ethers.getContractFactory("MockNFT");
     const mockNFT = await MockNFT.deploy();
     await mockNFT.deployed();

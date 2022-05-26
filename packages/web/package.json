@@ -6,9 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "lint": "run-s fix:*",
+    "lint:eslint": "eslint '**/*.{js,ts}' --ignore-path .gitignore",
+    "lint:prettier": "prettier '**/*.{json,sol,md}' --ignore-path .gitignore",
     "fix": "run-s fix:*",
-    "fix:eslint": "eslint '**/*.{js,ts}' --fix",
-    "fix:prettier": "prettier '**/*.{json,sol,md}' --write"
+    "fix:eslint": "yarn lint:eslint --fix",
+    "fix:prettier": "yarn lint:prettier --write"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.0.0",
