@@ -1,4 +1,4 @@
-import { Image, LinkBox, LinkOverlay, SimpleGrid, Text } from "@chakra-ui/react";
+import { Box,Image, LinkBox, LinkOverlay, SimpleGrid, Text } from "@chakra-ui/react";
 
 import { NFT } from "../types/nft";
 
@@ -7,6 +7,7 @@ export interface NFTListProps {
   setNFTContractAddress: (nftContractAddress: string) => void;
   setTokenId: (tokenId: string) => void;
   setSelectedNFTImage: (selectedNFTImage: string) => void;
+  setSelectedNFTName: (slectedNFTName: string) => void;
   onClose: () => void;
 }
 
@@ -15,6 +16,7 @@ export const NFTList: React.FC<NFTListProps> = ({
   setNFTContractAddress,
   setTokenId,
   setSelectedNFTImage,
+  setSelectedNFTName,
   onClose,
 }) => {
   const handleNFTContractAddressChange = (index: number) => {
@@ -22,6 +24,7 @@ export const NFTList: React.FC<NFTListProps> = ({
     setNFTContractAddress(nft.nftContractAddress);
     setTokenId(nft.tokenId);
     setSelectedNFTImage(nft.image);
+    setSelectedNFTName(nft.name);
     onClose();
   };
 
@@ -41,10 +44,13 @@ export const NFTList: React.FC<NFTListProps> = ({
                 fit="cover"
                 mb="2"
               />
+              <Box textAlign={"center"}>
+
               <Text fontSize="xs" noOfLines={1}>
-                {nftContractAddress}
+                {name}
               </Text>
               <Text fontSize="xs">ID: {tokenId}</Text>
+              </Box>
             </LinkOverlay>
           </LinkBox>
         );

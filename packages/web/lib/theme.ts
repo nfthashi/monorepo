@@ -3,7 +3,7 @@ import { mode } from "@chakra-ui/theme-tools";
 import { Dict } from "@chakra-ui/utils";
 
 const config = {
-  initialColorMode: "light",
+  initialColorMode: "dark",
   useSystemColorMode: false,
 };
 
