@@ -1,40 +1,36 @@
-import React from "react";
-import {
-  Button,
-  Box,
-  FormControl,
-  useToast,
-  Select,
-  Modal,
-  Text,
-  ModalOverlay,
-  ModalContent,
-  ModalCloseButton,
-  ModalBody,
-  useDisclosure,
-  Flex,
-  Image,
-} from "@chakra-ui/react";
-import { useState } from "react";
-import { ethers } from "ethers";
-import { useWeb3React } from "@web3-react/core";
-import { Web3Provider } from "@ethersproject/providers";
-
-import axios from "axios";
-
-import { injected } from "../lib/web3/injected";
-import config from "../lib/web3/config.json";
-
-import { NFTList } from "./NFTList";
-import { NFT } from "../types/nft";
-import { Chain } from "../types/chain";
 import { ArrowRightIcon } from "@chakra-ui/icons";
+import {
+  Box,
+  Button,
+  Flex,
+  FormControl,
+  Image,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalOverlay,
+  Select,
+  Text,
+  useDisclosure,
+  useToast,
+} from "@chakra-ui/react";
+import { Web3Provider } from "@ethersproject/providers";
+import { useWeb3React } from "@web3-react/core";
+import axios from "axios";
+import { ethers } from "ethers";
+import React, { useState } from "react";
 
-import NFTWrapBridge from "../../contracts/artifacts/contracts/wrap/NFTWrapBridge.sol/NFTWrapBridge.json";
-import NFTNativeBridge from "../../contracts/artifacts/contracts/native/NFTNativeBridge.sol/NFTNativeBridge.json";
 import IERC721 from "../../contracts/artifacts/@openzeppelin/contracts/token/ERC721/IERC721.sol/IERC721.json";
 import IERC165 from "../../contracts/artifacts/@openzeppelin/contracts/utils/introspection/IERC165.sol/IERC165.json";
+import NFTNativeBridge from "../../contracts/artifacts/contracts/native/NFTNativeBridge.sol/NFTNativeBridge.json";
+import NFTWrapBridge from "../../contracts/artifacts/contracts/wrap/NFTWrapBridge.sol/NFTWrapBridge.json";
 import { NFT_NATIVE_BRIDGE_INTERFACE_ID } from "../../contracts/lib/constant";
+import config from "../lib/web3/config.json";
+import { injected } from "../lib/web3/injected";
+import { Chain } from "../types/chain";
+import { NFT } from "../types/nft";
+import { NFTList } from "./NFTList";
 
 declare global {
   interface Window {

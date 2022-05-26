@@ -1,5 +1,6 @@
+import { Image, LinkBox, LinkOverlay, SimpleGrid, Text } from "@chakra-ui/react";
+
 import { NFT } from "../types/nft";
-import { SimpleGrid, Image, LinkBox, LinkOverlay, Text } from "@chakra-ui/react";
 
 export interface NFTListProps {
   nfts: NFT[];

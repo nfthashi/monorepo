@@ -1,8 +1,8 @@
+import { Box, Container, Flex, Stack } from "@chakra-ui/react";
 import React from "react";
-import { Header } from "./Header";
-import { Footer } from "./Footer";
 
-import { Flex, Box, Container, Stack } from "@chakra-ui/react";
+import { Footer } from "./Footer";
+import { Header } from "./Header";
 
 export interface LayoutProps {
   children: React.ReactNode;

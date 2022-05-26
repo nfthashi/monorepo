@@ -1,7 +1,7 @@
+import { ethers } from "ethers";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import { getNFTs } from "../../lib/moralis";
-import { ethers } from "ethers";
 import { isChain } from "../../types/chain";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

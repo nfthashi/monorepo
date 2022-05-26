@@ -3,16 +3,15 @@ module.exports = {
     browser: false,
     es2021: true,
     mocha: true,
-
     node: true,
   },
-  plugins: ["@typescript-eslint"],
-  extends: ["standard", "plugin:prettier/recommended"],
-  parser: "@typescript-eslint/parser",
-  parserOptions: {
-    ecmaVersion: 12,
-  },
+  extends: ["eslint:recommended", "plugin:@typescript-eslint/recommended", "prettier"],
+  plugins: ["simple-import-sort", "import"],
   rules: {
-    "node/no-unsupported-features/es-syntax": ["error", { ignores: ["modules"] }],
+    "simple-import-sort/imports": "error",
+    "simple-import-sort/exports": "error",
+    "import/first": "error",
+    "import/newline-after-import": "error",
+    "import/no-duplicates": "error",
   },
 };

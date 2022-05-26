@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
-import { NULL_ADDRESS, ADDRESS_1 } from "../lib/constant";
+
+import { ADDRESS_1,NULL_ADDRESS } from "../lib/constant";
 
 describe("NFTWrapBridge", function () {
   let NFTWrapBridge: any;

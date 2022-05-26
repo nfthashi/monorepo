@@ -1,6 +1,7 @@
 import Moralis from "moralis/node";
-import { NFT } from "../types/nft";
+
 import { Chain } from "../types/chain";
+import { NFT } from "../types/nft";
 
 const serverUrl = process.env.MORALIS_SERVER_URL;
 const appId = process.env.MORALIS_APP_ID;
@@ -15,12 +16,12 @@ export const initMorarils = async () => {
 export const getNFTs = async (userAddress: string, chain: Chain): Promise<NFT[]> => {
   await initMorarils();
   const options = { address: userAddress, chain };
-  let { result } = await Moralis.Web3API.account.getNFTs(options);
+  const { result } = await Moralis.Web3API.account.getNFTs(options);
   if (!result) {
     return [];
   }
   const nfts = result.map((nft) => {
-    let metadata = {
+    const metadata = {
       name: "",
       image: "",
     };

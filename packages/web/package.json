@@ -6,9 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "run-s fix:*",
-    "lint:eslint": "eslint '**/*.{js,ts}' --ignore-path .gitignore",
-    "lint:prettier": "prettier '**/*.{json,sol,md}' --ignore-path .gitignore",
+    "lint": "run-s lint:*",
+    "lint:eslint": "eslint '**/*.{js,ts,jsx,tsx}' --ignore-path .gitignore",
+    "lint:prettier": "prettier '**/*.{json,sol,md}' --ignore-path .gitignore --check",
     "fix": "run-s fix:*",
     "fix:eslint": "yarn lint:eslint --fix",
     "fix:prettier": "yarn lint:prettier --write"
@@ -34,6 +34,9 @@
     "@types/react-dom": "18.0.4",
     "eslint": "8.15.0",
     "eslint-config-next": "12.1.6",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-simple-import-sort": "^7.0.0",
     "prettier": "^2.6.2",
     "typescript": "4.6.4"
   }

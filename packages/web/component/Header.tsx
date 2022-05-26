@@ -1,8 +1,9 @@
-import React from "react";
-import { Box, Flex, Text, Button, IconButton, useColorMode } from "@chakra-ui/react";
-import { useWeb3React } from "@web3-react/core";
-import { Web3Provider } from "@ethersproject/providers";
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
+import { Box, Button, Flex, IconButton, Text, useColorMode } from "@chakra-ui/react";
+import { Web3Provider } from "@ethersproject/providers";
+import { useWeb3React } from "@web3-react/core";
+import React from "react";
+
 import { injected } from "../lib/web3/injected";
 
 export const Header: React.FC = () => {

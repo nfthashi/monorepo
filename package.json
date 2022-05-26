@@ -9,9 +9,9 @@
   "scripts": {
     "prepare": "husky install",
     "ci": "run-p lint build test",
-    "lint": "run-p fix:*",
-    "lint:contracts": "yarn workspace contracts fix",
-    "lint:web": "yarn workspace web fix",
+    "lint": "run-p lint:*",
+    "lint:contracts": "yarn workspace contracts lint",
+    "lint:web": "yarn workspace web lint",
     "fix": "run-p fix:*",
     "fix:contracts": "yarn workspace contracts fix",
     "fix:web": "yarn workspace web fix",
