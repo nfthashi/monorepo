@@ -11,6 +11,7 @@ import {
   ModalContent,
   ModalOverlay,
   Select,
+  Spinner,
   Text,
   useDisclosure,
   useToast,
@@ -21,13 +22,13 @@ import axios from "axios";
 import { ethers } from "ethers";
 import React, { useState } from "react";
 
-import IERC721 from "../../contracts/artifacts/@openzeppelin/contracts/token/ERC721/IERC721.sol/IERC721.json";
-import IERC165 from "../../contracts/artifacts/@openzeppelin/contracts/utils/introspection/IERC165.sol/IERC165.json";
-import NFTNativeBridge from "../../contracts/artifacts/contracts/native/NFTNativeBridge.sol/NFTNativeBridge.json";
-import NFTWrapBridge from "../../contracts/artifacts/contracts/wrap/NFTWrapBridge.sol/NFTWrapBridge.json";
-import { NFT_NATIVE_BRIDGE_INTERFACE_ID } from "../../contracts/lib/constant";
 import config from "../lib/web3/config.json";
+import { NFT_NATIVE_BRIDGE_INTERFACE_ID } from "../lib/web3/constant";
+import IERC165 from "../lib/web3/IERC165.json";
+import IERC721 from "../lib/web3/IERC721.json";
 import { injected } from "../lib/web3/injected";
+import NFTNativeBridge from "../lib/web3/NFTNativeBridge.json";
+import NFTWrapBridge from "../lib/web3/NFTWrapBridge.json";
 import { Chain } from "../types/chain";
 import { NFT } from "../types/nft";
 import { NFTList } from "./NFTList";
@@ -40,9 +41,11 @@ declare global {
 
 export const Bridge: React.FC = () => {
   const [selectedNFTImage, setSelectedNFTImage] = useState("");
+  const [selectedNFTName, setSelectedNFTName] = useState("");
   const [sourceChain, setSourceChain] = useState<Chain>("rinkeby");
   const [nftContractAddress, setNFTContractAddress] = useState("");
   const [tokenId, setTokenId] = useState("");
+  const [load, setLoad] = useState("");
   const [destinationChain, setDestinationChain] = useState<Chain>("kovan");
   const [nftList, setNFTList] = useState<NFT[]>([]);
 
@@ -86,9 +89,10 @@ export const Bridge: React.FC = () => {
     if (!account || !sourceChain) {
       return;
     }
-    const { data } = await axios.get(`/api/nft?userAddress=${account}&chain=${sourceChain}`);
-    setNFTList(data);
     onOpen();
+    const { data } = await axios.get(`/api/nft?userAddress=${account}&chain=${sourceChain}`);
+    setLoad("none")
+    setNFTList(data);
   };
 
   const xCall = async () => {
@@ -201,6 +205,12 @@ export const Bridge: React.FC = () => {
           <Modal isOpen={isOpen} onClose={onClose} scrollBehavior={"inside"}>
             <ModalOverlay />
             <ModalContent padding={"4"}>
+              <Box textAlign={"center"} display={load}>
+                <Flex>
+                  <Spinner />
+                  <Text ml={"10"}>Loading NFT</Text>
+                </Flex>
+              </Box>
               <ModalCloseButton />
               <ModalBody>
                 <Flex justify={"center"}>
@@ -209,6 +219,7 @@ export const Bridge: React.FC = () => {
                     setNFTContractAddress={setNFTContractAddress}
                     setTokenId={setTokenId}
                     setSelectedNFTImage={setSelectedNFTImage}
+                    setSelectedNFTName={setSelectedNFTName}
                     onClose={onClose}
                   />
                 </Flex>
@@ -240,7 +251,8 @@ export const Bridge: React.FC = () => {
               />
             </Box>
           </Flex>
-          <Flex gap="4">
+          <Text textAlign={"center"}>{selectedNFTName}</Text>
+          <Flex gap="4" mt={"10"}>
             <Button width={"50%"} onClick={clearSelectedNFT} fontSize={"sm"} rounded={"2xl"} variant="outline">
               Back
             </Button>

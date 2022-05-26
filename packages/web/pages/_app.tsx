@@ -9,7 +9,7 @@ import theme from "../lib/theme";
 
 function MyApp({ Component, pageProps }: AppProps) {
   function getLibrary(provider: any) {
-    return new Web3Provider(provider);
+    return new Web3Provider(provider, "any");
   }
   return (
     <Web3ReactProvider getLibrary={getLibrary}>
