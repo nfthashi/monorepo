@@ -4,7 +4,7 @@
     "domainId": 1111,
     "contracts": {
       "bridge": "0x19db41660131663f7313B6e2EdD4746d55038796",
-      "connext": "0x3e99898Da8A01Ed909976AF13e4Fa6094326cB10",
+      "connext": "0x2307Ed9f152FA9b3DcDfe2385d279D8C2A9DF2b0",
       "testToken": "0x3FFc03F05D1869f493c7dbf913E636C6280e0ff9"
     },
     "exproler": "https://rinkeby.etherscan.io/"
@@ -14,7 +14,7 @@
     "domainId": 3331,
     "contracts": {
       "bridge": "",
-      "connext": "0x2307Ed9f152FA9b3DcDfe2385d279D8C2A9DF2b0",
+      "connext": "0xEC3A723DE47a644b901DC269829bf8718F175EBF",
       "testToken": "0x3FFc03F05D1869f493c7dbf913E636C6280e0ff9"
     },
     "exproler": "https://goerli.etherscan.io/"
