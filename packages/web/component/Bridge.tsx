@@ -22,13 +22,13 @@ import axios from "axios";
 import { ethers } from "ethers";
 import React, { useState } from "react";
 
-import IERC721 from "../../contracts/artifacts/@openzeppelin/contracts/token/ERC721/IERC721.sol/IERC721.json";
-import IERC165 from "../../contracts/artifacts/@openzeppelin/contracts/utils/introspection/IERC165.sol/IERC165.json";
-import NFTNativeBridge from "../../contracts/artifacts/contracts/native/NFTNativeBridge.sol/NFTNativeBridge.json";
-import NFTWrapBridge from "../../contracts/artifacts/contracts/wrap/NFTWrapBridge.sol/NFTWrapBridge.json";
-import { NFT_NATIVE_BRIDGE_INTERFACE_ID } from "../../contracts/lib/constant";
 import config from "../lib/web3/config.json";
+import { NFT_NATIVE_BRIDGE_INTERFACE_ID } from "../lib/web3/constant";
+import IERC165 from "../lib/web3/IERC165.json";
+import IERC721 from "../lib/web3/IERC721.json";
 import { injected } from "../lib/web3/injected";
+import NFTNativeBridge from "../lib/web3/NFTNativeBridge.json";
+import NFTWrapBridge from "../lib/web3/NFTWrapBridge.json";
 import { Chain } from "../types/chain";
 import { NFT } from "../types/nft";
 import { NFTList } from "./NFTList";
