@@ -1,12 +1,8 @@
-import * as dotenv from "dotenv";
-
-import { HardhatUserConfig, task } from "hardhat/config";
 import "@nomiclabs/hardhat-etherscan";
 import "@nomiclabs/hardhat-waffle";
 import "@typechain/hardhat";
 import "hardhat-gas-reporter";
 import "solidity-coverage";
-
 import "./tasks/native-bridge";
 import "./tasks/native-deploy";
 import "./tasks/native-mint";
@@ -14,9 +10,10 @@ import "./tasks/register";
 import "./tasks/wrap-bridge";
 import "./tasks/wrap-deploy-implementation";
 import "./tasks/wrap-deploy-mock-with-mint";
-import "./tasks/wrap-deploy-source";
-import "./tasks/wrap-deploy-target";
-import "./tasks/wrap";
+import "./tasks/wrap-deploy";
+
+import * as dotenv from "dotenv";
+import { HardhatUserConfig, task } from "hardhat/config";
 
 dotenv.config();
 

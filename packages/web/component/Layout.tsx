@@ -1,14 +1,14 @@
+import { Box, Container, Flex, Stack } from "@chakra-ui/react";
 import React from "react";
-import { Header } from "./Header";
-import { Footer } from "./Footer";
 
-import { Flex, Box, Container, Stack } from "@chakra-ui/react";
+import { Footer } from "./Footer";
+import { Header } from "./Header";
 
 export interface LayoutProps {
   children: React.ReactNode;
 }
 
-export const Layout: React.VFC<LayoutProps> = ({ children }) => {
+export const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <Flex minHeight={"100vh"} direction={"column"}>
       <Header />

@@ -1,13 +1,18 @@
 {
   "name": "contracts",
-  "version": "0.1.1",
+  "version": "0.2.0",
+  "license": "UNLICENSED",
   "scripts": {
     "test": "hardhat test",
     "build": "npx hardhat compile",
+    "lint": "run-s lint:*",
+    "lint:eslint": "eslint '**/*.{js,ts}' --ignore-path .gitignore",
+    "lint:prettier": "prettier '**/*.{json,sol,md}' --ignore-path .gitignore --check",
+    "lint:solhint": "solhint 'contracts/**/*.sol' --ignore-path .gitignore",
     "fix": "run-s fix:*",
-    "fix:eslint": "eslint '**/*.{js,ts}' --fix",
-    "fix:prettier": "prettier '**/*.{json,sol,md}' --write",
-    "fix:solhint": "solhint 'contracts/**/*.sol' --fix"
+    "fix:eslint": "yarn lint:eslint --fix",
+    "fix:prettier": "yarn lint:prettier --write",
+    "fix:solhint": "yarn lint:solhint --fix"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.6",
@@ -24,11 +29,7 @@
     "dotenv": "^16.0.1",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.5.0",
-    "eslint-config-standard": "^16.0.3",
     "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-prettier": "^3.4.1",
-    "eslint-plugin-promise": "^5.2.0",
     "ethereum-waffle": "^3.4.4",
     "ethers": "^5.6.5",
     "hardhat": "^2.9.4",
@@ -42,8 +43,8 @@
     "typescript": "^4.6.4"
   },
   "dependencies": {
-    "@connext/nxtp-contracts": "^0.2.0-alpha.16",
-    "@openzeppelin/contracts": "^4.6.0",
-    "@openzeppelin/contracts-upgradeable": "^4.6.0"
+    "@connext/nxtp-contracts": "0.2.0-beta.0",
+    "@openzeppelin/contracts": "4.6.0",
+    "@openzeppelin/contracts-upgradeable": "4.6.0"
   }
 }

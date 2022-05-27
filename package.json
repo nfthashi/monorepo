@@ -1,6 +1,6 @@
 {
-  "name": "nft-hashi",
-  "version": "0.1.1",
+  "name": "nfthashi",
+  "version": "0.2.0",
   "license": "UNLICENSED",
   "private": true,
   "workspaces": [
@@ -8,16 +8,20 @@
   ],
   "scripts": {
     "prepare": "husky install",
+    "ci": "run-p lint build test",
+    "lint": "run-p lint:*",
+    "lint:contracts": "yarn workspace contracts lint",
+    "lint:web": "yarn workspace web lint",
+    "fix": "run-p fix:*",
+    "fix:contracts": "yarn workspace contracts fix",
+    "fix:web": "yarn workspace web fix",
     "test": "run-p test:*",
     "test:contracts": "yarn workspace contracts test",
     "dev": "run-p dev:*",
     "dev:web": "yarn workspace web dev",
     "build": "run-p build:*",
     "build:contracts": "yarn workspace contracts build",
-    "build:web": "yarn workspace web build",
-    "fix": "run-p fix:*",
-    "fix:contracts": "yarn workspace contracts fix",
-    "fix:web": "yarn workspace web fix"
+    "build:web": "yarn workspace web build"
   },
   "devDependencies": {
     "@commitlint/cli": "^16.2.4",

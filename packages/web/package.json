@@ -1,13 +1,17 @@
 {
   "name": "web",
-  "version": "0.1.1",
+  "version": "0.2.0",
+  "license": "UNLICENSED",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "lint": "run-s lint:*",
+    "lint:eslint": "eslint '**/*.{js,ts,jsx,tsx}' --ignore-path .gitignore",
+    "lint:prettier": "prettier '**/*.{json,sol,md}' --ignore-path .gitignore --check",
     "fix": "run-s fix:*",
-    "fix:eslint": "eslint '**/*.{js,ts}' --fix",
-    "fix:prettier": "prettier '**/*.{json,sol,md}' --write"
+    "fix:eslint": "yarn lint:eslint --fix",
+    "fix:prettier": "yarn lint:prettier --write"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.0.0",
@@ -17,7 +21,9 @@
     "@ethersproject/providers": "^5.6.6",
     "@web3-react/core": "^6.1.9",
     "@web3-react/injected-connector": "^6.0.7",
+    "axios": "^0.27.2",
     "framer-motion": "^6",
+    "moralis": "^1.7.0",
     "next": "12.1.6",
     "react": "18.1.0",
     "react-dom": "18.1.0"
@@ -28,6 +34,9 @@
     "@types/react-dom": "18.0.4",
     "eslint": "8.15.0",
     "eslint-config-next": "12.1.6",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-simple-import-sort": "^7.0.0",
     "prettier": "^2.6.2",
     "typescript": "4.6.4"
   }
