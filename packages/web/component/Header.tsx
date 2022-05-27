@@ -11,6 +11,11 @@ export const Header: React.FC = () => {
   const connect = async () => {
     activate(injected);
   };
+
+  const docs = () => {
+    window.open("https://docs.nfthashi.com/");
+  }
+
   const { colorMode, toggleColorMode } = useColorMode();
 
   return (
@@ -20,6 +25,9 @@ export const Header: React.FC = () => {
           NFTHashi
         </Text>
         <Flex gap={"16px"}>
+          <Button rounded="2xl" fontSize={"sm"} onClick={docs}>
+            Document
+          </Button>
           {!account ? (
             <Button onClick={connect} fontSize={"xs"} rounded={"2xl"}>
               Connect Wallet
