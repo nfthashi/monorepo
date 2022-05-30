@@ -2,6 +2,7 @@ import { ArrowRightIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
+  Center,
   Flex,
   FormControl,
   Image,
@@ -61,23 +62,19 @@ export const Bridge: React.FC = () => {
 
   const handleDestinationChainChange = (e: any) => {
     const inputValue = e.target.value;
-    setDestinationChain(inputValue);
-    if (inputValue === "kovan") {
-      setSourceChain("rinkeby");
-    } else {
-      setSourceChain("kovan");
+    if (inputValue === sourceChain) {
+      setSourceChain(destinationChain);
     }
+    setDestinationChain(inputValue);
     clearSelectedNFT();
   };
 
   const handleSourceChainChange = async (e: any) => {
     const inputValue = e.target.value;
-    setSourceChain(inputValue);
-    if (inputValue === "kovan") {
-      setDestinationChain("rinkeby");
-    } else {
-      setDestinationChain("kovan");
+    if (inputValue === destinationChain) {
+      setDestinationChain(sourceChain);
     }
+    setSourceChain(inputValue);
     clearSelectedNFT();
   };
 
@@ -176,6 +173,7 @@ export const Bridge: React.FC = () => {
           >
             <option value={"rinkeby"}>Rinkeby</option>
             <option value={"kovan"}>Kovan</option>
+            <option value={"goerli"}>Goerli</option>
           </Select>
         </Box>
         <Box textAlign={"center"} mt={9}>
@@ -196,6 +194,7 @@ export const Bridge: React.FC = () => {
             >
               <option value={"rinkeby"}>Rinkeby</option>
               <option value={"kovan"}>Kovan</option>
+              <option value={"goerli"}>Goerli</option>
             </Select>
           </FormControl>
         </Box>
@@ -205,12 +204,14 @@ export const Bridge: React.FC = () => {
           <Modal isOpen={isOpen} onClose={onClose} scrollBehavior={"inside"}>
             <ModalOverlay />
             <ModalContent padding={"4"}>
-              <Box textAlign={"center"} display={load}>
-                <Flex>
+              {/* <Box textAlign={"center"}display={load}> */}
+              <Center display={load} h={"100%"} minH={1 / 2} >
+                <Flex verticalAlign={"middle"}>
                   <Spinner />
                   <Text ml={"10"}>Loading NFT</Text>
                 </Flex>
-              </Box>
+              </Center>
+              {/* </Box> */}
               <ModalCloseButton />
               <ModalBody>
                 <Flex justify={"center"}>
