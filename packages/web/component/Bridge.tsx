@@ -258,11 +258,10 @@ export const Bridge: React.FC = () => {
               />
             </Box>
           </Flex>
-          <Box padding="4">
+          <Box padding="8">
             <Text textAlign={"center"} fontSize={"sm"} mb="1">
               {selectedNFT.name ? selectedNFT.name : "untitled"} - #{selectedNFT.tokenId}
             </Text>
-
             <Text textAlign={"center"} fontSize={"xs"}>
               <Link target={"_blank"} href={`${config[sourceChain].exproler}address/${selectedNFT.nftContractAddress}`}>
                 {selectedNFT.nftContractAddress}
