@@ -6,6 +6,7 @@ import {
   Flex,
   FormControl,
   Image,
+  Link,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -24,10 +25,10 @@ import { ethers } from "ethers";
 import React, { useState } from "react";
 
 import IERC721 from "../../contracts/artifacts/@openzeppelin/contracts/token/ERC721/IERC721.sol/IERC721.json";
-import IERC165  from "../../contracts/artifacts/@openzeppelin/contracts/utils/introspection/IERC165.sol/IERC165.json"
+import IERC165 from "../../contracts/artifacts/@openzeppelin/contracts/utils/introspection/IERC165.sol/IERC165.json";
 import NFTNativeBridge from "../../contracts/artifacts/contracts/native/NFTNativeBridge.sol/NFTNativeBridge.json";
 import NFTWrapBridge from "../../contracts/artifacts/contracts/wrap/NFTWrapBridge.sol/NFTWrapBridge.json";
-import { NFT_NATIVE_BRIDGE_INTERFACE_ID } from "../../contracts/lib/constant"
+import { NFT_NATIVE_BRIDGE_INTERFACE_ID } from "../../contracts/lib/constant";
 import config from "../lib/web3/config.json";
 import { injected } from "../lib/web3/injected";
 import { Chain } from "../types/chain";
@@ -41,12 +42,10 @@ declare global {
 }
 
 export const Bridge: React.FC = () => {
-  const [selectedNFTImage, setSelectedNFTImage] = useState("");
-  const [selectedNFTName, setSelectedNFTName] = useState("");
+  const [selectedNFT, setSelectedNFT] = useState<NFT>();
   const [sourceChain, setSourceChain] = useState<Chain>("rinkeby");
-  const [nftContractAddress, setNFTContractAddress] = useState("");
-  const [tokenId, setTokenId] = useState("");
-  const [load, setLoad] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
   const [destinationChain, setDestinationChain] = useState<Chain>("kovan");
   const [nftList, setNFTList] = useState<NFT[]>([]);
 
@@ -56,8 +55,7 @@ export const Bridge: React.FC = () => {
   const { activate, library, account } = useWeb3React<Web3Provider>();
 
   const clearSelectedNFT = () => {
-    setTokenId("");
-    setNFTContractAddress("");
+    setSelectedNFT(undefined);
   };
 
   const handleDestinationChainChange = (e: any) => {
@@ -86,14 +84,15 @@ export const Bridge: React.FC = () => {
     if (!account || !sourceChain) {
       return;
     }
-    onOpen();
+    setIsLoading(true);
     const { data } = await axios.get(`/api/nft?userAddress=${account}&chain=${sourceChain}`);
-    setLoad("none")
     setNFTList(data);
+    onOpen();
+    setIsLoading(false);
   };
 
   const xCall = async () => {
-    if (!library) {
+    if (!library || !selectedNFT) {
       return;
     }
     const { chainId } = await library.getNetwork();
@@ -106,21 +105,21 @@ export const Bridge: React.FC = () => {
       });
     }
 
-    const nftContractERC165 = new ethers.Contract(nftContractAddress, IERC165.abi, library.getSigner());
+    const nftContractERC165 = new ethers.Contract(selectedNFT.nftContractAddress, IERC165.abi, library.getSigner());
     const isNativeBridgeIntegrated = await nftContractERC165.supportsInterface(NFT_NATIVE_BRIDGE_INTERFACE_ID);
-    const nftContract = new ethers.Contract(nftContractAddress, IERC721.abi, library.getSigner());
+    const nftContract = new ethers.Contract(selectedNFT.nftContractAddress, IERC721.abi, library.getSigner());
     const destinationDomainId = config[destinationChain].domainId;
 
     let transaction;
     if (isNativeBridgeIntegrated) {
-      const bridgeContract = nftContractAddress;
+      const bridgeContract = selectedNFT.nftContractAddress;
       const contract = new ethers.Contract(bridgeContract, NFTNativeBridge.abi, library.getSigner());
-      transaction = await contract.xSend(account, account, tokenId, destinationDomainId, {
+      transaction = await contract.xSend(account, account, selectedNFT.tokenId, destinationDomainId, {
         gasLimit: "500000",
       });
     } else {
       const bridgeContract = config[sourceChain].contracts.bridge;
-      const approvedAddress = await nftContract.getApproved(tokenId);
+      const approvedAddress = await nftContract.getApproved(selectedNFT.tokenId);
       const isApprovedForAll = await nftContract.isApprovedForAll(account, bridgeContract);
       if (approvedAddress != bridgeContract && isApprovedForAll != true) {
         const approveTx = await nftContract.setApprovalForAll(bridgeContract, true);
@@ -132,9 +131,16 @@ export const Bridge: React.FC = () => {
         await approveTx.wait(1);
       }
       const contract = new ethers.Contract(bridgeContract, NFTWrapBridge.abi, library.getSigner());
-      transaction = await contract.xSend(nftContractAddress, account, account, tokenId, destinationDomainId, {
-        gasLimit: "500000",
-      });
+      transaction = await contract.xSend(
+        selectedNFT.nftContractAddress,
+        account,
+        account,
+        selectedNFT.tokenId,
+        destinationDomainId,
+        {
+          gasLimit: "500000",
+        }
+      );
     }
 
     transaction
@@ -156,6 +162,20 @@ export const Bridge: React.FC = () => {
       });
   };
 
+  const NetworkSelectOptions: React.FC = () => {
+    return (
+      <>
+        {Object.entries(config).map(([key, { name }], i) => {
+          return (
+            <option key={i} value={key}>
+              {name}
+            </option>
+          );
+        })}
+      </>
+    );
+  };
+
   return (
     <Box>
       <Flex mb={"8"} gap={"1"} justify={"space-between"}>
@@ -169,11 +189,9 @@ export const Bridge: React.FC = () => {
             value={sourceChain}
             rounded={"2xl"}
             fontSize={"sm"}
-            disabled={!!tokenId}
+            disabled={!!selectedNFT}
           >
-            <option value={"rinkeby"}>Rinkeby</option>
-            <option value={"kovan"}>Kovan</option>
-            <option value={"goerli"}>Goerli</option>
+            <NetworkSelectOptions />
           </Select>
         </Box>
         <Box textAlign={"center"} mt={9}>
@@ -190,39 +208,22 @@ export const Bridge: React.FC = () => {
               value={destinationChain}
               rounded={"2xl"}
               fontSize={"sm"}
-              disabled={!!tokenId}
+              disabled={!!selectedNFT}
             >
-              <option value={"rinkeby"}>Rinkeby</option>
-              <option value={"kovan"}>Kovan</option>
-              <option value={"goerli"}>Goerli</option>
+              <NetworkSelectOptions />
             </Select>
           </FormControl>
         </Box>
       </Flex>
-      {!tokenId ? (
+      {!selectedNFT ? (
         <Box>
           <Modal isOpen={isOpen} onClose={onClose} scrollBehavior={"inside"}>
             <ModalOverlay />
             <ModalContent padding={"4"}>
-              {/* <Box textAlign={"center"}display={load}> */}
-              <Center display={load} h={"100%"} minH={1 / 2} >
-                <Flex verticalAlign={"middle"}>
-                  <Spinner />
-                  <Text ml={"10"}>Loading NFT</Text>
-                </Flex>
-              </Center>
-              {/* </Box> */}
               <ModalCloseButton />
               <ModalBody>
                 <Flex justify={"center"}>
-                  <NFTList
-                    nfts={nftList}
-                    setNFTContractAddress={setNFTContractAddress}
-                    setTokenId={setTokenId}
-                    setSelectedNFTImage={setSelectedNFTImage}
-                    setSelectedNFTName={setSelectedNFTName}
-                    onClose={onClose}
-                  />
+                  <NFTList nfts={nftList} setSelectedNFT={setSelectedNFT} onClose={onClose} />
                 </Flex>
               </ModalBody>
             </ModalContent>
@@ -232,28 +233,43 @@ export const Bridge: React.FC = () => {
               Connect Wallet
             </Button>
           ) : (
-            <Button width={"100%"} onClick={openModal} fontSize={"sm"} colorScheme={"blue"} rounded={"2xl"}>
-              Select NFT
+            <Button
+              width={"100%"}
+              onClick={openModal}
+              fontSize={"sm"}
+              colorScheme={"blue"}
+              rounded={"2xl"}
+              disabled={isLoading}
+            >
+              Select NFT {isLoading && <Spinner ml="2" h={4} w={4} />}
             </Button>
           )}
         </Box>
       ) : (
         <Box>
           <Flex justify={"center"}>
-            <Box padding="8">
+            <Box>
               <Image
-                src={selectedNFTImage}
-                alt={selectedNFTImage}
-                height={"48"}
-                width={"48"}
+                src={selectedNFT.image}
+                alt={"Selected NFT Image"}
+                height={"32"}
+                width={"32"}
                 fit="cover"
                 fallbackSrc={"/assets/placeholder.png"}
-                mb={"2"}
               />
             </Box>
           </Flex>
-          <Text textAlign={"center"}>{selectedNFTName}</Text>
-          <Flex gap="4" mt={"10"}>
+          <Box padding="8">
+            <Text textAlign={"center"} fontSize={"sm"} mb="1">
+              {selectedNFT.name ? selectedNFT.name : "untitled"} - #{selectedNFT.tokenId}
+            </Text>
+            <Text textAlign={"center"} fontSize={"xs"}>
+              <Link target={"_blank"} href={`${config[sourceChain].exproler}address/${selectedNFT.nftContractAddress}`}>
+                {selectedNFT.nftContractAddress}
+              </Link>
+            </Text>
+          </Box>
+          <Flex gap="4">
             <Button width={"50%"} onClick={clearSelectedNFT} fontSize={"sm"} rounded={"2xl"} variant="outline">
               Back
             </Button>
