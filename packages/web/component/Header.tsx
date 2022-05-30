@@ -4,7 +4,7 @@ import { Web3Provider } from "@ethersproject/providers";
 import { useWeb3React } from "@web3-react/core";
 import React from "react";
 
-import { injected } from "../lib/web3/injected";
+import { injected } from "../lib/web3";
 
 export const Header: React.FC = () => {
   const { activate, account, deactivate } = useWeb3React<Web3Provider>();

@@ -2,7 +2,6 @@ import { ArrowRightIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
-  Center,
   Flex,
   FormControl,
   Image,
@@ -29,8 +28,8 @@ import IERC165 from "../../contracts/artifacts/@openzeppelin/contracts/utils/int
 import NFTNativeBridge from "../../contracts/artifacts/contracts/native/NFTNativeBridge.sol/NFTNativeBridge.json";
 import NFTWrapBridge from "../../contracts/artifacts/contracts/wrap/NFTWrapBridge.sol/NFTWrapBridge.json";
 import { NFT_NATIVE_BRIDGE_INTERFACE_ID } from "../../contracts/lib/constant";
-import config from "../lib/web3/config.json";
-import { injected } from "../lib/web3/injected";
+import config from "../../contracts/networks.json";
+import { injected } from "../lib/web3";
 import { Chain } from "../types/chain";
 import { NFT } from "../types/nft";
 import { NFTList } from "./NFTList";
