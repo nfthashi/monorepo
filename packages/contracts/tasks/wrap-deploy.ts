@@ -10,4 +10,5 @@ task("wrap-deploy", "deploy wrap target xNFTs contract")
     const nftWrapBridge = await NFTWrapBridge.deploy(selfDomain, connext, dummyTransactingAssetId, nftImplementation);
     await nftWrapBridge.deployed();
     console.log("Deployed to: ", nftWrapBridge.address);
+    return nftWrapBridge.address;
   });
