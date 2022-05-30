@@ -4,9 +4,9 @@
     "chainId": 4,
     "domainId": 1111,
     "contracts": {
-      "bridge": "0x19db41660131663f7313B6e2EdD4746d55038796",
       "connext": "0x2307Ed9f152FA9b3DcDfe2385d279D8C2A9DF2b0",
-      "testToken": "0x3FFc03F05D1869f493c7dbf913E636C6280e0ff9"
+      "testToken": "0x3FFc03F05D1869f493c7dbf913E636C6280e0ff9",
+      "bridge": "0xD87A5815E8E46eFA71B160c18502EDBAa056b5b0"
     },
     "exproler": "https://rinkeby.etherscan.io/"
   },
@@ -15,7 +15,7 @@
     "chainId": 5,
     "domainId": 3331,
     "contracts": {
-      "bridge": "",
+      "bridge": "0x36e81927210cF1A4D88723c259016851C8C4C51C",
       "connext": "0xEC3A723DE47a644b901DC269829bf8718F175EBF",
       "testToken": "0x3FFc03F05D1869f493c7dbf913E636C6280e0ff9"
     },
@@ -26,7 +26,7 @@
     "chainId": 42,
     "domainId": 2221,
     "contracts": {
-      "bridge": "0x83cD00613a17De35887D12c0CacFeF2D85319DF2",
+      "bridge": "0x4f9bB63763Cd696F0E66Ce4F75F262cfcdb644e5",
       "connext": "0x3366A61A701FA84A86448225471Ec53c5c4ad49f",
       "testToken": "0x3FFc03F05D1869f493c7dbf913E636C6280e0ff9"
     },

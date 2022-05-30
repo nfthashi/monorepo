@@ -5,4 +5,5 @@ task("wrap-deploy-implementation", "deploy wrap target xNFTs contract").setActio
   const wrappedNFT = await WrappedNFT.deploy();
   await wrappedNFT.deployed();
   console.log("Deployed to: ", wrappedNFT.address);
+  return wrappedNFT.address;
 });

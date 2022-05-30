@@ -14,7 +14,7 @@ export const Header: React.FC = () => {
 
   const docs = () => {
     window.open("https://docs.nfthashi.com/");
-  }
+  };
 
   const { colorMode, toggleColorMode } = useColorMode();
 
@@ -24,21 +24,21 @@ export const Header: React.FC = () => {
         <Text fontSize={"lg"} fontWeight={"bold"}>
           NFTHashi
         </Text>
-        <Flex gap={"16px"}>
-          <Button rounded="2xl" fontSize={"sm"} onClick={docs}>
-            Document
-          </Button>
+        <Flex gap={"2"}>
           {!account ? (
             <Button onClick={connect} fontSize={"xs"} rounded={"2xl"}>
               Connect Wallet
             </Button>
           ) : (
             <>
-              <Button fontSize={"xs"} maxWidth={"40"} rounded={"2xl"} onClick={deactivate}>
+              <Button fontSize={"xs"} maxWidth={"32"} rounded={"2xl"} onClick={deactivate}>
                 <Text noOfLines={1}>{account}</Text>
               </Button>
             </>
           )}
+          <Button rounded="2xl" fontSize={"xs"} onClick={docs}>
+            Doc
+          </Button>
           <IconButton
             rounded={"2xl"}
             aria-label={"dark mode switch"}
