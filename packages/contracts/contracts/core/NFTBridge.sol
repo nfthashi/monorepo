@@ -53,7 +53,7 @@ contract NFTBridge is Ownable, ERC165, INFTBridge {
       originDomain: _selfDomain,
       destinationDomain: destinationDomain,
       recovery: destinationContract,
-      callback: address(this),
+      callback: address(0),
       callbackFee: 0,
       forceSlow: true,
       receiveLocal: false
