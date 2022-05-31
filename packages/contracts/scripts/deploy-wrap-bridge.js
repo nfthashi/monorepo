@@ -17,6 +17,10 @@ async function main() {
   const nftImplementation = await run("wrap-deploy-implementation");
   const bridge = await run("wrap-deploy", { selfDomain, connext, dummyTransactingAssetId, nftImplementation });
   networks[name].contracts.bridge = bridge;
+  await run("verify:verify", {
+    address: bridge,
+    constructorArguments: [selfDomain, connext, dummyTransactingAssetId, nftImplementation],
+  });
   fs.writeFileSync(path.join(__dirname, "../networks.json"), JSON.stringify(networks));
   console.log("DONE");
 }
