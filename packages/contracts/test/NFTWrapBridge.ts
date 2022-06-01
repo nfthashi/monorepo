@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
 
-import { ADDRESS_1,NULL_ADDRESS } from "../lib/constant";
+import { ADDRESS_1, NULL_ADDRESS } from "../lib/constant";
 
 describe("NFTWrapBridge", function () {
   let NFTWrapBridge: any;
@@ -49,6 +49,11 @@ describe("NFTWrapBridge", function () {
 
     const MockClone = await ethers.getContractFactory("MockClone");
     mockClone = await MockClone.deploy();
+  });
+
+  it("supports ERC721", async function () {
+    const ERC721_INTERFACE_ID = 0x80ac58cd;
+    expect(await WrappedNFT.supportsInterface(ERC721_INTERFACE_ID)).to.equal(true);
   });
 
   it("xSend - sender is in birth chain", async function () {
