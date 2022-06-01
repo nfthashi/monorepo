@@ -141,24 +141,12 @@ export const Bridge: React.FC = () => {
         }
       );
     }
-
-    transaction
-      .wait(1)
-      .then((tx: any) => {
-        console.log(tx);
-        toast({
-          title: `Bridge Tx Hash: ${tx.transactionHash}`,
-          status: "success",
-          isClosable: true,
-        });
-      })
-      .catch((err: any) => {
-        toast({
-          title: `${err.message}`,
-          status: "error",
-          isClosable: true,
-        });
-      });
+    clearSelectedNFT();
+    toast({
+      title: `Bridge Tx Hash: ${transaction.hash}`,
+      status: "success",
+      isClosable: true,
+    });
   };
 
   const NetworkSelectOptions: React.FC = () => {
