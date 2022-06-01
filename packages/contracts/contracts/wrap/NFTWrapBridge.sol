@@ -45,6 +45,10 @@ contract NFTWrapBridge is ERC165, INFTWrapBridge, NFTBridge {
     uint32 birthChainDomain;
     uint32 destinationDomain;
 
+    string memory name = IERC721Metadata(processingNFTContractAddress).name();
+    string memory symbol = IERC721Metadata(processingNFTContractAddress).symbol();
+    string memory tokenURI = IERC721Metadata(processingNFTContractAddress).tokenURI(tokenId);
+
     if (_contracts[processingNFTContractAddress] != address(0x0) && _domains[processingNFTContractAddress] != 0) {
       birthChainNFTContractAddress = _contracts[processingNFTContractAddress];
       birthChainDomain = _domains[processingNFTContractAddress];
@@ -57,9 +61,6 @@ contract NFTWrapBridge is ERC165, INFTWrapBridge, NFTBridge {
       IERC721(birthChainNFTContractAddress).transferFrom(from, address(this), tokenId);
     }
 
-    string memory name = IERC721Metadata(processingNFTContractAddress).name();
-    string memory symbol = IERC721Metadata(processingNFTContractAddress).symbol();
-    string memory tokenURI = IERC721Metadata(processingNFTContractAddress).tokenURI(tokenId);
     bytes memory callData = abi.encodeWithSelector(
       this.xReceive.selector,
       birthChainNFTContractAddress,
