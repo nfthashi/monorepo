@@ -101,7 +101,7 @@ describe("NFTWrapBridge", function () {
     const deployedContract = XWrappedNFT.attach(deployedContractAddress);
 
     await expect(NFTWrapBridge.xSend(deployedContract.address, signer.address, ADDRESS_1, tokenId, fromDomain))
-      .to.emit(mockNFT, "Transfer")
+      .to.emit(deployedContract, "Transfer")
       .withArgs(signer.address, NULL_ADDRESS, tokenId);
   });
 
