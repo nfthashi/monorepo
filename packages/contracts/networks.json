@@ -1,1 +1,35 @@
-{"rinkeby":{"name":"Rinkeby","chainId":4,"domainId":1111,"contracts":{"connext":"0x2307Ed9f152FA9b3DcDfe2385d279D8C2A9DF2b0","testToken":"0x3FFc03F05D1869f493c7dbf913E636C6280e0ff9","bridge":"0xD87A5815E8E46eFA71B160c18502EDBAa056b5b0"},"exproler":"https://rinkeby.etherscan.io/"},"goerli":{"name":"Goerli","chainId":5,"domainId":3331,"contracts":{"bridge":"0xde50BA2dcCB02b08c713f441dD70D15Cb528fbd8","connext":"0xEC3A723DE47a644b901DC269829bf8718F175EBF","testToken":"0x3FFc03F05D1869f493c7dbf913E636C6280e0ff9"},"exproler":"https://goerli.etherscan.io/"},"kovan":{"name":"Kovan","chainId":42,"domainId":2221,"contracts":{"bridge":"0x4f9bB63763Cd696F0E66Ce4F75F262cfcdb644e5","connext":"0x3366A61A701FA84A86448225471Ec53c5c4ad49f","testToken":"0x3FFc03F05D1869f493c7dbf913E636C6280e0ff9"},"exproler":"https://kovan.etherscan.io/"}}
+{
+  "rinkeby": {
+    "name": "Rinkeby",
+    "chainId": 4,
+    "domainId": 1111,
+    "contracts": {
+      "connext": "0x2307Ed9f152FA9b3DcDfe2385d279D8C2A9DF2b0",
+      "testToken": "0x3FFc03F05D1869f493c7dbf913E636C6280e0ff9",
+      "bridge": "0xD87A5815E8E46eFA71B160c18502EDBAa056b5b0"
+    },
+    "exproler": "https://rinkeby.etherscan.io/"
+  },
+  "goerli": {
+    "name": "Goerli",
+    "chainId": 5,
+    "domainId": 3331,
+    "contracts": {
+      "bridge": "0xde50BA2dcCB02b08c713f441dD70D15Cb528fbd8",
+      "connext": "0xEC3A723DE47a644b901DC269829bf8718F175EBF",
+      "testToken": "0x3FFc03F05D1869f493c7dbf913E636C6280e0ff9"
+    },
+    "exproler": "https://goerli.etherscan.io/"
+  },
+  "kovan": {
+    "name": "Kovan",
+    "chainId": 42,
+    "domainId": 2221,
+    "contracts": {
+      "bridge": "0x4f9bB63763Cd696F0E66Ce4F75F262cfcdb644e5",
+      "connext": "0x3366A61A701FA84A86448225471Ec53c5c4ad49f",
+      "testToken": "0x3FFc03F05D1869f493c7dbf913E636C6280e0ff9"
+    },
+    "exproler": "https://kovan.etherscan.io/"
+  }
+}
