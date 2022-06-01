@@ -1,16 +1,19 @@
-import React from "react";
-import { Box, Flex, Text, Button, IconButton, useColorMode } from "@chakra-ui/react";
-import { useWeb3React } from "@web3-react/core";
-import { Web3Provider } from "@ethersproject/providers";
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
+import { Box, Button, Flex, IconButton, Text, useColorMode } from "@chakra-ui/react";
+import { Web3Provider } from "@ethersproject/providers";
+import { useWeb3React } from "@web3-react/core";
+import React from "react";
 
-import { injected } from "../lib/web3/injected";
+import { injected } from "../lib/web3";
 
 export const Header: React.FC = () => {
   const { activate, account, deactivate } = useWeb3React<Web3Provider>();
-
   const connect = async () => {
     activate(injected);
+  };
+
+  const docs = () => {
+    window.open("https://docs.nfthashi.com/");
   };
 
   const { colorMode, toggleColorMode } = useColorMode();
@@ -19,27 +22,27 @@ export const Header: React.FC = () => {
     <Box>
       <Flex minH={"64px"} alignItems={"center"} justifyContent={"space-between"} p={{ base: 8 }}>
         <Text fontSize={"lg"} fontWeight={"bold"}>
-          NFT Hashi
+          NFTHashi
         </Text>
-        <Flex gap={"16px"}>
+        <Flex gap={"2"}>
           {!account ? (
-            <Button onClick={connect} fontSize={"sm"} rounded="2xl">
+            <Button onClick={connect} fontSize={"xs"} rounded={"2xl"}>
               Connect Wallet
             </Button>
           ) : (
             <>
-              <Button disabled fontSize={"sm"} maxWidth="40" rounded="2xl">
-                <Text noOfLines={1}>{account} ...</Text>
-              </Button>
-              <Button fontSize={"xs"} colorScheme="yellow" onClick={deactivate} rounded="2xl">
-                Disconnect
+              <Button fontSize={"xs"} maxWidth={"32"} rounded={"2xl"} onClick={deactivate}>
+                <Text noOfLines={1}>{account}</Text>
               </Button>
             </>
           )}
+          <Button rounded="2xl" fontSize={"xs"} onClick={docs}>
+            Doc
+          </Button>
           <IconButton
-            rounded="2xl"
-            aria-label="DarkMode Switch"
-            icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />} //自分の好みでSunアイコンはreact-iconsを使用しています
+            rounded={"2xl"}
+            aria-label={"dark mode switch"}
+            icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
             onClick={toggleColorMode}
           />
         </Flex>
