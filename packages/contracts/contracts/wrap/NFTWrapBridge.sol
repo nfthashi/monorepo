@@ -49,7 +49,7 @@ contract NFTWrapBridge is ERC165, INFTWrapBridge, NFTBridge {
       birthChainNFTContractAddress = _contracts[processingNFTContractAddress];
       birthChainDomain = _domains[processingNFTContractAddress];
       destinationDomain = birthChainDomain;
-      WrappedNFT(birthChainNFTContractAddress).burn(tokenId);
+      WrappedNFT(processingNFTContractAddress).burn(tokenId);
     } else {
       birthChainNFTContractAddress = processingNFTContractAddress;
       birthChainDomain = getSelfDomain();
