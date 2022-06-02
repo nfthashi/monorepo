@@ -82,7 +82,7 @@ export const Faucet: React.FC = () => {
       </Box>
       <Text fontSize={"sm"} mt="4">
         For testing wrap pattern, please get some testnet NFTs from{" "}
-        <Link href="https://faucet.paradigm.xyz/" isExternal>
+        <Link href="https://faucet.paradigm.xyz/" isExternal _focus={{ boxShadow: "none" }}>
           https://faucet.paradigm.xyz/
         </Link>
       </Text>
