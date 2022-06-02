@@ -16,7 +16,7 @@ task("native-deploy", "deploy native xNFTs contract")
       endTokenId,
       "TEST",
       "TEST",
-      "http:localhost:3000/"
+      "https://raw.githubusercontent.com/nfthashi/monorepo/main/packages/web/public/assets/metadata/metadata.json"
     );
     await NativeNFT.deployed();
     console.log("Deployed to: ", NativeNFT.address);
