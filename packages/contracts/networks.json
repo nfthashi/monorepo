@@ -6,6 +6,7 @@
     "contracts": {
       "connext": "0x2307Ed9f152FA9b3DcDfe2385d279D8C2A9DF2b0",
       "testToken": "0x3FFc03F05D1869f493c7dbf913E636C6280e0ff9",
+      "faucet": "0xbe01D3dD0610cA5Cae05FE0DbeFeC30685242F50",
       "bridge": "0x4653B63b35F34dF8f692Fe16ef160907269f1971"
     },
     "exproler": "https://rinkeby.etherscan.io/"
@@ -17,6 +18,7 @@
     "contracts": {
       "bridge": "0x788Fc1c502dED52FF8Cc7b2c9D54d4175E84A6d9",
       "connext": "0xEC3A723DE47a644b901DC269829bf8718F175EBF",
+      "faucet": "0x4a44b451d9239e60E5A3df7214b2c467b7148902",
       "testToken": "0x3FFc03F05D1869f493c7dbf913E636C6280e0ff9"
     },
     "exproler": "https://goerli.etherscan.io/"
@@ -28,6 +30,7 @@
     "contracts": {
       "bridge": "0x63CCADBd2beEDd58232E72265dCfa2834Ce65c63",
       "connext": "0x3366A61A701FA84A86448225471Ec53c5c4ad49f",
+      "faucet": "0xA53CD588263389922C5f3d2229ff5e47Aa3b3922",
       "testToken": "0x3FFc03F05D1869f493c7dbf913E636C6280e0ff9"
     },
     "exproler": "https://kovan.etherscan.io/"
