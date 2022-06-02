@@ -21,7 +21,9 @@ const IndexPage: NextPage = () => {
           <Bridge />
         </Box>
       </Flex>
-          <Link textAlign={"center"} href="./faucet">If you do not have NFTs, mint at the faucet!</Link>
+      <Link textAlign={"center"} href="./faucet" _focus={{ boxShadow: "none" }}>
+        If you do not have NFTs, mint at the faucet!
+      </Link>
     </Layout>
   );
 };

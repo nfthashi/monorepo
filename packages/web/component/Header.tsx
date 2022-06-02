@@ -1,5 +1,5 @@
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
-import { Box, Button, Flex, IconButton, Text, useColorMode } from "@chakra-ui/react";
+import { Box, Button, Flex, IconButton, Link, Text, useColorMode } from "@chakra-ui/react";
 import { Web3Provider } from "@ethersproject/providers";
 import { useWeb3React } from "@web3-react/core";
 import React from "react";
@@ -21,9 +21,9 @@ export const Header: React.FC = () => {
   return (
     <Box>
       <Flex minH={"64px"} alignItems={"center"} justifyContent={"space-between"} p={{ base: 8 }}>
-        <Text fontSize={"lg"} fontWeight={"bold"}>
+        <Link fontSize={"lg"} fontWeight={"bold"} href="/" _focus={{ boxShadow: "none" }}>
           NFTHashi
-        </Text>
+        </Link>
         <Flex gap={"2"}>
           {!account ? (
             <Button onClick={connect} fontSize={"xs"} rounded={"2xl"}>
