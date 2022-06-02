@@ -1,4 +1,4 @@
-import { Box, Flex, useColorModeValue } from "@chakra-ui/react";
+import { Box, Flex, Link, useColorModeValue } from "@chakra-ui/react";
 import type { NextPage } from "next";
 
 import { Bridge } from "../component/Bridge";
@@ -21,6 +21,7 @@ const IndexPage: NextPage = () => {
           <Bridge />
         </Box>
       </Flex>
+          <Link textAlign={"center"} href="./faucet">If you do not have NFTs, mint at the faucet!</Link>
     </Layout>
   );
 };
