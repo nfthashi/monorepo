@@ -177,7 +177,7 @@ export const Landing: React.FC = () => {
               mx="auto"
               objectFit={"fill"}
             >
-              <Image my="auto" src={chain.image} alt={chain.link}></Image>
+              <Image my="auto" src={chain.image} alt={chain.image}></Image>
             </Box>
           );
         })}
