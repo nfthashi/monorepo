@@ -20,27 +20,32 @@ import { MdCheckCircle } from "react-icons/md";
 
 export const Landing: React.FC = () => {
   const supportedChains = [
-    { image: "assets/connext__Logo.png", link: "" },
-    { image: "assets/connext__Logo.png", link: "" },
-    { image: "assets/connext__Logo.png", link: "" },
-    { image: "assets/connext__Logo.png", link: "" },
+    { image: "assets/chains/ethereum.svg" },
+    { image: "assets/chains/polygon.svg" },
+    { image: "assets/chains/optimism.svg" },
+    { image: "assets/chains/arbitrum.svg" },
   ];
   const communities = [
-    { icon: FaDiscord, link: "" },
-    { icon: FaTwitter, link: "" },
+    { icon: FaDiscord, link: "https://discord.com/channels/454734546869551114/982204460266823682" },
+    { icon: FaTwitter, link: "https://twitter.com/nfthashi" },
   ];
 
   return (
     <Box textAlign={"center"} mb="8">
-      <Heading fontSize={{ base: "3xl", md: "7xl" }} textColor={"teal.200"} my="4">
+      <Heading fontSize={{ base: "3xl", md: "7xl" }} textColor={useColorModeValue("teal.400", "teal.200")} my="4">
         NFTHashi
       </Heading>
       <Text fontWeight={"semibold"} fontSize="lg">
-        Trust minimized cross-chain NFT Bridge
+        <chakra.span color={useColorModeValue("pink.500", "pink.300")} fontWeight={"extrabold"}>
+          Trust minimized
+        </chakra.span>{" "}
+        cross-chain NFT Bridge
       </Text>
-      <Button mt="4" w="full" size="lg" colorScheme={"teal"} rounded="2xl">
-        Develop with NFTHashi <ArrowForwardIcon />
-      </Button>
+      <Link href="https://docs.nfthashi.com/operation-guide/how-to-use-sdk">
+        <Button mt="4" w="full" size="lg" colorScheme={"teal"} rounded="2xl">
+          Develop with NFTHashi <ArrowForwardIcon />
+        </Button>
+      </Link>
       <Box
         bgColor={"gray.900"}
         my="8"
@@ -130,11 +135,13 @@ export const Landing: React.FC = () => {
       </Box>
       <Text fontWeight={"semibold"} my="8">
         Easily create native xchain NFTs or upgrade your existing ones so they seamlessly move across any chain. Very
-        Simple to implement, trust minimized, and many usecases.Supported by Connext technology.
+        Simple to implement, trust minimized, and many usecases. Secured by Connext technology.
       </Text>
-      <Button mt="2" w="full" size="lg" rounded="2xl">
-        Develop with NFTHashi <ArrowForwardIcon />
-      </Button>
+      <Link href="https://docs.nfthashi.com/operation-guide/how-to-use-sdk">
+        <Button mt="2" w="full" size="lg" rounded="2xl">
+          Develop with NFTHashi <ArrowForwardIcon />
+        </Button>
+      </Link>
       <Link href="/bridge">
         <Button mt="2" w="full" size="lg" colorScheme={"teal"} rounded="2xl">
           Try Demo Bridge
@@ -154,19 +161,21 @@ export const Landing: React.FC = () => {
       <Heading mt="12" mb="4">
         Supported Chains
       </Heading>
-      <SimpleGrid columns={3} spacing="4">
+      <SimpleGrid columns={{ base: 2, md: 3 }} spacing="4" mx="auto">
         {supportedChains.map((chain, i) => {
           return (
             <Box
               padding="2"
               rounded="2xl"
               // eslint-disable-next-line react-hooks/rules-of-hooks
-              bgColor={useColorModeValue("gray.200", "gray.700")}
+              bgColor={useColorModeValue("gray.200", "gray.200")}
               w="40"
               h="24"
               display={"flex"}
               justifyContent="center"
               key={i}
+              mx="auto"
+              objectFit={"fill"}
             >
               <Image my="auto" src={chain.image} alt={chain.link}></Image>
             </Box>
