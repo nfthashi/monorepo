@@ -31,7 +31,7 @@ export const Landing: React.FC = () => {
   ];
 
   return (
-    <Box textAlign={"center"} mb="8">
+    <Box textAlign={"center"} mb="8" mx="4">
       <Heading fontSize={{ base: "3xl", md: "7xl" }} textColor={useColorModeValue("teal.400", "teal.200")} my="4">
         NFTHashi
       </Heading>
@@ -41,17 +41,23 @@ export const Landing: React.FC = () => {
         </chakra.span>{" "}
         cross-chain NFT Bridge
       </Text>
-      <Link href="https://docs.nfthashi.com/operation-guide/how-to-use-sdk">
-        <Button mt="4" w="full" size="lg" colorScheme={"teal"} rounded="2xl">
-          Develop with NFTHashi <ArrowForwardIcon />
+      <Link href="/bridge">
+        <Button mt="4" w={{ base: "xs", md: "full" }} size="lg" colorScheme={"teal"} rounded="2xl">
+          Try Demo Bridge
+          <ArrowForwardIcon />
         </Button>
       </Link>
+      <Text fontWeight={"semibold"} my="8" mx="2">
+        Easily create native xchain NFTs or upgrade your existing ones so they seamlessly move across any chain. Very
+        Simple to implement, trust minimized, and many usecases. Secured by Connext technology.
+      </Text>
       <Box
         bgColor={"gray.900"}
         my="8"
         rounded="lg"
         textAlign={"left"}
         p="4"
+        mx="2"
         fontSize={"xs"}
         textColor="white"
         overflowY={"scroll"}
@@ -133,21 +139,13 @@ export const Landing: React.FC = () => {
         <Text ml="8">{"}"}</Text>
         <Text>{"}"}</Text>
       </Box>
-      <Text fontWeight={"semibold"} my="8">
-        Easily create native xchain NFTs or upgrade your existing ones so they seamlessly move across any chain. Very
-        Simple to implement, trust minimized, and many usecases. Secured by Connext technology.
-      </Text>
+
       <Link href="https://docs.nfthashi.com/operation-guide/how-to-use-sdk">
-        <Button mt="2" w="full" size="lg" rounded="2xl">
+        <Button mt="2" w={{ base: "xs", md: "full" }} size="lg" rounded="2xl">
           Develop with NFTHashi <ArrowForwardIcon />
         </Button>
       </Link>
-      <Link href="/bridge">
-        <Button mt="2" w="full" size="lg" colorScheme={"teal"} rounded="2xl">
-          Try Demo Bridge
-          <ArrowForwardIcon />
-        </Button>
-      </Link>
+
       <Heading mt="12" mb="2">
         Secured By
       </Heading>
@@ -169,7 +167,7 @@ export const Landing: React.FC = () => {
               rounded="2xl"
               // eslint-disable-next-line react-hooks/rules-of-hooks
               bgColor={useColorModeValue("gray.200", "gray.200")}
-              w="40"
+              w="48"
               h="24"
               display={"flex"}
               justifyContent="center"
@@ -185,7 +183,7 @@ export const Landing: React.FC = () => {
       <Heading mt="12" mb="4">
         Use cases
       </Heading>
-      <List spacing={3} textAlign="left">
+      <List spacing={3} textAlign="left" mx="2">
         <ListItem>
           <ListIcon as={MdCheckCircle} color="green.500" />
           Bring a Punk xchain and fractionalize it
@@ -205,20 +203,21 @@ export const Landing: React.FC = () => {
       <SimpleGrid columns={2} spacing="1" w={"sm"} mx="auto">
         {communities.map((community, i) => {
           return (
-            <Box
-              padding="2"
-              // eslint-disable-next-line react-hooks/rules-of-hooks
-              bgColor={useColorModeValue("gray.200", "gray.700")}
-              w="40"
-              h="24"
-              rounded="2xl"
-              display={"flex"}
-              justifyContent="center"
-              key={i}
-              mx="auto"
-            >
-              <Icon as={community.icon} w={8} h={8} my="auto" />
-            </Box>
+            <Link key={i} href={community.link} isExternal>
+              <Box
+                padding="2"
+                // eslint-disable-next-line react-hooks/rules-of-hooks
+                bgColor={useColorModeValue("gray.200", "gray.700")}
+                w="40"
+                h="24"
+                rounded="2xl"
+                display={"flex"}
+                justifyContent="center"
+                mx="auto"
+              >
+                <Icon as={community.icon} w={8} h={8} my="auto" />
+              </Box>
+            </Link>
           );
         })}
       </SimpleGrid>
