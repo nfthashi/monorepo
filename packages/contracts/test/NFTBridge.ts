@@ -5,7 +5,8 @@ import { ADDRESS_1 } from "../lib/constant";
 
 describe("NFTBridge", function () {
   let mockExecuter: any;
-  let other: any;
+  let signer: any;
+  let malicious: any;
   let XNFTBridge: any;
   let NFTBridge: any;
   let MockConnextHandler: any;
@@ -18,7 +19,7 @@ describe("NFTBridge", function () {
   const ERC_721_interface_ID = 0x80ac58cd;
 
   beforeEach(async function () {
-    [other] = await ethers.getSigners();
+    [signer, malicious] = await ethers.getSigners();
     MockConnextHandler = await ethers.getContractFactory("MockConnextHandler");
     mockConnextHandler = await MockConnextHandler.deploy();
     const MockExecuter = await ethers.getContractFactory("MockExecuter");
@@ -39,7 +40,7 @@ describe("NFTBridge", function () {
   it("setBridgeContract", async function () {
     await NFTBridge.setBridgeContract(opponentDomain, opponentContract);
     expect(await NFTBridge.getBridgeContract(opponentDomain)).to.equal(opponentContract);
-    await expect(NFTBridge.connect(other).setBridgeContract(opponentDomain, opponentContract)).to.revertedWith(
+    await expect(NFTBridge.connect(malicious).setBridgeContract(opponentDomain, opponentContract)).to.revertedWith(
       "Ownable: caller is not the owner"
     );
   });
