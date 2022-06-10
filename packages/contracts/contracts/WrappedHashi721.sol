@@ -7,19 +7,19 @@ import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721URIStorageUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol";
 
-import "../interface/IWappedNFT.sol";
+import "./interfaces/IWrappedHashi721.sol";
 
-contract WrappedNFT is
+contract WrappedHashi721 is
   Initializable,
   ERC165Upgradeable,
   OwnableUpgradeable,
   ERC721Upgradeable,
   ERC721URIStorageUpgradeable,
-  IWappedNFT
+  IWrappedHashi721
 {
-  function initialize(string memory name, string memory symbol) public initializer {
+  function initialize() public initializer {
     __Ownable_init_unchained();
-    __ERC721_init_unchained(name, symbol);
+    __ERC721_init_unchained("WrappedHashi721", "WHASHI721");
   }
 
   function mint(
@@ -28,7 +28,9 @@ contract WrappedNFT is
     string memory _tokenURI
   ) public onlyOwner {
     _mint(to, tokenId);
-    _setTokenURI(tokenId, _tokenURI);
+    if (bytes(_tokenURI).length > 0) {
+      _setTokenURI(tokenId, _tokenURI);
+    }
   }
 
   function burn(uint256 tokenId) public onlyOwner {
@@ -49,7 +51,7 @@ contract WrappedNFT is
     return super.tokenURI(tokenId);
   }
 
-  function isNFTHashiWrappedNFT() public pure returns (bool) {
+  function isWrappedHashi721() public pure returns (bool) {
     return true;
   }
 
@@ -60,6 +62,6 @@ contract WrappedNFT is
     override(IERC165, ERC165Upgradeable, ERC721Upgradeable)
     returns (bool)
   {
-    return interfaceId == type(IWappedNFT).interfaceId || super.supportsInterface(interfaceId);
+    return interfaceId == type(IWrappedHashi721).interfaceId || super.supportsInterface(interfaceId);
   }
 }

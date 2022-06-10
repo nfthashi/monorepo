@@ -8,15 +8,12 @@ import "@connext/nxtp-contracts/contracts/libraries/LibConnextStorage.sol";
 import "@connext/nxtp-contracts/contracts/interfaces/IExecutor.sol";
 import "@connext/nxtp-contracts/contracts/interfaces/IConnextHandler.sol";
 
-import "../interface/INFTBridge.sol";
-
-contract NFTBridge is Ownable, ERC165, INFTBridge {
+contract HashiConnextAdapter is Ownable, ERC165 {
   mapping(uint32 => address) private _bridgeContracts;
 
   address private immutable _connext;
   address private immutable _executor;
   address private immutable _transactingAssetId;
-
   uint32 private immutable _selfDomain;
 
   modifier onlyExecutor() {
@@ -71,10 +68,6 @@ contract NFTBridge is Ownable, ERC165, INFTBridge {
     return _bridgeContracts[domain];
   }
 
-  function getSelfDomain() public view returns (uint32) {
-    return _selfDomain;
-  }
-
   function getConnext() public view returns (address) {
     return _connext;
   }
@@ -83,11 +76,7 @@ contract NFTBridge is Ownable, ERC165, INFTBridge {
     return _executor;
   }
 
-  function isNFTHashiBridge() public pure returns (bool) {
-    return true;
-  }
-
-  function supportsInterface(bytes4 interfaceId) public view virtual override(ERC165, IERC165) returns (bool) {
-    return interfaceId == type(INFTBridge).interfaceId || super.supportsInterface(interfaceId);
+  function getSelfDomain() public view returns (uint32) {
+    return _selfDomain;
   }
 }

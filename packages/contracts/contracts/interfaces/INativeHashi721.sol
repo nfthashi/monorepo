@@ -2,9 +2,8 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
-import "./INFTBridge.sol";
 
-interface INFTNativeBridge is IERC165, INFTBridge {
+interface INativeHashi721 is IERC165 {
   function xSend(
     address from,
     address to,
@@ -14,5 +13,5 @@ interface INFTNativeBridge is IERC165, INFTBridge {
 
   function xReceive(address to, uint256 tokenId) external;
 
-  function isNFTHashiNativeBridge() external view returns (bool);
+  function isNativeHashi721() external view returns (bool);
 }

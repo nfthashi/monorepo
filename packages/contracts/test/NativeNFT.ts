@@ -1,10 +1,10 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
 
-import { ADDRESS_1,NULL_ADDRESS } from "../lib/constant";
+import { ADDRESS_1, NULL_ADDRESS } from "../lib/constant";
 
-describe("NativeNFT", function () {
-  let NativeNFT: any;
+describe("NativeHashi721", function () {
+  let NativeHashi721: any;
   let mockExecuter: any;
   let signer: any;
 
@@ -26,8 +26,8 @@ describe("NativeNFT", function () {
     const MockExecuter = await ethers.getContractFactory("MockExecuter");
     mockExecuter = await MockExecuter.deploy();
     await mockConnextHandler.setExecuter(mockExecuter.address);
-    const XNativeNFT = await ethers.getContractFactory("NativeNFT");
-    NativeNFT = await XNativeNFT.deploy(
+    const XNativeHashi721 = await ethers.getContractFactory("NativeHashi721");
+    NativeHashi721 = await XNativeHashi721.deploy(
       selfDomain,
       mockConnextHandler.address,
       dummyTransactingAssetId,
@@ -37,14 +37,14 @@ describe("NativeNFT", function () {
       symbol,
       baseTokenURL
     );
-    await NativeNFT.setBridgeContract(opponentDomain, opponentContract);
-    await NativeNFT.mint(signer.address);
+    await NativeHashi721.setBridgeContract(opponentDomain, opponentContract);
+    await NativeHashi721.mint(signer.address);
   });
 
   it("xSend", async function () {
     const tokenId = startTokenId;
-    await expect(NativeNFT.xSend(signer.address, ADDRESS_1, tokenId, opponentDomain))
-      .to.emit(NativeNFT, "Transfer")
+    await expect(NativeHashi721.xSend(signer.address, ADDRESS_1, tokenId, opponentDomain))
+      .to.emit(NativeHashi721, "Transfer")
       .withArgs(signer.address, NULL_ADDRESS, tokenId);
   });
 
@@ -52,8 +52,8 @@ describe("NativeNFT", function () {
     const tokenId = endTokenId + 1;
     await mockExecuter.setOriginSender(opponentContract);
     await mockExecuter.setOrigin(opponentDomain);
-    const data = NativeNFT.interface.encodeFunctionData("xReceive", [signer.address, tokenId]);
-    await mockExecuter.execute(NativeNFT.address, data);
-    expect(await NativeNFT.ownerOf(tokenId)).to.equal(signer.address);
+    const data = NativeHashi721.interface.encodeFunctionData("xReceive", [signer.address, tokenId]);
+    await mockExecuter.execute(NativeHashi721.address, data);
+    expect(await NativeHashi721.ownerOf(tokenId)).to.equal(signer.address);
   });
 });

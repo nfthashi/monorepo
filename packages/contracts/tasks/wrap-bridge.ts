@@ -11,8 +11,8 @@ task("wrap-bridge", "bridge native xNFTs")
     async ({ sourceContractAddress, originalNftContractAddress, from, to, tokenId, destinationDomain }, { ethers }) => {
       const [signer] = await ethers.getSigners();
 
-      const NFTWrapBridge = await ethers.getContractFactory("NFTWrapBridge");
-      const nftWrapBridge = await NFTWrapBridge.attach(sourceContractAddress);
+      const Hashi721Bridge = await ethers.getContractFactory("Hashi721Bridge");
+      const nftWrapBridge = await Hashi721Bridge.attach(sourceContractAddress);
 
       const ERC721 = await ethers.getContractFactory("ERC721");
       const erc721 = await ERC721.attach(originalNftContractAddress);
@@ -21,9 +21,17 @@ task("wrap-bridge", "bridge native xNFTs")
       if (!isApprovedForAll) {
         await erc721.setApprovalForAll(sourceContractAddress, true);
       }
-      const { hash } = await nftWrapBridge.xSend(originalNftContractAddress, from, to, tokenId, destinationDomain, {
-        gasLimit: 1000000,
-      });
+      const { hash } = await nftWrapBridge.xSend(
+        originalNftContractAddress,
+        from,
+        to,
+        tokenId,
+        destinationDomain,
+        true,
+        {
+          gasLimit: 1000000,
+        }
+      );
       console.log("Bridged at:", hash);
     }
   );

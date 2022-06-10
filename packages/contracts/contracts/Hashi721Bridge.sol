@@ -6,12 +6,11 @@ import "@openzeppelin/contracts/interfaces/IERC721Metadata.sol";
 import "@openzeppelin/contracts/proxy/Clones.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
-import "../interface/INFTWrapBridge.sol";
 
-import "../core/NFTBridge.sol";
-import "./WrappedNFT.sol";
+import "./HashiConnextAdapter.sol";
+import "./interfaces/IWrappedHashi721.sol";
 
-contract NFTWrapBridge is ERC165, INFTWrapBridge, NFTBridge {
+contract Hashi721Bridge is ERC165, HashiConnextAdapter {
   mapping(address => address) private _contracts;
   mapping(address => uint32) private _domains;
 
@@ -22,7 +21,7 @@ contract NFTWrapBridge is ERC165, INFTWrapBridge, NFTBridge {
     address connext,
     address dummyTransactingAssetId,
     address nftImplementation
-  ) NFTBridge(selfDomain, connext, dummyTransactingAssetId) {
+  ) HashiConnextAdapter(selfDomain, connext, dummyTransactingAssetId) {
     _nftImplementation = nftImplementation;
   }
 
@@ -31,29 +30,35 @@ contract NFTWrapBridge is ERC165, INFTWrapBridge, NFTBridge {
     address from,
     address to,
     uint256 tokenId,
-    uint32 sendToDomain
+    uint32 sendToDomain,
+    bool isTokenURIIncluded
   ) public {
+    require(
+      IERC165(processingNFTContractAddress).supportsInterface(type(IERC721).interfaceId),
+      "Hashi721Bridge: invalid nft"
+    );
     require(
       IERC721(processingNFTContractAddress).ownerOf(tokenId) == _msgSender() ||
         IERC721(processingNFTContractAddress).getApproved(tokenId) == _msgSender() ||
         IERC721(processingNFTContractAddress).isApprovedForAll(from, _msgSender()),
-      "NativeNFT: invalid sender"
+      "Hashi721Bridge: invalid sender"
     );
-    require(IERC721(processingNFTContractAddress).ownerOf(tokenId) == from, "NativeNFT: invalid from");
+    require(IERC721(processingNFTContractAddress).ownerOf(tokenId) == from, "Hashi721Bridge: invalid from");
 
     address birthChainNFTContractAddress;
     uint32 birthChainDomain;
     uint32 destinationDomain;
 
-    string memory name = IERC721Metadata(processingNFTContractAddress).name();
-    string memory symbol = IERC721Metadata(processingNFTContractAddress).symbol();
-    string memory tokenURI = IERC721Metadata(processingNFTContractAddress).tokenURI(tokenId);
+    string memory tokenURI;
+    if (isTokenURIIncluded) {
+      tokenURI = IERC721Metadata(processingNFTContractAddress).tokenURI(tokenId);
+    }
 
     if (_contracts[processingNFTContractAddress] != address(0x0) && _domains[processingNFTContractAddress] != 0) {
       birthChainNFTContractAddress = _contracts[processingNFTContractAddress];
       birthChainDomain = _domains[processingNFTContractAddress];
       destinationDomain = birthChainDomain;
-      WrappedNFT(processingNFTContractAddress).burn(tokenId);
+      IWrappedHashi721(processingNFTContractAddress).burn(tokenId);
     } else {
       birthChainNFTContractAddress = processingNFTContractAddress;
       birthChainDomain = getSelfDomain();
@@ -67,8 +72,6 @@ contract NFTWrapBridge is ERC165, INFTWrapBridge, NFTBridge {
       to,
       tokenId,
       birthChainDomain,
-      name,
-      symbol,
       tokenURI
     );
     _xcall(destinationDomain, callData);
@@ -79,8 +82,6 @@ contract NFTWrapBridge is ERC165, INFTWrapBridge, NFTBridge {
     address to,
     uint256 tokenId,
     uint32 birthChainDomain,
-    string memory name,
-    string memory symbol,
     string memory tokenURI
   ) public onlyExecutor {
     uint32 selfDomain = getSelfDomain();
@@ -97,23 +98,13 @@ contract NFTWrapBridge is ERC165, INFTWrapBridge, NFTBridge {
         Clones.cloneDeterministic(_nftImplementation, salt);
         _contracts[processingNFTContractAddress] = birthChainNFTContractAddress;
         _domains[processingNFTContractAddress] = birthChainDomain;
-        IWappedNFT(processingNFTContractAddress).initialize(name, symbol);
+        IWrappedHashi721(processingNFTContractAddress).initialize();
       }
-      WrappedNFT(processingNFTContractAddress).mint(to, tokenId, tokenURI);
+      IWrappedHashi721(processingNFTContractAddress).mint(to, tokenId, tokenURI);
     }
   }
 
   function isNFTHashiWrapBridge() public pure returns (bool) {
     return true;
-  }
-
-  function supportsInterface(bytes4 interfaceId)
-    public
-    view
-    virtual
-    override(NFTBridge, ERC165, IERC165)
-    returns (bool)
-  {
-    return interfaceId == type(INFTWrapBridge).interfaceId || super.supportsInterface(interfaceId);
   }
 }

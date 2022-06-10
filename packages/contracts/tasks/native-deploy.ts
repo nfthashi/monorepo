@@ -7,8 +7,8 @@ task("native-deploy", "deploy native xNFTs contract")
   .addParam("startTokenId", "start token id")
   .addParam("endTokenId", "end token id")
   .setAction(async ({ selfDomain, connext, dummyTransactingAssetId, startTokenId, endTokenId }, { ethers }) => {
-    const XNativeNFT = await ethers.getContractFactory("NativeNFT");
-    const NativeNFT = await XNativeNFT.deploy(
+    const XNativeHashi721 = await ethers.getContractFactory("NativeHashi721");
+    const NativeHashi721 = await XNativeHashi721.deploy(
       selfDomain,
       connext,
       dummyTransactingAssetId,
@@ -18,6 +18,6 @@ task("native-deploy", "deploy native xNFTs contract")
       "TEST",
       "https://raw.githubusercontent.com/nfthashi/monorepo/main/packages/web/public/assets/metadata/metadata.json"
     );
-    await NativeNFT.deployed();
-    console.log("Deployed to: ", NativeNFT.address);
+    await NativeHashi721.deployed();
+    console.log("Deployed to: ", NativeHashi721.address);
   });

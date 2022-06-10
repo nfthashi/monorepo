@@ -4,7 +4,7 @@ import { useWeb3React } from "@web3-react/core";
 import { ethers } from "ethers";
 import React, { useState } from "react";
 
-import NativeNFT from "../../contracts/artifacts/contracts/native/exmaple/NativeNFT.sol/NativeNFT.json";
+import NativeHashi721 from "../../contracts/artifacts/contracts/examples/NativeHashi721Example.sol/NativeHashi721Example.json";
 import config from "../../contracts/networks.json";
 import { injected } from "../lib/web3";
 import { Chain } from "../types/chain";
@@ -37,7 +37,7 @@ export const Faucet: React.FC = () => {
     }
     console.log(chain);
     const faucetContract = config[chain].contracts.faucet;
-    const nftContract = new ethers.Contract(faucetContract, NativeNFT.abi, library.getSigner());
+    const nftContract = new ethers.Contract(faucetContract, NativeHashi721.abi, library.getSigner());
     const tx = await nftContract.mint(account);
     toast({
       title: `Approve Tx Hash: ${tx.hash}, please wait for confirmation`,

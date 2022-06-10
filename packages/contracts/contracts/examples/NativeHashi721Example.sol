@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.0;
 
-import "../NFTNativeBridge.sol";
+import "../NativeHashi721.sol";
 
-contract NativeNFT is NFTNativeBridge {
+contract NativeHashi721Example is NativeHashi721 {
   uint256 private immutable _startTokenId;
   uint256 private immutable _endTokenId;
   uint256 private _supplied;
@@ -19,7 +19,7 @@ contract NativeNFT is NFTNativeBridge {
     string memory name,
     string memory symbol,
     string memory baseTokenURI
-  ) NFTNativeBridge(selfDomain, connext, dummyTransactingAssetId) ERC721(name, symbol) {
+  ) NativeHashi721(selfDomain, connext, dummyTransactingAssetId) ERC721(name, symbol) {
     _startTokenId = startTokenId;
     _endTokenId = endTokenId;
     _baseTokenURI = baseTokenURI;
@@ -27,7 +27,7 @@ contract NativeNFT is NFTNativeBridge {
 
   function mint(address to) public {
     uint256 tokenId = _startTokenId + _supplied;
-    require(tokenId <= _endTokenId, "NativeNFT: mint already finished");
+    require(tokenId <= _endTokenId, "NativeHashi721: mint already finished");
     _mint(to, tokenId);
     _supplied++;
   }

@@ -1,6 +1,6 @@
 {
-  "name": "contracts",
-  "version": "0.2.0",
+  "name": "@nfthashi/contracts",
+  "version": "0.3.0",
   "license": "UNLICENSED",
   "scripts": {
     "test": "hardhat test",
