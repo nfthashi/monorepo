@@ -1,11 +1,11 @@
 import { Box, Flex, Link, useColorModeValue } from "@chakra-ui/react";
 import type { NextPage } from "next";
 
-import { Landing } from "../component/Landing";
+import { Bridge } from "../component/Bridge";
 import { Layout } from "../component/Layout";
 import { Seo } from "../component/Seo";
 
-const IndexPage: NextPage = () => {
+const BridgePage: NextPage = () => {
   return (
     <Layout>
       <Seo />
@@ -18,11 +18,14 @@ const IndexPage: NextPage = () => {
           rounded="2xl"
           shadow="xl"
         >
-          <Landing />
+          <Bridge />
         </Box>
       </Flex>
+      <Link textAlign={"center"} href="./faucet" _focus={{ boxShadow: "none" }}>
+        If you do not have NFTs, mint at the faucet!
+      </Link>
     </Layout>
   );
 };
 
-export default IndexPage;
+export default BridgePage;
