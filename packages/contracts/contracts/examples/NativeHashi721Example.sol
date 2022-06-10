@@ -35,8 +35,4 @@ contract NativeHashi721Example is NativeHashi721 {
   function _baseURI() internal view virtual override returns (string memory) {
     return _baseTokenURI;
   }
-
-  function tokenURI(uint256 tokenId) public view override returns (string memory) {
-    return _baseTokenURI;
-  }
 }

@@ -11,6 +11,7 @@ import "./tasks/wrap-bridge";
 import "./tasks/wrap-deploy-implementation";
 import "./tasks/wrap-deploy-mock-with-mint";
 import "./tasks/wrap-deploy";
+import "./tasks/test-deploy";
 
 import * as dotenv from "dotenv";
 import { HardhatUserConfig, task } from "hardhat/config";

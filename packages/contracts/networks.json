@@ -4,10 +4,10 @@
     "chainId": 4,
     "domainId": 1111,
     "contracts": {
+      "bridge": "0x5CD712E58645b8e4F0A688aD63DDB50e87841e87",
       "connext": "0x2307Ed9f152FA9b3DcDfe2385d279D8C2A9DF2b0",
-      "testToken": "0x3FFc03F05D1869f493c7dbf913E636C6280e0ff9",
-      "faucet": "0x751b32E1c05860A26e204005A4Ad22cc3f3185A5",
-      "bridge": "0x4653B63b35F34dF8f692Fe16ef160907269f1971"
+      "faucet": "0x5B26da852945f37638Ff987c060022e8159a57c5",
+      "testToken": "0x3FFc03F05D1869f493c7dbf913E636C6280e0ff9"
     },
     "exproler": "https://rinkeby.etherscan.io/"
   },
@@ -16,9 +16,9 @@
     "chainId": 5,
     "domainId": 3331,
     "contracts": {
-      "bridge": "0x788Fc1c502dED52FF8Cc7b2c9D54d4175E84A6d9",
+      "bridge": "0x86CB60B53f47654D93Ef6f30f7D37Ebc0b3bf2Cc",
       "connext": "0xEC3A723DE47a644b901DC269829bf8718F175EBF",
-      "faucet": "0x5C76cf5aAe24e6d9403788f654c60d06b569aA33",
+      "faucet": "0x35de708c2355B5f02c2F5bFB800E22d4Bb40233A",
       "testToken": "0x3FFc03F05D1869f493c7dbf913E636C6280e0ff9"
     },
     "exproler": "https://goerli.etherscan.io/"
@@ -28,9 +28,9 @@
     "chainId": 42,
     "domainId": 2221,
     "contracts": {
-      "bridge": "0x63CCADBd2beEDd58232E72265dCfa2834Ce65c63",
+      "bridge": "0x735ab7D921C6f19546DE21997251370AC54Ff935",
       "connext": "0x3366A61A701FA84A86448225471Ec53c5c4ad49f",
-      "faucet": "0x1e2fEBaE36Ef46d69342522258974145A2C73dA5",
+      "faucet": "0x85e8f052c39fdf47940Aa5f87346a39d34028D98",
       "testToken": "0x3FFc03F05D1869f493c7dbf913E636C6280e0ff9"
     },
     "exproler": "https://kovan.etherscan.io/"

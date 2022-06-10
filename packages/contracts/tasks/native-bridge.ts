@@ -7,8 +7,8 @@ task("native-bridge", "bridge native xNFTs")
   .addParam("tokenId", "token id")
   .addParam("destinationDomain", "destination domain")
   .setAction(async ({ sourceContractAddress, from, to, tokenId, destinationDomain }, { ethers }) => {
-    const XNativeHashi721 = await ethers.getContractFactory("NativeHashi721");
-    const NativeHashi721 = await XNativeHashi721.attach(sourceContractAddress);
-    const { hash } = await NativeHashi721.xSend(from, to, tokenId, destinationDomain, { gasLimit: 1000000 });
+    const XNativeHashi721Example = await ethers.getContractFactory("NativeHashi721Example");
+    const NativeHashi721Example = await XNativeHashi721Example.attach(sourceContractAddress);
+    const { hash } = await NativeHashi721Example.xSend(from, to, tokenId, destinationDomain, { gasLimit: 1000000 });
     console.log("Bridged at:", hash);
   });
