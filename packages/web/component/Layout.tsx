@@ -13,7 +13,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
     <Flex minHeight={"100vh"} direction={"column"}>
       <Header />
       <Box flex={1}>
-        <Container>
+        <Container maxW={"7xl"}>
           <Stack>{children}</Stack>
         </Container>
       </Box>

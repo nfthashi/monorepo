@@ -24,7 +24,7 @@ export const Header: React.FC = () => {
         <Link fontSize={"lg"} fontWeight={"bold"} href="/" _focus={{ boxShadow: "none" }}>
           NFTHashi
         </Link>
-        <Flex gap={"2"}>
+        <Flex gap={"1"}>
           {!account ? (
             <Button onClick={connect} fontSize={"xs"} rounded={"2xl"}>
               Connect Wallet
