@@ -4,7 +4,7 @@ import { useWeb3React } from "@web3-react/core";
 import { ethers } from "ethers";
 import React, { useState } from "react";
 
-import NativeHashi721 from "../../contracts/artifacts/contracts/examples/NativeHashi721Example.sol/NativeHashi721Example.json";
+import TestERC721 from "../../contracts/artifacts/contracts/examples/TestERC721.sol/TestERC721.json";
 import config from "../../contracts/networks.json";
 import { Chain, isChain } from "../../contracts/types/chain";
 import { injected } from "../lib/web3";
@@ -40,10 +40,10 @@ export const Faucet: React.FC = () => {
     }
     console.log(chain);
     const faucetContract = config[chain].contracts.faucet;
-    const nftContract = new ethers.Contract(faucetContract, NativeHashi721.abi, library.getSigner());
-    const tx = await nftContract.mint(account);
+    const nftContract = new ethers.Contract(faucetContract, TestERC721.abi, library.getSigner());
+    const tx = await nftContract.mint();
     toast({
-      title: `Approve Tx Hash: ${tx.hash}, please wait for confirmation`,
+      title: `Minted Tx Hash: ${tx.hash}`,
       status: "success",
       isClosable: true,
     });
@@ -67,7 +67,7 @@ export const Faucet: React.FC = () => {
   return (
     <Box textAlign={"center"}>
       <Heading fontSize={"xl"} my="4">
-        NativeBridge NFT Faucet
+        NFTHashi NFT Faucet
       </Heading>
       <Select variant={"filled"} onChange={handleSourceChainChange} value={chain} rounded={"2xl"} fontSize={"sm"}>
         <NetworkSelectOptions />
@@ -83,12 +83,6 @@ export const Faucet: React.FC = () => {
           </Button>
         )}
       </Box>
-      <Text fontSize={"sm"} mt="4">
-        For testing wrap pattern, please get some testnet NFTs from{" "}
-        <Link href="https://faucet.paradigm.xyz/" isExternal _focus={{ boxShadow: "none" }}>
-          https://faucet.paradigm.xyz/
-        </Link>
-      </Text>
     </Box>
   );
 };
