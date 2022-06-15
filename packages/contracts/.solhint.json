@@ -2,6 +2,17 @@
   "extends": "solhint:recommended",
   "rules": {
     "compiler-version": ["error", "^0.8.0"],
-    "func-visibility": ["warn", { "ignoreConstructors": true }]
+    "func-visibility": [
+      "warn",
+      {
+        "ignoreConstructors": true
+      }
+    ],
+    "func-param-name-mixedcase": "error",
+    "modifier-name-mixedcase": "error",
+    "not-rely-on-time": "off",
+    "ordering": "error",
+    "private-vars-leading-underscore": "error",
+    "reason-string": "off"
   }
 }

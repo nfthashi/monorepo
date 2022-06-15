@@ -1,4 +1,4 @@
-import { Box, Flex, Link, useColorModeValue } from "@chakra-ui/react";
+import { Box, Flex, useColorModeValue } from "@chakra-ui/react";
 import type { NextPage } from "next";
 
 import { Landing } from "../component/Landing";

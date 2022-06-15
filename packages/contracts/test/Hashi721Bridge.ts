@@ -3,19 +3,28 @@ import { expect } from "chai";
 import { ethers } from "hardhat";
 
 import { ADDRESS_1, NULL_ADDRESS } from "../lib/constant";
+import {
+  Hashi721Bridge,
+  MockClone,
+  MockERC165,
+  MockExecutor,
+  MockNFT,
+  WrappedHashi721,
+  WrappedHashi721__factory,
+} from "../typechain";
 
 describe("Hashi721Bridge", function () {
   let signer: SignerWithAddress;
   let malicious: SignerWithAddress;
 
-  let Hashi721Bridge: any;
-  let mockExecutor: any;
-  let XWrappedHashi721: any;
-  let WrappedHashi721: any;
-  let mockNFT: any;
-  let mockClone: any;
+  let hashi721Bridge: Hashi721Bridge;
+  let mockExecutor: MockExecutor;
+  let WrappedHashi721: WrappedHashi721__factory;
+  let wrappedHashi721: WrappedHashi721;
+  let mockNFT: MockNFT;
+  let mockClone: MockClone;
+  let mockERC165: MockERC165;
 
-  let mockERC165: any;
   const baseTokenURL = "http://localhost:3000/";
 
   const selfDomain = "0";
@@ -31,15 +40,15 @@ describe("Hashi721Bridge", function () {
     mockExecutor = await MockExecutor.deploy();
     await mockConnextHandler.setExecutor(mockExecutor.address);
 
-    XWrappedHashi721 = await ethers.getContractFactory("WrappedHashi721");
-    WrappedHashi721 = await XWrappedHashi721.deploy();
+    WrappedHashi721 = await ethers.getContractFactory("WrappedHashi721");
+    wrappedHashi721 = await WrappedHashi721.deploy();
 
-    const XHashi721Bridge = await ethers.getContractFactory("Hashi721Bridge");
-    Hashi721Bridge = await XHashi721Bridge.deploy(
+    const Hashi721Bridge = await ethers.getContractFactory("Hashi721Bridge");
+    hashi721Bridge = await Hashi721Bridge.deploy(
       selfDomain,
       mockConnextHandler.address,
       dummyTransactingAssetId,
-      WrappedHashi721.address
+      wrappedHashi721.address
     );
 
     const MockERC165 = await ethers.getContractFactory("MockERC165");
@@ -49,7 +58,7 @@ describe("Hashi721Bridge", function () {
     mockNFT = await MockNFT.deploy(baseTokenURL);
     await mockNFT.mint(signer.address);
     await mockNFT.mint(signer.address);
-    await mockNFT.setApprovalForAll(Hashi721Bridge.address, true);
+    await mockNFT.setApprovalForAll(hashi721Bridge.address, true);
     const MockClone = await ethers.getContractFactory("MockClone");
     mockClone = await MockClone.deploy();
   });
@@ -60,29 +69,29 @@ describe("Hashi721Bridge", function () {
 
     const sendToDomain = "1";
     const toContract = ADDRESS_1;
-    await Hashi721Bridge.setBridgeContract(sendToDomain, toContract);
+    await hashi721Bridge.setBridgeContract(sendToDomain, toContract);
 
     await expect(
-      Hashi721Bridge.xSend(mockERC165.address, signer.address, ADDRESS_1, tokenId_1, sendToDomain, true)
+      hashi721Bridge.xSend(mockERC165.address, signer.address, ADDRESS_1, tokenId_1, sendToDomain, true)
     ).to.revertedWith("Hashi721Bridge: invalid nft");
 
     await expect(
-      Hashi721Bridge.connect(malicious).xSend(mockNFT.address, signer.address, ADDRESS_1, tokenId_1, sendToDomain, true)
+      hashi721Bridge.connect(malicious).xSend(mockNFT.address, signer.address, ADDRESS_1, tokenId_1, sendToDomain, true)
     ).to.revertedWith("Hashi721Bridge: invalid sender");
 
     await expect(
-      Hashi721Bridge.xSend(mockNFT.address, malicious.address, ADDRESS_1, tokenId_1, sendToDomain, true)
+      hashi721Bridge.xSend(mockNFT.address, malicious.address, ADDRESS_1, tokenId_1, sendToDomain, true)
     ).to.revertedWith("Hashi721Bridge: invalid from");
 
     // for is token uri included = true
-    await expect(Hashi721Bridge.xSend(mockNFT.address, signer.address, ADDRESS_1, tokenId_1, sendToDomain, true))
+    await expect(hashi721Bridge.xSend(mockNFT.address, signer.address, ADDRESS_1, tokenId_1, sendToDomain, true))
       .to.emit(mockNFT, "Transfer")
-      .withArgs(signer.address, Hashi721Bridge.address, tokenId_1);
+      .withArgs(signer.address, hashi721Bridge.address, tokenId_1);
 
     // for is token uri included = false
-    await expect(Hashi721Bridge.xSend(mockNFT.address, signer.address, ADDRESS_1, tokenId_2, sendToDomain, false))
+    await expect(hashi721Bridge.xSend(mockNFT.address, signer.address, ADDRESS_1, tokenId_2, sendToDomain, false))
       .to.emit(mockNFT, "Transfer")
-      .withArgs(signer.address, Hashi721Bridge.address, tokenId_2);
+      .withArgs(signer.address, hashi721Bridge.address, tokenId_2);
   });
 
   // this is separated test because it requires receiving asset first
@@ -94,12 +103,11 @@ describe("Hashi721Bridge", function () {
     const fromDomain = birthDomain;
     const fromContract = ADDRESS_1;
 
-    await Hashi721Bridge.setBridgeContract(fromDomain, fromContract);
-
+    await hashi721Bridge.setBridgeContract(fromDomain, fromContract);
     await mockExecutor.setOriginSender(fromContract);
     await mockExecutor.setOrigin(fromDomain);
 
-    const data = Hashi721Bridge.interface.encodeFunctionData("xReceive", [
+    const data = hashi721Bridge.interface.encodeFunctionData("xReceive", [
       mockNFT.address,
       signer.address,
       tokenId,
@@ -107,16 +115,16 @@ describe("Hashi721Bridge", function () {
       baseTokenURL,
     ]);
 
-    await mockExecutor.execute(Hashi721Bridge.address, data);
+    await mockExecutor.execute(hashi721Bridge.address, data);
     const salt = ethers.utils.solidityKeccak256(["uint32", "address"], [birthDomain, mockNFT.address]);
     const deployedContractAddress = await mockClone.predictDeterministicAddress(
-      WrappedHashi721.address,
+      wrappedHashi721.address,
       salt,
-      Hashi721Bridge.address
+      hashi721Bridge.address
     );
-    const deployedContract = XWrappedHashi721.attach(deployedContractAddress);
+    const deployedContract = WrappedHashi721.attach(deployedContractAddress);
 
-    await expect(Hashi721Bridge.xSend(deployedContract.address, signer.address, ADDRESS_1, tokenId, fromDomain, true))
+    await expect(hashi721Bridge.xSend(deployedContract.address, signer.address, ADDRESS_1, tokenId, fromDomain, true))
       .to.emit(deployedContract, "Transfer")
       .withArgs(signer.address, NULL_ADDRESS, tokenId);
   });
@@ -124,25 +132,25 @@ describe("Hashi721Bridge", function () {
   it("xReceive - receiver is in birth chain", async function () {
     const tokenId = "0";
 
-    await mockNFT.transferFrom(signer.address, Hashi721Bridge.address, tokenId);
+    await mockNFT.transferFrom(signer.address, hashi721Bridge.address, tokenId);
 
     const birthDomain = selfDomain;
 
     const fromDomain = "1";
     const fromContract = ADDRESS_1;
 
-    await Hashi721Bridge.setBridgeContract(fromDomain, fromContract);
+    await hashi721Bridge.setBridgeContract(fromDomain, fromContract);
     await mockExecutor.setOriginSender(fromContract);
     await mockExecutor.setOrigin(fromDomain);
 
-    const data_1 = Hashi721Bridge.interface.encodeFunctionData("xReceive", [
+    const data_1 = hashi721Bridge.interface.encodeFunctionData("xReceive", [
       mockNFT.address,
       signer.address,
       tokenId,
       birthDomain,
       baseTokenURL,
     ]);
-    await mockExecutor.execute(Hashi721Bridge.address, data_1);
+    await mockExecutor.execute(hashi721Bridge.address, data_1);
     expect(await mockNFT.ownerOf(tokenId)).to.equal(signer.address);
   });
 
@@ -155,35 +163,35 @@ describe("Hashi721Bridge", function () {
     const fromDomain = "2";
     const fromContract = ADDRESS_1;
 
-    await Hashi721Bridge.setBridgeContract(fromDomain, fromContract);
+    await hashi721Bridge.setBridgeContract(fromDomain, fromContract);
 
     await mockExecutor.setOriginSender(fromContract);
     await mockExecutor.setOrigin(fromDomain);
 
-    const data_1 = Hashi721Bridge.interface.encodeFunctionData("xReceive", [
+    const data_1 = hashi721Bridge.interface.encodeFunctionData("xReceive", [
       mockNFT.address,
       signer.address,
       tokenId_1,
       birthDomain,
       baseTokenURL,
     ]);
-    await mockExecutor.execute(Hashi721Bridge.address, data_1);
+    await mockExecutor.execute(hashi721Bridge.address, data_1);
 
-    const data_2 = Hashi721Bridge.interface.encodeFunctionData("xReceive", [
+    const data_2 = hashi721Bridge.interface.encodeFunctionData("xReceive", [
       mockNFT.address,
       signer.address,
       tokenId_2,
       birthDomain,
       baseTokenURL,
     ]);
-    await mockExecutor.execute(Hashi721Bridge.address, data_2);
+    await mockExecutor.execute(hashi721Bridge.address, data_2);
     const salt = ethers.utils.solidityKeccak256(["uint32", "address"], [birthDomain, mockNFT.address]);
     const deployedContractAddress = await mockClone.predictDeterministicAddress(
-      WrappedHashi721.address,
+      wrappedHashi721.address,
       salt,
-      Hashi721Bridge.address
+      hashi721Bridge.address
     );
-    const deployedContract = XWrappedHashi721.attach(deployedContractAddress);
+    const deployedContract = wrappedHashi721.attach(deployedContractAddress);
     expect(await deployedContract.ownerOf(tokenId_1)).to.equal(signer.address);
     expect(await deployedContract.ownerOf(tokenId_2)).to.equal(signer.address);
   });

@@ -7,7 +7,7 @@ import React, { useState } from "react";
 import NativeHashi721 from "../../contracts/artifacts/contracts/examples/NativeHashi721Example.sol/NativeHashi721Example.json";
 import config from "../../contracts/networks.json";
 import { injected } from "../lib/web3";
-import { Chain } from "../types/chain";
+import { Chain, isChain } from "../types/chain";
 
 export const Faucet: React.FC = () => {
   const [chain, setChain] = useState<Chain>("rinkeby");
@@ -17,8 +17,11 @@ export const Faucet: React.FC = () => {
     activate(injected);
   };
 
-  const handleSourceChainChange = async (e: any) => {
+  const handleSourceChainChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const inputValue = e.target.value;
+    if (!isChain(inputValue)) {
+      return;
+    }
     setChain(inputValue);
   };
 

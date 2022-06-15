@@ -32,11 +32,11 @@ contract NativeHashi721 is ERC165, INativeHashi721, HashiConnextAdapter, ERC721 
     _mint(to, tokenId);
   }
 
-  function isNativeHashi721() public pure returns (bool) {
-    return true;
-  }
-
   function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721, ERC165, IERC165) returns (bool) {
     return interfaceId == type(INativeHashi721).interfaceId || super.supportsInterface(interfaceId);
+  }
+
+  function isNativeHashi721() public pure returns (bool) {
+    return true;
   }
 }

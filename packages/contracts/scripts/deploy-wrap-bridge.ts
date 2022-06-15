@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-const networks = require("../networks.json");
-const { run, network } = require("hardhat");
-const fs = require("fs");
-const path = require("path");
+import fs from "fs";
+import { network, run } from "hardhat";
+import path from "path";
+
+import networks from "../networks.json";
 
 async function main() {
   const { name } = network;

@@ -3,4 +3,7 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 
-contract MockERC165 is ERC165 {}
+// solhint-disable-next-line no-empty-blocks
+contract MockERC165 is ERC165 {
+
+}

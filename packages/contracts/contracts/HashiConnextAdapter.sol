@@ -9,8 +9,6 @@ import "@connext/nxtp-contracts/contracts/interfaces/IExecutor.sol";
 import "@connext/nxtp-contracts/contracts/interfaces/IConnextHandler.sol";
 
 contract HashiConnextAdapter is Ownable, ERC165 {
-  event BridgeSet(uint32 domain, address bridgeContract);
-
   mapping(uint32 => address) private _bridgeContracts;
 
   address private immutable _connext;
@@ -18,11 +16,13 @@ contract HashiConnextAdapter is Ownable, ERC165 {
   address private immutable _transactingAssetId;
   uint32 private immutable _selfDomain;
 
+  event BridgeSet(uint32 domain, address bridgeContract);
+
   modifier onlyExecutor() {
-    require(msg.sender == _executor, "HashiConnextAdapter: sender is not executor");
+    require(msg.sender == _executor, "HashiConnextAdapter: sender invalid");
     require(
       IExecutor(msg.sender).originSender() == _bridgeContracts[IExecutor(msg.sender).origin()],
-      "HashiConnextAdapter: invalid origin sender"
+      "HashiConnextAdapter: origin sender invalid"
     );
     _;
   }
@@ -41,6 +41,22 @@ contract HashiConnextAdapter is Ownable, ERC165 {
   function setBridgeContract(uint32 domain, address bridgeContract) public onlyOwner {
     _bridgeContracts[domain] = bridgeContract;
     emit BridgeSet(domain, bridgeContract);
+  }
+
+  function getBridgeContract(uint32 domain) public view returns (address) {
+    return _bridgeContracts[domain];
+  }
+
+  function getConnext() public view returns (address) {
+    return _connext;
+  }
+
+  function getExecutor() public view returns (address) {
+    return _executor;
+  }
+
+  function getSelfDomain() public view returns (uint32) {
+    return _selfDomain;
   }
 
   function _xcall(uint32 destinationDomain, bytes memory callData) internal {
@@ -64,21 +80,5 @@ contract HashiConnextAdapter is Ownable, ERC165 {
       relayerFee: 0
     });
     IConnextHandler(_connext).xcall(xcallArgs);
-  }
-
-  function getBridgeContract(uint32 domain) public view returns (address) {
-    return _bridgeContracts[domain];
-  }
-
-  function getConnext() public view returns (address) {
-    return _connext;
-  }
-
-  function getExecutor() public view returns (address) {
-    return _executor;
-  }
-
-  function getSelfDomain() public view returns (uint32) {
-    return _selfDomain;
   }
 }

@@ -2,12 +2,11 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 
-import { ADDRESS_1, NULL_ADDRESS } from "../../lib/constant";
+import { ADDRESS_1 } from "../../lib/constant";
 import { NativeHashi721Example } from "../../typechain";
 
 describe("NativeHashi721Example", function () {
   let signer: SignerWithAddress;
-  let malicious: SignerWithAddress;
 
   let nativeHashi721Example: NativeHashi721Example;
 
@@ -22,7 +21,7 @@ describe("NativeHashi721Example", function () {
   const baseTokenURI = "http://localhost:3000/";
 
   beforeEach(async function () {
-    [signer, malicious] = await ethers.getSigners();
+    [signer] = await ethers.getSigners();
 
     const MockConnextHandler = await ethers.getContractFactory("MockConnextHandler");
     const mockConnextHandler = await MockConnextHandler.deploy();

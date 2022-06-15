@@ -30,15 +30,9 @@ import NativeHashi721 from "../../contracts/artifacts/contracts/NativeHashi721.s
 import { NFT_NATIVE_BRIDGE_INTERFACE_ID } from "../../contracts/lib/constant";
 import config from "../../contracts/networks.json";
 import { injected } from "../lib/web3";
-import { Chain } from "../types/chain";
+import { Chain, isChain } from "../types/chain";
 import { NFT } from "../types/nft";
 import { NFTList } from "./NFTList";
-
-declare global {
-  interface Window {
-    ethereum: any;
-  }
-}
 
 export const Bridge: React.FC = () => {
   const [selectedNFT, setSelectedNFT] = useState<NFT>();
@@ -57,8 +51,11 @@ export const Bridge: React.FC = () => {
     setSelectedNFT(undefined);
   };
 
-  const handleDestinationChainChange = (e: any) => {
+  const handleDestinationChainChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const inputValue = e.target.value;
+    if (!isChain(inputValue)) {
+      return;
+    }
     if (inputValue === sourceChain) {
       setSourceChain(destinationChain);
     }
@@ -66,8 +63,11 @@ export const Bridge: React.FC = () => {
     clearSelectedNFT();
   };
 
-  const handleSourceChainChange = async (e: any) => {
+  const handleSourceChainChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const inputValue = e.target.value;
+    if (!isChain(inputValue)) {
+      return;
+    }
     if (inputValue === destinationChain) {
       setDestinationChain(sourceChain);
     }

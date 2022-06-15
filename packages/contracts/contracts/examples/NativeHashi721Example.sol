@@ -27,16 +27,16 @@ contract NativeHashi721Example is NativeHashi721 {
 
   function mint(address to) public {
     uint256 tokenId = _startTokenId + _supplied;
-    require(tokenId <= _endTokenId, "NativeHashi721: mint already finished");
+    require(tokenId <= _endTokenId, "NativeHashi721: mint finished");
     _mint(to, tokenId);
     _supplied++;
   }
 
-  function _baseURI() internal view virtual override returns (string memory) {
-    return _baseTokenURI;
-  }
-
   function tokenURI(uint256 tokenId) public view override returns (string memory) {
     return super.tokenURI(tokenId);
+  }
+
+  function _baseURI() internal view virtual override returns (string memory) {
+    return _baseTokenURI;
   }
 }
