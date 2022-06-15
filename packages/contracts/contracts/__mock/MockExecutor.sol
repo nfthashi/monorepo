@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.0;
 
-contract MockExecuter {
+contract MockExecutor {
   address private _originSender;
   uint32 private _origin;
 
@@ -15,8 +15,8 @@ contract MockExecuter {
 
   function execute(address to, bytes memory data) public {
     // solhint-disable-next-line avoid-low-level-calls
-    (bool success, ) = to.call(data);
-    require(success, "MockExecuter: execute failed");
+    (bool success, bytes memory log) = to.call(data);
+    require(success, string(log));
   }
 
   function originSender() public view returns (address) {

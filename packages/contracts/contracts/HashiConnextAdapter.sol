@@ -9,6 +9,8 @@ import "@connext/nxtp-contracts/contracts/interfaces/IExecutor.sol";
 import "@connext/nxtp-contracts/contracts/interfaces/IConnextHandler.sol";
 
 contract HashiConnextAdapter is Ownable, ERC165 {
+  event BridgeSet(uint32 domain, address bridgeContract);
+
   mapping(uint32 => address) private _bridgeContracts;
 
   address private immutable _connext;
@@ -17,11 +19,10 @@ contract HashiConnextAdapter is Ownable, ERC165 {
   uint32 private immutable _selfDomain;
 
   modifier onlyExecutor() {
-    IExecutor(msg.sender).originSender();
+    require(msg.sender == _executor, "HashiConnextAdapter: sender is not executor");
     require(
-      IExecutor(msg.sender).originSender() == _bridgeContracts[IExecutor(msg.sender).origin()] &&
-        msg.sender == _executor,
-      "NFTBridge: invalid executor"
+      IExecutor(msg.sender).originSender() == _bridgeContracts[IExecutor(msg.sender).origin()],
+      "HashiConnextAdapter: invalid origin sender"
     );
     _;
   }
@@ -39,11 +40,12 @@ contract HashiConnextAdapter is Ownable, ERC165 {
 
   function setBridgeContract(uint32 domain, address bridgeContract) public onlyOwner {
     _bridgeContracts[domain] = bridgeContract;
+    emit BridgeSet(domain, bridgeContract);
   }
 
   function _xcall(uint32 destinationDomain, bytes memory callData) internal {
     address destinationContract = _bridgeContracts[destinationDomain];
-    require(destinationContract != address(0x0), "NFTBridge: invalid bridge");
+    require(destinationContract != address(0x0), "HashiConnextAdapter: invalid bridge");
     CallParams memory callParams = CallParams({
       to: destinationContract,
       callData: callData,

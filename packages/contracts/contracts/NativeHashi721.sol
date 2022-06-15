@@ -6,12 +6,14 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "./HashiConnextAdapter.sol";
 import "./interfaces/INativeHashi721.sol";
 
-abstract contract NativeHashi721 is ERC165, INativeHashi721, HashiConnextAdapter, ERC721 {
+contract NativeHashi721 is ERC165, INativeHashi721, HashiConnextAdapter, ERC721 {
   constructor(
     uint32 selfDomain,
     address connext,
-    address dummyTransactingAssetId
-  ) HashiConnextAdapter(selfDomain, connext, dummyTransactingAssetId) {} // solhint-disable-line no-empty-blocks
+    address dummyTransactingAssetId,
+    string memory name,
+    string memory symbol
+  ) HashiConnextAdapter(selfDomain, connext, dummyTransactingAssetId) ERC721(name, symbol) {} // solhint-disable-line no-empty-blocks
 
   function xSend(
     address from,

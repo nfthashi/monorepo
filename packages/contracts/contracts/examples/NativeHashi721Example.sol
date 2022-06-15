@@ -14,12 +14,12 @@ contract NativeHashi721Example is NativeHashi721 {
     uint32 selfDomain,
     address connext,
     address dummyTransactingAssetId,
-    uint256 startTokenId,
-    uint256 endTokenId,
     string memory name,
     string memory symbol,
+    uint256 startTokenId,
+    uint256 endTokenId,
     string memory baseTokenURI
-  ) NativeHashi721(selfDomain, connext, dummyTransactingAssetId) ERC721(name, symbol) {
+  ) NativeHashi721(selfDomain, connext, dummyTransactingAssetId, name, symbol) {
     _startTokenId = startTokenId;
     _endTokenId = endTokenId;
     _baseTokenURI = baseTokenURI;
@@ -37,6 +37,6 @@ contract NativeHashi721Example is NativeHashi721 {
   }
 
   function tokenURI(uint256 tokenId) public view override returns (string memory) {
-    return _baseTokenURI;
+    return super.tokenURI(tokenId);
   }
 }
