@@ -16,11 +16,11 @@ contract HashiFaucetERC721 is ERC721 {
     ++supplied;
   }
 
-  function _baseURI() internal view virtual override returns (string memory) {
-    return _baseTokenURI;
-  }
-
   function tokenURI(uint256 tokenId) public view override returns (string memory) {
     return super.tokenURI(tokenId);
+  }
+
+  function _baseURI() internal view virtual override returns (string memory) {
+    return _baseTokenURI;
   }
 }
