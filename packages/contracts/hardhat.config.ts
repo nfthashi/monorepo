@@ -4,6 +4,7 @@ import "@typechain/hardhat";
 import "hardhat-gas-reporter";
 import "solidity-coverage";
 import "./tasks/cmd/deploy-bridge";
+import "./tasks/cmd/deploy-faucet";
 import "./tasks/cmd/deploy-implementation";
 import "./tasks/cmd/register";
 import "./tasks/integration/deploy";
