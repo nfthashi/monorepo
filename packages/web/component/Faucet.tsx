@@ -1,10 +1,10 @@
-import { Box, Button, Heading, Link, Select, Text, useToast } from "@chakra-ui/react";
+import { Box, Button, Heading, Select, useToast } from "@chakra-ui/react";
 import { Web3Provider } from "@ethersproject/providers";
 import { useWeb3React } from "@web3-react/core";
 import { ethers } from "ethers";
 import React, { useState } from "react";
 
-import TestERC721 from "../../contracts/artifacts/contracts/examples/TestERC721.sol/TestERC721.json";
+import HashiFaucetERC721 from "../../contracts/artifacts/contracts/__faucet/HashiFaucetERC721.sol/HashiFaucetERC721.json";
 import config from "../../contracts/networks.json";
 import { Chain, isChain } from "../../contracts/types/chain";
 import { injected } from "../lib/web3";
@@ -40,7 +40,7 @@ export const Faucet: React.FC = () => {
     }
     console.log(chain);
     const faucetContract = config[chain].contracts.faucet;
-    const nftContract = new ethers.Contract(faucetContract, TestERC721.abi, library.getSigner());
+    const nftContract = new ethers.Contract(faucetContract, HashiFaucetERC721.abi, library.getSigner());
     const tx = await nftContract.mint();
     toast({
       title: `Minted Tx Hash: ${tx.hash}`,
