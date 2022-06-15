@@ -2,10 +2,10 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 
-import { NULL_ADDRESS } from "../lib/constant";
-import { WrappedHashi721 } from "../typechain";
+import { NULL_ADDRESS } from "../../lib/constant";
+import { WrappedHashi721 } from "../../typechain";
 
-describe("WrappedHashi721", function () {
+describe("Unit Test for WrappedHashi721", function () {
   let signer: SignerWithAddress;
   let malicious: SignerWithAddress;
   let wrappedHashi721: WrappedHashi721;

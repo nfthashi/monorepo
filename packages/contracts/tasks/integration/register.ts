@@ -1,12 +1,12 @@
-import { network, run } from "hardhat";
+import { task } from "hardhat/config";
 
-import networks from "../networks.json";
+import networks from "../../networks.json";
+import { isChain } from "../../types/chain";
 
-async function main() {
+task("integration-register", "integration register").setAction(async (_, { network, run }) => {
   const { name } = network;
-  const config = networks[name];
-  if (!config) {
-    console.log("network not supported");
+  if (!isChain(name)) {
+    console.log("network invalid");
     return;
   }
   const { contracts } = networks[name];
@@ -20,17 +20,8 @@ async function main() {
       const { domainId: opponentDomainNum, contracts } = value;
       const { bridge: opponentContractAddress } = contracts;
       const opponentDomain = opponentDomainNum.toString();
-      await run("register", { selfContractAddress, opponentDomain, opponentContractAddress });
+      await run("cmd-register", { selfContractAddress, opponentDomain, opponentContractAddress });
     }
   }
   console.log("DONE");
-}
-
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
-main()
-  .then(() => process.exit(0))
-  .catch((error) => {
-    console.error(error);
-    process.exit(1);
-  });
+});

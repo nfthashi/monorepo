@@ -8,6 +8,8 @@ import "@connext/nxtp-contracts/contracts/libraries/LibConnextStorage.sol";
 import "@connext/nxtp-contracts/contracts/interfaces/IExecutor.sol";
 import "@connext/nxtp-contracts/contracts/interfaces/IConnextHandler.sol";
 
+import "hardhat/console.sol";
+
 contract HashiConnextAdapter is Ownable, ERC165 {
   mapping(uint32 => address) private _bridgeContracts;
 

@@ -2,10 +2,10 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 
-import { ADDRESS_1 } from "../../lib/constant";
-import { NativeHashi721Example } from "../../typechain";
+import { ADDRESS_1 } from "../../../lib/constant";
+import { NativeHashi721Example } from "../../../typechain";
 
-describe("NativeHashi721Example", function () {
+describe("Unit Test for NativeHashi721Example", function () {
   let signer: SignerWithAddress;
 
   let nativeHashi721Example: NativeHashi721Example;
@@ -46,7 +46,7 @@ describe("NativeHashi721Example", function () {
 
   it("mint", async function () {
     await nativeHashi721Example.mint(signer.address);
-    await expect(nativeHashi721Example.mint(signer.address)).to.revertedWith("NativeHashi721: mint already finished");
+    await expect(nativeHashi721Example.mint(signer.address)).to.revertedWith("NativeHashi721: mint finished");
   });
 
   it("tokenURI", async function () {

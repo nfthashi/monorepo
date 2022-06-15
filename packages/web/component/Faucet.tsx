@@ -6,8 +6,8 @@ import React, { useState } from "react";
 
 import NativeHashi721 from "../../contracts/artifacts/contracts/examples/NativeHashi721Example.sol/NativeHashi721Example.json";
 import config from "../../contracts/networks.json";
+import { Chain, isChain } from "../../contracts/types/chain";
 import { injected } from "../lib/web3";
-import { Chain, isChain } from "../types/chain";
 
 export const Faucet: React.FC = () => {
   const [chain, setChain] = useState<Chain>("rinkeby");

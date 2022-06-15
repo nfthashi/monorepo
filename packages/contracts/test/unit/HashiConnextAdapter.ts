@@ -2,10 +2,10 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 
-import { ADDRESS_1, ADDRESS_2, NULL_ADDRESS } from "../lib/constant";
-import { MockConnextHandler, MockExecutor, MockExecutor__factory, MockHashiConnextAdapter } from "../typechain";
+import { ADDRESS_1, ADDRESS_2, NULL_ADDRESS } from "../../lib/constant";
+import { MockConnextHandler, MockExecutor, MockExecutor__factory, MockHashiConnextAdapter } from "../../typechain";
 
-describe("HashiConnextAdapter", function () {
+describe("Unit Test for HashiConnextAdapter", function () {
   let malicious: SignerWithAddress;
 
   let MockExecutor: MockExecutor__factory;
@@ -71,12 +71,12 @@ describe("HashiConnextAdapter", function () {
     const malciousMockExecutor = await MockExecutor.deploy();
     await expect(
       malciousMockExecutor.execute(mockHashiConnextAdapter.address, testOnlyExecutorSighash)
-    ).to.revertedWith("HashiConnextAdapter: sender is not executor");
+    ).to.revertedWith("HashiConnextAdapter: sender invalid");
 
     const mistakeContract = ADDRESS_2;
     await mockHashiConnextAdapter.setBridgeContract(opponentDomain, mistakeContract);
     await expect(mockExecutor.execute(mockHashiConnextAdapter.address, testOnlyExecutorSighash)).to.revertedWith(
-      "HashiConnextAdapter: invalid origin sender"
+      "HashiConnextAdapter: origin sender invalid"
     );
   });
 

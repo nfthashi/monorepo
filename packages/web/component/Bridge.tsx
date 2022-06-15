@@ -29,8 +29,8 @@ import Hashi721Bridge from "../../contracts/artifacts/contracts/Hashi721Bridge.s
 import NativeHashi721 from "../../contracts/artifacts/contracts/NativeHashi721.sol/NativeHashi721.json";
 import { NFT_NATIVE_BRIDGE_INTERFACE_ID } from "../../contracts/lib/constant";
 import config from "../../contracts/networks.json";
+import { Chain, isChain } from "../../contracts/types/chain";
 import { injected } from "../lib/web3";
-import { Chain, isChain } from "../types/chain";
 import { NFT } from "../types/nft";
 import { NFTList } from "./NFTList";
 
