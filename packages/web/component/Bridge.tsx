@@ -107,6 +107,8 @@ export const Bridge: React.FC = () => {
     const bridgeContract = config[sourceChain].contracts.bridge;
     const approvedAddress = await nftContract.getApproved(selectedNFT.tokenId);
     const isApprovedForAll = await nftContract.isApprovedForAll(account, bridgeContract);
+    const nftContractAddress = selectedNFT.nftContractAddress
+    const tokenId = selectedNFT.tokenId;
     if (approvedAddress != bridgeContract && isApprovedForAll != true) {
       const approveTx = await nftContract.setApprovalForAll(bridgeContract, true);
       toast({
@@ -114,14 +116,17 @@ export const Bridge: React.FC = () => {
         status: "success",
         isClosable: true,
       });
+      clearSelectedNFT();
+      setIsLoading(true);
       await approveTx.wait(1);
     }
+    setIsLoading(false);
     const contract = new ethers.Contract(bridgeContract, Hashi721Bridge.abi, library.getSigner());
     const transaction = await contract.xSend(
-      selectedNFT.nftContractAddress,
+      nftContractAddress,
       account,
       account,
-      selectedNFT.tokenId,
+      tokenId,
       destinationDomainId,
       isTokenURIIncluded,
       {
