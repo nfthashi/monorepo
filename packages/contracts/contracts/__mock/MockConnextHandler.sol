@@ -7,7 +7,7 @@ import "@connext/nxtp-contracts/contracts/interfaces/IExecutor.sol";
 contract MockConnextHandler {
   IExecutor private _executor;
 
-  function setExecuter(IExecutor executor) public {
+  function setExecutor(IExecutor executor) public {
     _executor = executor;
   }
 

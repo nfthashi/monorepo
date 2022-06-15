@@ -1,6 +1,6 @@
 import { task } from "hardhat/config";
 
-task("register", "register")
+task("cmd-register", "cmd register")
   .addParam("selfContractAddress", "self contract address")
   .addParam("opponentDomain", "opponent domain")
   .addParam("opponentContractAddress", "opponent contract address")

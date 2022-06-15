@@ -37,10 +37,6 @@ contract WrappedHashi721 is
     _burn(tokenId);
   }
 
-  function _burn(uint256 tokenId) internal virtual override(ERC721Upgradeable, ERC721URIStorageUpgradeable) {
-    return super._burn(tokenId);
-  }
-
   function tokenURI(uint256 tokenId)
     public
     view
@@ -51,10 +47,6 @@ contract WrappedHashi721 is
     return super.tokenURI(tokenId);
   }
 
-  function isWrappedHashi721() public pure returns (bool) {
-    return true;
-  }
-
   function supportsInterface(bytes4 interfaceId)
     public
     view
@@ -63,5 +55,13 @@ contract WrappedHashi721 is
     returns (bool)
   {
     return interfaceId == type(IWrappedHashi721).interfaceId || super.supportsInterface(interfaceId);
+  }
+
+  function isWrappedHashi721() public pure returns (bool) {
+    return true;
+  }
+
+  function _burn(uint256 tokenId) internal virtual override(ERC721Upgradeable, ERC721URIStorageUpgradeable) {
+    return super._burn(tokenId);
   }
 }

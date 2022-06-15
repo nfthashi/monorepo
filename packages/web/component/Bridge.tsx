@@ -26,16 +26,10 @@ import React, { useState } from "react";
 import IERC721 from "../../contracts/artifacts/@openzeppelin/contracts/token/ERC721/IERC721.sol/IERC721.json";
 import Hashi721Bridge from "../../contracts/artifacts/contracts/Hashi721Bridge.sol/Hashi721Bridge.json";
 import config from "../../contracts/networks.json";
+import { Chain, isChain } from "../../contracts/types/chain";
 import { injected } from "../lib/web3";
-import { Chain } from "../types/chain";
 import { NFT } from "../types/nft";
 import { NFTList } from "./NFTList";
-
-declare global {
-  interface Window {
-    ethereum: any;
-  }
-}
 
 export const Bridge: React.FC = () => {
   const isTokenURIIncluded = true;
@@ -55,8 +49,11 @@ export const Bridge: React.FC = () => {
     setSelectedNFT(undefined);
   };
 
-  const handleDestinationChainChange = (e: any) => {
+  const handleDestinationChainChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const inputValue = e.target.value;
+    if (!isChain(inputValue)) {
+      return;
+    }
     if (inputValue === sourceChain) {
       setSourceChain(destinationChain);
     }
@@ -64,8 +61,11 @@ export const Bridge: React.FC = () => {
     clearSelectedNFT();
   };
 
-  const handleSourceChainChange = async (e: any) => {
+  const handleSourceChainChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const inputValue = e.target.value;
+    if (!isChain(inputValue)) {
+      return;
+    }
     if (inputValue === destinationChain) {
       setDestinationChain(sourceChain);
     }

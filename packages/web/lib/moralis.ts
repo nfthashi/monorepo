@@ -1,6 +1,6 @@
 import Moralis from "moralis/node";
 
-import { Chain } from "../types/chain";
+import { Chain } from "../../contracts/types/chain";
 import { NFT } from "../types/nft";
 
 const serverUrl = process.env.MORALIS_SERVER_URL;

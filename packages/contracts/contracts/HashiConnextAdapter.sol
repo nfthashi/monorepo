@@ -8,6 +8,8 @@ import "@connext/nxtp-contracts/contracts/libraries/LibConnextStorage.sol";
 import "@connext/nxtp-contracts/contracts/interfaces/IExecutor.sol";
 import "@connext/nxtp-contracts/contracts/interfaces/IConnextHandler.sol";
 
+import "hardhat/console.sol";
+
 contract HashiConnextAdapter is Ownable, ERC165 {
   mapping(uint32 => address) private _bridgeContracts;
 
@@ -16,12 +18,13 @@ contract HashiConnextAdapter is Ownable, ERC165 {
   address private immutable _transactingAssetId;
   uint32 private immutable _selfDomain;
 
+  event BridgeSet(uint32 domain, address bridgeContract);
+
   modifier onlyExecutor() {
-    IExecutor(msg.sender).originSender();
+    require(msg.sender == _executor, "HashiConnextAdapter: sender invalid");
     require(
-      IExecutor(msg.sender).originSender() == _bridgeContracts[IExecutor(msg.sender).origin()] &&
-        msg.sender == _executor,
-      "NFTBridge: invalid executor"
+      IExecutor(msg.sender).originSender() == _bridgeContracts[IExecutor(msg.sender).origin()],
+      "HashiConnextAdapter: origin sender invalid"
     );
     _;
   }
@@ -39,11 +42,28 @@ contract HashiConnextAdapter is Ownable, ERC165 {
 
   function setBridgeContract(uint32 domain, address bridgeContract) public onlyOwner {
     _bridgeContracts[domain] = bridgeContract;
+    emit BridgeSet(domain, bridgeContract);
+  }
+
+  function getBridgeContract(uint32 domain) public view returns (address) {
+    return _bridgeContracts[domain];
+  }
+
+  function getConnext() public view returns (address) {
+    return _connext;
+  }
+
+  function getExecutor() public view returns (address) {
+    return _executor;
+  }
+
+  function getSelfDomain() public view returns (uint32) {
+    return _selfDomain;
   }
 
   function _xcall(uint32 destinationDomain, bytes memory callData) internal {
     address destinationContract = _bridgeContracts[destinationDomain];
-    require(destinationContract != address(0x0), "NFTBridge: invalid bridge");
+    require(destinationContract != address(0x0), "HashiConnextAdapter: invalid bridge");
     CallParams memory callParams = CallParams({
       to: destinationContract,
       callData: callData,
@@ -62,21 +82,5 @@ contract HashiConnextAdapter is Ownable, ERC165 {
       relayerFee: 0
     });
     IConnextHandler(_connext).xcall(xcallArgs);
-  }
-
-  function getBridgeContract(uint32 domain) public view returns (address) {
-    return _bridgeContracts[domain];
-  }
-
-  function getConnext() public view returns (address) {
-    return _connext;
-  }
-
-  function getExecutor() public view returns (address) {
-    return _executor;
-  }
-
-  function getSelfDomain() public view returns (uint32) {
-    return _selfDomain;
   }
 }

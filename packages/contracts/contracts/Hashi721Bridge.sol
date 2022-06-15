@@ -54,16 +54,16 @@ contract Hashi721Bridge is ERC165, HashiConnextAdapter {
       tokenURI = IERC721Metadata(processingNFTContractAddress).tokenURI(tokenId);
     }
 
-    if (_contracts[processingNFTContractAddress] != address(0x0) && _domains[processingNFTContractAddress] != 0) {
-      birthChainNFTContractAddress = _contracts[processingNFTContractAddress];
-      birthChainDomain = _domains[processingNFTContractAddress];
-      destinationDomain = birthChainDomain;
-      IWrappedHashi721(processingNFTContractAddress).burn(tokenId);
-    } else {
+    if (_contracts[processingNFTContractAddress] == address(0x0) && _domains[processingNFTContractAddress] == 0) {
       birthChainNFTContractAddress = processingNFTContractAddress;
       birthChainDomain = getSelfDomain();
       destinationDomain = sendToDomain;
       IERC721(birthChainNFTContractAddress).transferFrom(from, address(this), tokenId);
+    } else {
+      birthChainNFTContractAddress = _contracts[processingNFTContractAddress];
+      birthChainDomain = _domains[processingNFTContractAddress];
+      destinationDomain = birthChainDomain;
+      IWrappedHashi721(processingNFTContractAddress).burn(tokenId);
     }
 
     bytes memory callData = abi.encodeWithSelector(
@@ -102,9 +102,5 @@ contract Hashi721Bridge is ERC165, HashiConnextAdapter {
       }
       IWrappedHashi721(processingNFTContractAddress).mint(to, tokenId, tokenURI);
     }
-  }
-
-  function isNFTHashiWrapBridge() public pure returns (bool) {
-    return true;
   }
 }

@@ -1,6 +1,6 @@
 import { task } from "hardhat/config";
 
-task("wrap-deploy", "deploy wrap target xNFTs contract")
+task("cmd-deploy-bridge", "cmd deploy bridge")
   .addParam("selfDomain", "self domain")
   .addParam("connext", "connext")
   .addParam("dummyTransactingAssetId", "dummy transacting asset id")
