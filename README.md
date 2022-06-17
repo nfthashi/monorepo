@@ -1,7 +1,7 @@
 # NFT Hashi Read Me
 
-This is a simple description of how to use this bridge application
-For a detailed functional description, architecture, and developer guide, please check our documentation
+This is a simple description of how to use this bridge application.
+For the detailed architecture, or developer guide, please check our documentation
 http://docs.nfthashi.com/
 
 - What is NFT Hashi?
@@ -10,108 +10,39 @@ http://docs.nfthashi.com/
   - How to check the bridge status
 
 # What is NFT Hashi
+**NFTHashi is a trust-minimized cross-chain NFT bridge powered by Connext & Nomad**
 
-NFT Hashi is a NFT bridge protocol that support transferring the NFTs between the deferent chains. We provide two types of bridge system, Wrap Pattern and Native Support Pattern, that can be used for different use cases.
+We support all NFTs even that have already been issued can be bridged to other chains. That means your Punks or BAYC can go beyond Ethereum and can be used on any chain you like
+We use Connext, and Connext provides trust-minimized cross-chain messaging using optimistic verification provided by Nomad, the most trust-minimized protocol for cross-chain messaging so you can safely bridge your valuable NFTs!
+
 
 # How to use NFT Hashi
-
-### Installation
-
-`$ npm i @nfthashi/contracts`
-
-### Usage
-
-Once installed, you can use the contracts in the library by importing them:
-
-```
-pragma solidity ^0.8.0;
-
-import "@nfthashi/contracts/contracts/native/example/NativeHashi721";
-
-contract MyCollectible is NativeHashi721 {
-    constructor(
-      uint32 selfDomain,
-      address connext,
-      address dummyTransactingAssetId,
-      uint256 startTokenId,
-      uint256 endTokenId,
-      string memory name,
-      string memory symbol,
-      string memory baseTokenURI
-  )  {
-  }
-}
-```
-
-- selfDomain :
-  The domain ID of the network you deploy
-- connext :
-  The connext handler address of the network you deploy
-- dummyTransactionAssetId :
-  The test ERC20 token address of the network you deploy
-- startTokenId & endTokenId :
-  Enter how many tokens you want to mint in this chain
-  ex) You want to set token Id 101 ~ 200 to this network, startTokenId is 101 and endTokenId is 200
-- name & symbol & baseTokenURI :
-  Enter each as you would when creating an ERC721
-
-You can find some necessary informations (ex domainID, connext address) from here
-https://docs.nfthashi.com/developer-guide/informations
-
-For example, when deploying to rinkeby with token ID 101 ~ 200 set, the arguments would look like this.
-pragma solidity ^0.8.0;
-
-```
-import "@nfthashi/contracts/contracts/native/example/NativeHashi721";
-
-contract MyCollectible is NativeHashi721 {
-    constructor() NativeHashi721(
-      1111,
-      a0x2307Ed9f152FA9b3DcDfe2385d279D8C2A9DF2b0,
-      0x3FFc03F05D1869f493c7dbf913E636C6280e0ff9,
-      101,
-      200,
-      TEST TOKEN NFT,
-      TEST,
-      www.nfthashi.com/metadata/
-  )  {
-  }
-}
-```
-
-If you're new to smart contract development, head to Developing Smart Contracts to learn about creating a new project and compiling your contracts. This Openzeppelin Document help your understanding.
-
-## How to bridge
-
-#### Wrap Pattern
-
-Wrap pattern support any NFTs already created
+## Useage
+NFTHashi support any NFTs already created.
 When you deposit an NFT to the contract in Chain A, the NFT is minted in Chain B. When you burn the NFT in Chain B, the deposited NFT is returned.
 
-<img width="622" alt="Screen Shot 2022-05-25 at 14 12 46" src="https://user-images.githubusercontent.com/64068653/170184708-bcdf2630-4f34-4ce9-8bef-75d7a457000a.png">
+1. Connect your web3 wallet, and select chains you want to bridge
+<img width="680" alt="Screen Shot 2022-06-17 at 18 04 17" src="https://user-images.githubusercontent.com/64068653/174266018-ad4bc978-2579-48d8-844f-23c315ac3787.png">
 
-1. Select Bridge Pattern
-2. Select Wrap (Original ⇒ Wrapped) or Unwrap(Wrapped ⇒ Original)
-3. Select the origin chain and the destination chain
-4. Input the NFT contract address on the origin chain and Input token ID
-5. Click “Bridge” and send the transaction from your wallet.
+2. Select the NFT you want to bridge, and confirm
 
-#### Native Pattern
+<img width="657" alt="Screen Shot 2022-06-17 at 18 11 40" src="https://user-images.githubusercontent.com/64068653/174267304-302d5b85-a08e-412b-9e4e-0c423f8c23ff.png">
 
-Native Pattern is an extended contract that allows you to bridge between each chain by incorporating our contract into your NFT.
-When you burn an NFT in Chain A, the NFT is minted in Chain B. When you burn the NFT in Chain B, the NFT is minted in Chain A vice versa.
-<img width="552" alt="Screen Shot 2022-05-25 at 14 09 29" src="https://user-images.githubusercontent.com/64068653/170184310-1f542326-91f9-4fac-a287-9a16ade38417.png">
+3. Metamask is launched twice: Approve and Bridge.
 
-1. Minting test NFT with bridge function
-2. Select Bridge Pattern
-3. Select the origin chain and the destination chain
-4. Input the NFT contract address on the origin chain and Input token ID
-5. Click “Bridge” and send the transaction from your wallet.
+For more detaild descriptions, see this how-to-use docs
+https://docs.nfthashi.com/operation-guide/how-to-use-nfthashi
 
-If you want to deploy and use NFT with bridge function by yourself, please refer to Document
-http://docs.nfthashi.com/
 
-## How to check NFT bridge status
+## SDK 
+We provide the contract integrated bridge function as SDK for the users who want to create a more advanced NFT utilizing cross-chain. For example, a chain with minted NFTs, a chain with current NFTs, the itinerancy of NFT bridges, and other NFTs whose metadata changes according to these attributes, and so on, will allow for new expressions that have not been possible before!
+You can create those NFTs easily by installing SDK and inheriting the contract follow the instructions in the document below.
+
+If you want to deploy and use NFT with bridge function by yourself, please refer to Document.
+https://docs.nfthashi.com/developer-guide/how-to-deploy-your-own-cross-chain-nft
+
+
+### How to check NFT bridge status
 
 - Copy the transaction hash on the origin chain
 - Use this code in subQuery of the origin chain to get “Transaction ID”
@@ -147,14 +78,17 @@ destinationTransfers(
 }
 ```
 
+
 For more information about this section, this documentation will help you
 
 - [https://docs.connext.network/Developers/xcall-status](https://docs.connext.network/Developers/xcall-status)
-  # Contact
+
+
+# Contact
   Please contact me if you have any questions, feedback, or are interested in collaborating !!
   And, we'd love to discuss future directions of Cross-chain NFT, so feel free to chat us!
 - [https://twitter.com/0x_Yuzu](https://twitter.com/0x_Yuzu)
-- [https://twitter.com/taijusanag](https://twitter.com/taijusanagi)
+- [https://twitter.com/taijusanagi](https://twitter.com/taijusanagi)
 
 ## Publish
 
