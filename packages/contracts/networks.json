@@ -24,18 +24,5 @@
     },
     "exproler": "https://goerli.etherscan.io/",
     "rpc": "https://goerli.infura.io/v3/95f65ab099894076814e8526f52c9149"
-  },
-  "kovan": {
-    "name": "Kovan",
-    "chainId": 42,
-    "domainId": 2221,
-    "contracts": {
-      "bridge": "0x735ab7D921C6f19546DE21997251370AC54Ff935",
-      "connext": "0x3366A61A701FA84A86448225471Ec53c5c4ad49f",
-      "faucet": "0x85e8f052c39fdf47940Aa5f87346a39d34028D98",
-      "testToken": "0x3FFc03F05D1869f493c7dbf913E636C6280e0ff9"
-    },
-    "exproler": "https://kovan.etherscan.io/",
-    "rpc": "https://kovan.infura.io/v3/95f65ab099894076814e8526f52c9149"
   }
 }

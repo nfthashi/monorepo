@@ -37,10 +37,6 @@ const config: HardhatUserConfig = {
       url: networks.rinkeby.rpc,
       accounts,
     },
-    kovan: {
-      url: networks.kovan.rpc,
-      accounts,
-    },
     goerli: {
       url: networks.goerli.rpc,
       accounts,

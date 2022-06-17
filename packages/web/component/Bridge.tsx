@@ -37,7 +37,7 @@ export const Bridge: React.FC = () => {
   const [sourceChain, setSourceChain] = useState<Chain>("rinkeby");
   const [isLoading, setIsLoading] = useState(false);
 
-  const [destinationChain, setDestinationChain] = useState<Chain>("kovan");
+  const [destinationChain, setDestinationChain] = useState<Chain>("goerli");
   const [nftList, setNFTList] = useState<NFT[]>([]);
 
   const toast = useToast();
@@ -107,7 +107,7 @@ export const Bridge: React.FC = () => {
     const bridgeContract = config[sourceChain].contracts.bridge;
     const approvedAddress = await nftContract.getApproved(selectedNFT.tokenId);
     const isApprovedForAll = await nftContract.isApprovedForAll(account, bridgeContract);
-    const nftContractAddress = selectedNFT.nftContractAddress
+    const nftContractAddress = selectedNFT.nftContractAddress;
     const tokenId = selectedNFT.tokenId;
     if (approvedAddress != bridgeContract && isApprovedForAll != true) {
       const approveTx = await nftContract.setApprovalForAll(bridgeContract, true);
