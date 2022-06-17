@@ -71,6 +71,8 @@ describe("Unit Test for Hashi721Bridge", function () {
     const toContract = ADDRESS_1;
     await hashi721Bridge.setBridgeContract(sendToDomain, toContract);
 
+    await hashi721Bridge.setIsAllowListRequired(true);
+
     await expect(
       hashi721Bridge.xSend(mockNFT.address, signer.address, ADDRESS_1, tokenId_1, sendToDomain, true)
     ).to.revertedWith("Hashi721Bridge: invalid nft");
@@ -90,7 +92,11 @@ describe("Unit Test for Hashi721Bridge", function () {
       .to.emit(mockNFT, "Transfer")
       .withArgs(signer.address, hashi721Bridge.address, tokenId_1);
 
+    await hashi721Bridge.setAllowList(mockNFT.address, false);
+    await hashi721Bridge.setIsAllowListRequired(false);
+
     // for is token uri included = false
+    // for allowlist
     await expect(hashi721Bridge.xSend(mockNFT.address, signer.address, ADDRESS_1, tokenId_2, sendToDomain, false))
       .to.emit(mockNFT, "Transfer")
       .withArgs(signer.address, hashi721Bridge.address, tokenId_2);

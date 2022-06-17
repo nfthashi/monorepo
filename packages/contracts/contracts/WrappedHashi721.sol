@@ -51,7 +51,7 @@ contract WrappedHashi721 is
     public
     view
     virtual
-    override(IERC165, ERC165Upgradeable, ERC721Upgradeable)
+    override(IERC165Upgradeable, ERC165Upgradeable, ERC721Upgradeable)
     returns (bool)
   {
     return interfaceId == type(IWrappedHashi721).interfaceId || super.supportsInterface(interfaceId);

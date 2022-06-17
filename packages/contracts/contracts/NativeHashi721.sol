@@ -1,19 +1,35 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+
 import "./HashiConnextAdapter.sol";
 import "./interfaces/INativeHashi721.sol";
 
-contract NativeHashi721 is ERC165, INativeHashi721, HashiConnextAdapter, ERC721 {
+contract NativeHashi721 is Initializable, ERC165Upgradeable, INativeHashi721, HashiConnextAdapter, ERC721Upgradeable {
   constructor(
     uint32 selfDomain,
     address connext,
     address dummyTransactingAssetId,
     string memory name,
     string memory symbol
-  ) HashiConnextAdapter(selfDomain, connext, dummyTransactingAssetId) ERC721(name, symbol) {} // solhint-disable-line no-empty-blocks
+  ) {
+    __NativeHashi721_init(selfDomain, connext, dummyTransactingAssetId, name, symbol);
+  }
+
+  function __NativeHashi721_init(
+    uint32 selfDomain,
+    address connext,
+    address dummyTransactingAssetId,
+    string memory name,
+    string memory symbol
+  ) internal initializer {
+    __Ownable_init_unchained();
+    __ERC721_init_unchained(name, symbol);
+    __HashiConnextAdapter_init(selfDomain, connext, dummyTransactingAssetId);
+  }
 
   function xSend(
     address from,
@@ -32,7 +48,13 @@ contract NativeHashi721 is ERC165, INativeHashi721, HashiConnextAdapter, ERC721 
     _mint(to, tokenId);
   }
 
-  function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721, ERC165, IERC165) returns (bool) {
+  function supportsInterface(bytes4 interfaceId)
+    public
+    view
+    virtual
+    override(ERC721Upgradeable, ERC165Upgradeable, IERC165Upgradeable)
+    returns (bool)
+  {
     return interfaceId == type(INativeHashi721).interfaceId || super.supportsInterface(interfaceId);
   }
 
