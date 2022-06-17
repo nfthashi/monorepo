@@ -7,7 +7,7 @@ import { Seo } from "../component/Seo";
 
 const IndexPage: NextPage = () => {
   return (
-    <Layout>
+    <Layout isLanding={true}>
       <Seo />
       <Flex justifyContent="center">
         <Landing />

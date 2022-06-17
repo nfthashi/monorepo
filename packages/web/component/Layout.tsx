@@ -6,12 +6,13 @@ import { Header } from "./Header";
 
 export interface LayoutProps {
   children: React.ReactNode;
+  isLanding?: boolean;
 }
 
-export const Layout: React.FC<LayoutProps> = ({ children }) => {
+export const Layout: React.FC<LayoutProps> = ({ children, isLanding }) => {
   return (
     <Flex minHeight={"100vh"} direction={"column"}>
-      <Header />
+      <Header isLanding={isLanding} />
       <Box flex={1}>
         <Container maxW={"7xl"}>
           <Stack>{children}</Stack>
