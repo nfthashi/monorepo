@@ -14,7 +14,11 @@ contract Hashi721Bridge is ERC165, HashiConnextAdapter {
   mapping(address => address) private _contracts;
   mapping(address => uint32) private _domains;
 
+  mapping(address => bool) private _nftAllowedList;
+
   address private _nftImplementation;
+
+  event AllowListSet(address nftContractAddress, bool isAllowed);
 
   constructor(
     uint32 selfDomain,
@@ -25,6 +29,11 @@ contract Hashi721Bridge is ERC165, HashiConnextAdapter {
     _nftImplementation = nftImplementation;
   }
 
+  function setAllowList(address nftContractAddress, bool isAllowed) public onlyOwner {
+    _nftAllowedList[nftContractAddress] = isAllowed;
+    emit AllowListSet(nftContractAddress, isAllowed);
+  }
+
   function xSend(
     address processingNFTContractAddress,
     address from,
@@ -33,17 +42,8 @@ contract Hashi721Bridge is ERC165, HashiConnextAdapter {
     uint32 sendToDomain,
     bool isTokenURIIncluded
   ) public {
-    require(
-      IERC165(processingNFTContractAddress).supportsInterface(type(IERC721).interfaceId),
-      "Hashi721Bridge: invalid nft"
-    );
-    require(
-      IERC721(processingNFTContractAddress).ownerOf(tokenId) == _msgSender() ||
-        IERC721(processingNFTContractAddress).getApproved(tokenId) == _msgSender() ||
-        IERC721(processingNFTContractAddress).isApprovedForAll(from, _msgSender()),
-      "Hashi721Bridge: invalid sender"
-    );
-    require(IERC721(processingNFTContractAddress).ownerOf(tokenId) == from, "Hashi721Bridge: invalid from");
+    _validateNFT(processingNFTContractAddress);
+    _validateAuthorization(processingNFTContractAddress, from, tokenId);
 
     address birthChainNFTContractAddress;
     uint32 birthChainDomain;
@@ -102,5 +102,32 @@ contract Hashi721Bridge is ERC165, HashiConnextAdapter {
       }
       IWrappedHashi721(processingNFTContractAddress).mint(to, tokenId, tokenURI);
     }
+  }
+
+  function isAllowed(address nftContractAddress) public view returns (bool) {
+    return _nftAllowedList[nftContractAddress];
+  }
+
+  function isWrappedNFT(address nftContractAddress) public view returns (bool) {
+    return _contracts[nftContractAddress] != address(0x0) && _domains[nftContractAddress] != 0;
+  }
+
+  function _validateNFT(address nftContractAddress) internal {
+    require(isWrappedNFT(nftContractAddress) || isAllowed(nftContractAddress), "Hashi721Bridge: invalid nft");
+  }
+
+  function _validateAuthorization(
+    address nftContractAddress,
+    address from,
+    uint256 tokenId
+  ) internal {
+    require(
+      IERC721(nftContractAddress).ownerOf(tokenId) == _msgSender() ||
+        IERC721(nftContractAddress).getApproved(tokenId) == _msgSender() ||
+        IERC721(nftContractAddress).isApprovedForAll(from, _msgSender()),
+      "Hashi721Bridge: invalid sender"
+    );
+
+    require(IERC721(nftContractAddress).ownerOf(tokenId) == from, "Hashi721Bridge: invalid from");
   }
 }

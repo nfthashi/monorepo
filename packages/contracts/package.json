@@ -4,8 +4,8 @@
   "license": "UNLICENSED",
   "scripts": {
     "test": "run-p test:*",
-    "test:unit-test": "hardhat test --grep 'Unit Test'",
-    "test:integration-test": "cross-env FORK_RINKEBY=true hardhat test --grep 'Integration Test'",
+    "test:unit": "hardhat test --grep 'Unit Test'",
+    "test:integration": "cross-env FORK_RINKEBY=true hardhat test --grep 'Integration Test'",
     "coverage": "hardhat coverage --testfiles 'test/unit/**/*.ts'",
     "lint": "run-s lint:*",
     "lint:eslint": "eslint '**/*.{js,ts}' --ignore-path .gitignore",

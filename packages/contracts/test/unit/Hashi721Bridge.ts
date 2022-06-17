@@ -72,8 +72,10 @@ describe("Unit Test for Hashi721Bridge", function () {
     await hashi721Bridge.setBridgeContract(sendToDomain, toContract);
 
     await expect(
-      hashi721Bridge.xSend(mockERC165.address, signer.address, ADDRESS_1, tokenId_1, sendToDomain, true)
+      hashi721Bridge.xSend(mockNFT.address, signer.address, ADDRESS_1, tokenId_1, sendToDomain, true)
     ).to.revertedWith("Hashi721Bridge: invalid nft");
+
+    await hashi721Bridge.setAllowList(mockNFT.address, true);
 
     await expect(
       hashi721Bridge.connect(malicious).xSend(mockNFT.address, signer.address, ADDRESS_1, tokenId_1, sendToDomain, true)
