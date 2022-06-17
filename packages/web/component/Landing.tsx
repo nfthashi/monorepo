@@ -112,18 +112,22 @@ export const Landing: React.FC = () => {
           Powered By
         </Heading>
         <HStack spacing={4}>
-          <Image
-            w={36}
-            textAlign={"center"}
-            src={useColorModeValue("assets/connext_black.png", "assets/connext_white.png")}
-            alt={"Connext logo"}
-          />
-          <Image
-            w={36}
-            textAlign={"center"}
-            src={useColorModeValue("assets/nomad_black.svg", "assets/nomad_white.svg")}
-            alt={"Nomad logo"}
-          />
+          <Link href="https://www.connext.network/" target="_blank">
+            <Image
+              w={36}
+              textAlign={"center"}
+              src={useColorModeValue("assets/connext_black.png", "assets/connext_white.png")}
+              alt={"Connext logo"}
+            />
+          </Link>
+          <Link href="https://www.nomad.xyz/" target="_blank">
+            <Image
+              w={36}
+              textAlign={"center"}
+              src={useColorModeValue("assets/nomad_black.svg", "assets/nomad_white.svg")}
+              alt={"Nomad logo"}
+            />
+          </Link>
         </HStack>
       </Stack>
       <Stack spacing={4} as={Container} maxW={"3xl"} textAlign={"center"} align={"center"} my="16">
