@@ -9,7 +9,7 @@ const BridgePage: NextPage = () => {
   return (
     <Layout>
       <Seo />
-      <Flex justifyContent="center">
+      <Flex justifyContent="center" mb="2">
         <Box
           width="xl"
           bgColor={useColorModeValue("white", "gray.700")}
@@ -21,8 +21,8 @@ const BridgePage: NextPage = () => {
           <Bridge />
         </Box>
       </Flex>
-      <Link textAlign={"center"} href="./faucet" _focus={{ boxShadow: "none" }}>
-        If you do not have NFTs, mint at the faucet!
+      <Link textAlign={"center"} href="./faucet" _focus={{ boxShadow: "none" }} fontSize="sm">
+        If you do not have Test NFTs, mint at the faucet!
       </Link>
     </Layout>
   );
