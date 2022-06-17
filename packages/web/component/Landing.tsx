@@ -80,6 +80,7 @@ export const Landing: React.FC = () => {
               rounded={"full"}
               size={"lg"}
               fontWeight={"normal"}
+              colorScheme={"gray"}
               px={6}
               leftIcon={<Icon as={IoDocumentText} color={"gray.300"} />}
             >

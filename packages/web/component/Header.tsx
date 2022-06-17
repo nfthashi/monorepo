@@ -1,5 +1,5 @@
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
-import { Box, Button, Flex, Icon,IconButton, Link, Text, useColorMode } from "@chakra-ui/react";
+import { Box, Button, Flex, Icon, IconButton, Link, Text, useColorMode } from "@chakra-ui/react";
 import { Web3Provider } from "@ethersproject/providers";
 import { useWeb3React } from "@web3-react/core";
 import React from "react";
@@ -26,30 +26,32 @@ export const Header: React.FC<HeaderProps> = ({ isLanding }) => {
           NFTHashi
         </Link>
         <Flex gap={"1"}>
-          {!isLanding && (
-            <>
-              {!account ? (
-                <Button onClick={connect} fontSize={"xs"} rounded={"2xl"}>
-                  Connect Wallet
-                </Button>
-              ) : (
-                <>
-                  <Button fontSize={"xs"} maxWidth={"32"} rounded={"2xl"} onClick={deactivate}>
-                    <Text noOfLines={1}>{account}</Text>
+          <>
+            {!isLanding && (
+              <>
+                {!account ? (
+                  <Button onClick={connect} fontSize={"xs"} rounded={"2xl"}>
+                    Connect Wallet
                   </Button>
-                </>
-              )}
-              <Button rounded="2xl" fontSize={"xs"} as="a" href="https://docs.nfthashi.com/" target="_blank">
-                <Icon as={IoDocumentText} color={"gray.300"} />
-              </Button>
-              <IconButton
-                rounded={"2xl"}
-                aria-label={"dark mode switch"}
-                icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
-                onClick={toggleColorMode}
-              />
-            </>
-          )}
+                ) : (
+                  <>
+                    <Button fontSize={"xs"} maxWidth={"32"} rounded={"2xl"} onClick={deactivate}>
+                      <Text noOfLines={1}>{account}</Text>
+                    </Button>
+                  </>
+                )}
+                <Button rounded="2xl" fontSize={"xs"} as="a" href="https://docs.nfthashi.com/" target="_blank">
+                  <Icon as={IoDocumentText} color={"gray.300"} />
+                </Button>
+              </>
+            )}
+            <IconButton
+              rounded={"2xl"}
+              aria-label={"dark mode switch"}
+              icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
+              onClick={toggleColorMode}
+            />
+          </>
         </Flex>
       </Flex>
     </Box>
