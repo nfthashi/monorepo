@@ -1,13 +1,12 @@
 {
   "name": "@nfthashi/contracts",
-  "version": "0.3.0",
+  "version": "0.3.9",
   "license": "UNLICENSED",
   "scripts": {
     "test": "run-p test:*",
     "test:unit-test": "hardhat test --grep 'Unit Test'",
     "test:integration-test": "cross-env FORK_RINKEBY=true hardhat test --grep 'Integration Test'",
     "coverage": "hardhat coverage --testfiles 'test/unit/**/*.ts'",
-    "build": "npx hardhat compile",
     "lint": "run-s lint:*",
     "lint:eslint": "eslint '**/*.{js,ts}' --ignore-path .gitignore",
     "lint:prettier": "prettier '**/*.{json,sol,md}' --ignore-path .gitignore --check",
@@ -15,7 +14,8 @@
     "fix": "run-s fix:*",
     "fix:eslint": "yarn lint:eslint --fix",
     "fix:prettier": "yarn lint:prettier --write",
-    "fix:solhint": "yarn lint:solhint --fix"
+    "fix:solhint": "yarn lint:solhint --fix",
+    "build": "hardhat compile"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.6",

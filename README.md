@@ -155,3 +155,11 @@ For more information about this section, this documentation will help you
   And, we'd love to discuss future directions of Cross-chain NFT, so feel free to chat us!
 - [https://twitter.com/0x_Yuzu](https://twitter.com/0x_Yuzu)
 - [https://twitter.com/taijusanag](https://twitter.com/taijusanagi)
+
+## Publish
+
+Run this at root
+
+```
+cd packages/contracts && yarn cpx 'contracts/**/*.sol' dist && yarn cpx package.json dist/ && yarn cpx README.md dist/ && cd dist && npm publish && cd .. && rm -rf dist && cd ../..
+```
