@@ -14,17 +14,21 @@ http://docs.nfthashi.com/
 NFT Hashi is a NFT bridge protocol that support transferring the NFTs between the deferent chains. We provide two types of bridge system, Wrap Pattern and Native Support Pattern, that can be used for different use cases.
 
 # How to use NFT Hashi
+
 ### Installation
+
 `$ npm i @nfthashi/contracts`
 
 ### Usage
+
 Once installed, you can use the contracts in the library by importing them:
+
 ```
 pragma solidity ^0.8.0;
 
-import "@nfthashi/contracts/contracts/native/example/NativeNFT";
+import "@nfthashi/contracts/contracts/native/example/NativeHashi721";
 
-contract MyCollectible is NativeNFT {
+contract MyCollectible is NativeHashi721 {
     constructor(
       uint32 selfDomain,
       address connext,
@@ -38,17 +42,18 @@ contract MyCollectible is NativeNFT {
   }
 }
 ```
-- selfDomain : 
-The domain ID of the network you deploy
-- connext : 
-The connext handler address of the network you deploy
-- dummyTransactionAssetId : 
-The test ERC20 token address of the network you deploy
-- startTokenId & endTokenId : 
-Enter how many tokens you want to mint in this chain
-ex) You want to set token Id 101 ~ 200 to this network, startTokenId is 101 and endTokenId is 200
-- name & symbol & baseTokenURI : 
-Enter each as you would when creating an ERC721
+
+- selfDomain :
+  The domain ID of the network you deploy
+- connext :
+  The connext handler address of the network you deploy
+- dummyTransactionAssetId :
+  The test ERC20 token address of the network you deploy
+- startTokenId & endTokenId :
+  Enter how many tokens you want to mint in this chain
+  ex) You want to set token Id 101 ~ 200 to this network, startTokenId is 101 and endTokenId is 200
+- name & symbol & baseTokenURI :
+  Enter each as you would when creating an ERC721
 
 You can find some necessary informations (ex domainID, connext address) from here
 https://docs.nfthashi.com/developer-guide/informations
@@ -57,10 +62,10 @@ For example, when deploying to rinkeby with token ID 101 ~ 200 set, the argument
 pragma solidity ^0.8.0;
 
 ```
-import "@nfthashi/contracts/contracts/native/example/NativeNFT";
+import "@nfthashi/contracts/contracts/native/example/NativeHashi721";
 
-contract MyCollectible is NativeNFT {
-    constructor() NativeNFT(
+contract MyCollectible is NativeHashi721 {
+    constructor() NativeHashi721(
       1111,
       a0x2307Ed9f152FA9b3DcDfe2385d279D8C2A9DF2b0,
       0x3FFc03F05D1869f493c7dbf913E636C6280e0ff9,
@@ -73,6 +78,7 @@ contract MyCollectible is NativeNFT {
   }
 }
 ```
+
 If you're new to smart contract development, head to Developing Smart Contracts to learn about creating a new project and compiling your contracts. This Openzeppelin Document help your understanding.
 
 ## How to bridge

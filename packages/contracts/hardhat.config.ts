@@ -3,48 +3,46 @@ import "@nomiclabs/hardhat-waffle";
 import "@typechain/hardhat";
 import "hardhat-gas-reporter";
 import "solidity-coverage";
-import "./tasks/native-bridge";
-import "./tasks/native-deploy";
-import "./tasks/native-mint";
-import "./tasks/register";
-import "./tasks/wrap-bridge";
-import "./tasks/wrap-deploy-implementation";
-import "./tasks/wrap-deploy-mock-with-mint";
-import "./tasks/wrap-deploy";
+import "./tasks/cmd/deploy-bridge";
+import "./tasks/cmd/deploy-faucet";
+import "./tasks/cmd/deploy-implementation";
+import "./tasks/cmd/register";
+import "./tasks/integration/register";
+import "./tasks/integration/deploy";
+import "./tasks/experimental/deploy-x-nft-trader";
+import "./tasks/experimental/create-order";
+import "./tasks/experimental/x-fill-order";
 
 import * as dotenv from "dotenv";
-import { HardhatUserConfig, task } from "hardhat/config";
+import { HardhatUserConfig } from "hardhat/config";
+
+import networks from "./networks.json";
 
 dotenv.config();
 
 const accounts = process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [];
 
-// This is a sample Hardhat task. To learn how to create your own go to
-// https://hardhat.org/guides/create-task.html
-task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
-  const accounts = await hre.ethers.getSigners();
-
-  for (const account of accounts) {
-    console.log(account.address);
-  }
-});
-
-// You need to export an object to set up your config
-// Go to https://hardhat.org/config/ to learn more
-
 const config: HardhatUserConfig = {
   solidity: "0.8.11",
   networks: {
+    hardhat: process.env.FORK_RINKEBY
+      ? {
+          forking: {
+            url: networks.rinkeby.rpc,
+            blockNumber: 10857376,
+          },
+        }
+      : {},
     rinkeby: {
-      url: "https://rinkeby.infura.io/v3/95f65ab099894076814e8526f52c9149",
+      url: networks.rinkeby.rpc,
       accounts,
     },
     kovan: {
-      url: "https://kovan.infura.io/v3/95f65ab099894076814e8526f52c9149",
+      url: networks.kovan.rpc,
       accounts,
     },
     goerli: {
-      url: "https://goerli.infura.io/v3/95f65ab099894076814e8526f52c9149",
+      url: networks.goerli.rpc,
       accounts,
     },
   },

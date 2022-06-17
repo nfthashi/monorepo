@@ -1,13 +1,13 @@
-import { Box, Button, Heading, Link, Select, Text, useToast } from "@chakra-ui/react";
+import { Box, Button, Heading, Select, useToast } from "@chakra-ui/react";
 import { Web3Provider } from "@ethersproject/providers";
 import { useWeb3React } from "@web3-react/core";
 import { ethers } from "ethers";
 import React, { useState } from "react";
 
-import NativeNFT from "../../contracts/artifacts/contracts/native/exmaple/NativeNFT.sol/NativeNFT.json";
+import HashiFaucetERC721 from "../../contracts/artifacts/contracts/__faucet/HashiFaucetERC721.sol/HashiFaucetERC721.json";
 import config from "../../contracts/networks.json";
+import { Chain, isChain } from "../../contracts/types/chain";
 import { injected } from "../lib/web3";
-import { Chain } from "../types/chain";
 
 export const Faucet: React.FC = () => {
   const [chain, setChain] = useState<Chain>("rinkeby");
@@ -17,8 +17,11 @@ export const Faucet: React.FC = () => {
     activate(injected);
   };
 
-  const handleSourceChainChange = async (e: any) => {
+  const handleSourceChainChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const inputValue = e.target.value;
+    if (!isChain(inputValue)) {
+      return;
+    }
     setChain(inputValue);
   };
 
@@ -37,10 +40,10 @@ export const Faucet: React.FC = () => {
     }
     console.log(chain);
     const faucetContract = config[chain].contracts.faucet;
-    const nftContract = new ethers.Contract(faucetContract, NativeNFT.abi, library.getSigner());
-    const tx = await nftContract.mint(account);
+    const nftContract = new ethers.Contract(faucetContract, HashiFaucetERC721.abi, library.getSigner());
+    const tx = await nftContract.mint();
     toast({
-      title: `Approve Tx Hash: ${tx.hash}, please wait for confirmation`,
+      title: `Minted Tx Hash: ${tx.hash}`,
       status: "success",
       isClosable: true,
     });
@@ -64,7 +67,7 @@ export const Faucet: React.FC = () => {
   return (
     <Box textAlign={"center"}>
       <Heading fontSize={"xl"} my="4">
-        NativeBridge NFT Faucet
+        NFTHashi NFT Faucet
       </Heading>
       <Select variant={"filled"} onChange={handleSourceChainChange} value={chain} rounded={"2xl"} fontSize={"sm"}>
         <NetworkSelectOptions />
@@ -80,12 +83,6 @@ export const Faucet: React.FC = () => {
           </Button>
         )}
       </Box>
-      <Text fontSize={"sm"} mt="4">
-        For testing wrap pattern, please get some testnet NFTs from{" "}
-        <Link href="https://faucet.paradigm.xyz/" isExternal _focus={{ boxShadow: "none" }}>
-          https://faucet.paradigm.xyz/
-        </Link>
-      </Text>
     </Box>
   );
 };

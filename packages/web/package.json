@@ -1,6 +1,6 @@
 {
-  "name": "web",
-  "version": "0.2.0",
+  "name": "@nfthashi/web",
+  "version": "0.3.0",
   "license": "UNLICENSED",
   "scripts": {
     "dev": "next dev",
@@ -19,6 +19,7 @@
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
     "@ethersproject/providers": "^5.6.6",
+    "@metamask/providers": "^9.0.0",
     "@web3-react/core": "^6.1.9",
     "@web3-react/injected-connector": "^6.0.7",
     "axios": "^0.27.2",
@@ -26,7 +27,8 @@
     "moralis": "^1.7.0",
     "next": "12.1.6",
     "react": "18.1.0",
-    "react-dom": "18.1.0"
+    "react-dom": "18.1.0",
+    "react-icons": "^4.4.0"
   },
   "devDependencies": {
     "@types/node": "17.0.34",

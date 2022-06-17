@@ -1,50 +1,55 @@
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
-import { Box, Button, Flex, IconButton, Link, Text, useColorMode } from "@chakra-ui/react";
+import { Box, Button, Flex, Icon,IconButton, Link, Text, useColorMode } from "@chakra-ui/react";
 import { Web3Provider } from "@ethersproject/providers";
 import { useWeb3React } from "@web3-react/core";
 import React from "react";
+import { IoDocumentText } from "react-icons/io5";
 
 import { injected } from "../lib/web3";
 
-export const Header: React.FC = () => {
+export interface HeaderProps {
+  isLanding?: boolean;
+}
+
+export const Header: React.FC<HeaderProps> = ({ isLanding }) => {
   const { activate, account, deactivate } = useWeb3React<Web3Provider>();
   const connect = async () => {
     activate(injected);
-  };
-
-  const docs = () => {
-    window.open("https://docs.nfthashi.com/");
   };
 
   const { colorMode, toggleColorMode } = useColorMode();
 
   return (
     <Box>
-      <Flex minH={"64px"} alignItems={"center"} justifyContent={"space-between"} p={{ base: 8 }}>
-        <Link fontSize={"lg"} fontWeight={"bold"} href="/" _focus={{ boxShadow: "none" }}>
+      <Flex minH={"64px"} alignItems={"center"} justifyContent={"space-between"} py="8" px="4">
+        <Link fontSize={isLanding ? "2xl" : "lg"} fontWeight={"bold"} href="/" _focus={{ boxShadow: "none" }}>
           NFTHashi
         </Link>
-        <Flex gap={"2"}>
-          {!account ? (
-            <Button onClick={connect} fontSize={"xs"} rounded={"2xl"}>
-              Connect Wallet
-            </Button>
-          ) : (
+        <Flex gap={"1"}>
+          {!isLanding && (
             <>
-              <Button fontSize={"xs"} maxWidth={"32"} rounded={"2xl"} onClick={deactivate}>
-                <Text noOfLines={1}>{account}</Text>
+              {!account ? (
+                <Button onClick={connect} fontSize={"xs"} rounded={"2xl"}>
+                  Connect Wallet
+                </Button>
+              ) : (
+                <>
+                  <Button fontSize={"xs"} maxWidth={"32"} rounded={"2xl"} onClick={deactivate}>
+                    <Text noOfLines={1}>{account}</Text>
+                  </Button>
+                </>
+              )}
+              <Button rounded="2xl" fontSize={"xs"} as="a" href="https://docs.nfthashi.com/" target="_blank">
+                <Icon as={IoDocumentText} color={"gray.300"} />
               </Button>
+              <IconButton
+                rounded={"2xl"}
+                aria-label={"dark mode switch"}
+                icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
+                onClick={toggleColorMode}
+              />
             </>
           )}
-          <Button rounded="2xl" fontSize={"xs"} onClick={docs}>
-            Doc
-          </Button>
-          <IconButton
-            rounded={"2xl"}
-            aria-label={"dark mode switch"}
-            icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
-            onClick={toggleColorMode}
-          />
         </Flex>
       </Flex>
     </Box>

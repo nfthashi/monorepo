@@ -24,23 +24,15 @@ import { ethers } from "ethers";
 import React, { useState } from "react";
 
 import IERC721 from "../../contracts/artifacts/@openzeppelin/contracts/token/ERC721/IERC721.sol/IERC721.json";
-import IERC165 from "../../contracts/artifacts/@openzeppelin/contracts/utils/introspection/IERC165.sol/IERC165.json";
-import NFTNativeBridge from "../../contracts/artifacts/contracts/native/NFTNativeBridge.sol/NFTNativeBridge.json";
-import NFTWrapBridge from "../../contracts/artifacts/contracts/wrap/NFTWrapBridge.sol/NFTWrapBridge.json";
-import { NFT_NATIVE_BRIDGE_INTERFACE_ID } from "../../contracts/lib/constant";
+import Hashi721Bridge from "../../contracts/artifacts/contracts/Hashi721Bridge.sol/Hashi721Bridge.json";
 import config from "../../contracts/networks.json";
+import { Chain, isChain } from "../../contracts/types/chain";
 import { injected } from "../lib/web3";
-import { Chain } from "../types/chain";
 import { NFT } from "../types/nft";
 import { NFTList } from "./NFTList";
 
-declare global {
-  interface Window {
-    ethereum: any;
-  }
-}
-
 export const Bridge: React.FC = () => {
+  const isTokenURIIncluded = true;
   const [selectedNFT, setSelectedNFT] = useState<NFT>();
   const [sourceChain, setSourceChain] = useState<Chain>("rinkeby");
   const [isLoading, setIsLoading] = useState(false);
@@ -57,8 +49,11 @@ export const Bridge: React.FC = () => {
     setSelectedNFT(undefined);
   };
 
-  const handleDestinationChainChange = (e: any) => {
+  const handleDestinationChainChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const inputValue = e.target.value;
+    if (!isChain(inputValue)) {
+      return;
+    }
     if (inputValue === sourceChain) {
       setSourceChain(destinationChain);
     }
@@ -66,8 +61,11 @@ export const Bridge: React.FC = () => {
     clearSelectedNFT();
   };
 
-  const handleSourceChainChange = async (e: any) => {
+  const handleSourceChainChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const inputValue = e.target.value;
+    if (!isChain(inputValue)) {
+      return;
+    }
     if (inputValue === destinationChain) {
       setDestinationChain(sourceChain);
     }
@@ -104,43 +102,38 @@ export const Bridge: React.FC = () => {
       });
     }
 
-    const nftContractERC165 = new ethers.Contract(selectedNFT.nftContractAddress, IERC165.abi, library.getSigner());
-    const isNativeBridgeIntegrated = await nftContractERC165.supportsInterface(NFT_NATIVE_BRIDGE_INTERFACE_ID);
     const nftContract = new ethers.Contract(selectedNFT.nftContractAddress, IERC721.abi, library.getSigner());
     const destinationDomainId = config[destinationChain].domainId;
-
-    let transaction;
-    if (isNativeBridgeIntegrated) {
-      const bridgeContract = selectedNFT.nftContractAddress;
-      const contract = new ethers.Contract(bridgeContract, NFTNativeBridge.abi, library.getSigner());
-      transaction = await contract.xSend(account, account, selectedNFT.tokenId, destinationDomainId, {
-        gasLimit: "500000",
+    const bridgeContract = config[sourceChain].contracts.bridge;
+    const approvedAddress = await nftContract.getApproved(selectedNFT.tokenId);
+    const isApprovedForAll = await nftContract.isApprovedForAll(account, bridgeContract);
+    const nftContractAddress = selectedNFT.nftContractAddress
+    const tokenId = selectedNFT.tokenId;
+    if (approvedAddress != bridgeContract && isApprovedForAll != true) {
+      const approveTx = await nftContract.setApprovalForAll(bridgeContract, true);
+      toast({
+        title: `Approve Tx Hash: ${approveTx.hash}, please wait for confirmation`,
+        status: "success",
+        isClosable: true,
       });
-    } else {
-      const bridgeContract = config[sourceChain].contracts.bridge;
-      const approvedAddress = await nftContract.getApproved(selectedNFT.tokenId);
-      const isApprovedForAll = await nftContract.isApprovedForAll(account, bridgeContract);
-      if (approvedAddress != bridgeContract && isApprovedForAll != true) {
-        const approveTx = await nftContract.setApprovalForAll(bridgeContract, true);
-        toast({
-          title: `Approve Tx Hash: ${approveTx.hash}, please wait for confirmation`,
-          status: "success",
-          isClosable: true,
-        });
-        await approveTx.wait(1);
-      }
-      const contract = new ethers.Contract(bridgeContract, NFTWrapBridge.abi, library.getSigner());
-      transaction = await contract.xSend(
-        selectedNFT.nftContractAddress,
-        account,
-        account,
-        selectedNFT.tokenId,
-        destinationDomainId,
-        {
-          gasLimit: "500000",
-        }
-      );
+      clearSelectedNFT();
+      setIsLoading(true);
+      await approveTx.wait(1);
     }
+    setIsLoading(false);
+    const contract = new ethers.Contract(bridgeContract, Hashi721Bridge.abi, library.getSigner());
+    const transaction = await contract.xSend(
+      nftContractAddress,
+      account,
+      account,
+      tokenId,
+      destinationDomainId,
+      isTokenURIIncluded,
+      {
+        gasLimit: "500000",
+      }
+    );
+
     clearSelectedNFT();
     toast({
       title: `Bridge Tx Hash: ${transaction.hash}`,

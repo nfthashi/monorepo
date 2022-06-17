@@ -1,14 +1,14 @@
 import "../styles/globals.css";
 
 import { ChakraProvider } from "@chakra-ui/react";
-import { Web3Provider } from "@ethersproject/providers";
+import { ExternalProvider,Web3Provider } from "@ethersproject/providers";
 import { Web3ReactProvider } from "@web3-react/core";
 import type { AppProps } from "next/app";
 
 import theme from "../lib/theme";
 
 function MyApp({ Component, pageProps }: AppProps) {
-  function getLibrary(provider: any) {
+  function getLibrary(provider: ExternalProvider) {
     return new Web3Provider(provider, "any");
   }
   return (

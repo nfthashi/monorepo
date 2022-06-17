@@ -1,9 +1,12 @@
 {
-  "name": "contracts",
-  "version": "0.2.0",
+  "name": "@nfthashi/contracts",
+  "version": "0.3.0",
   "license": "UNLICENSED",
   "scripts": {
-    "test": "hardhat test",
+    "test": "run-p test:*",
+    "test:unit-test": "hardhat test --grep 'Unit Test'",
+    "test:integration-test": "cross-env FORK_RINKEBY=true hardhat test --grep 'Integration Test'",
+    "coverage": "hardhat coverage --testfiles 'test/unit/**/*.ts'",
     "build": "npx hardhat compile",
     "lint": "run-s lint:*",
     "lint:eslint": "eslint '**/*.{js,ts}' --ignore-path .gitignore",

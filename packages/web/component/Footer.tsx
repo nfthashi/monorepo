@@ -5,7 +5,7 @@ export const Footer: React.FC = () => {
   return (
     <Flex minH={"64px"} alignItems={"center"} justifyContent={"center"} p={{ base: 4 }} gap={"16px"}>
       <Text fontSize={"xs"} fontWeight={"medium"}>
-        Powered by Connext Amarok
+        Powered by Connext & Nomad
       </Text>
     </Flex>
   );
