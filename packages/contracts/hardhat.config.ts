@@ -7,8 +7,11 @@ import "./tasks/cmd/deploy-bridge";
 import "./tasks/cmd/deploy-faucet";
 import "./tasks/cmd/deploy-implementation";
 import "./tasks/cmd/register";
-import "./tasks/integration/deploy";
 import "./tasks/integration/register";
+import "./tasks/integration/deploy";
+import "./tasks/experimental/deploy-x-nft-trader";
+import "./tasks/experimental/create-order";
+import "./tasks/experimental/x-fill-order";
 
 import * as dotenv from "dotenv";
 import { HardhatUserConfig } from "hardhat/config";

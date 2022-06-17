@@ -53,6 +53,10 @@ describe("Unit Test for HashiConnextAdapter", function () {
     expect(await mockHashiConnextAdapter.getSelfDomain()).to.equal(selfDomain);
   });
 
+  it("getTransactingAssetId", async function () {
+    expect(await mockHashiConnextAdapter.getTransactingAssetId()).to.equal(dummyTransactingAssetId);
+  });
+
   it("setBridgeContract", async function () {
     expect(await mockHashiConnextAdapter.getBridgeContract(opponentDomain)).to.equal(NULL_ADDRESS);
     await expect(mockHashiConnextAdapter.setBridgeContract(opponentDomain, opponentContract))

@@ -61,6 +61,10 @@ contract HashiConnextAdapter is Ownable, ERC165 {
     return _selfDomain;
   }
 
+  function getTransactingAssetId() public view returns (address) {
+    return _transactingAssetId;
+  }
+
   function _xcall(uint32 destinationDomain, bytes memory callData) internal {
     address destinationContract = _bridgeContracts[destinationDomain];
     require(destinationContract != address(0x0), "HashiConnextAdapter: invalid bridge");
