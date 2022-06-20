@@ -95,3 +95,9 @@ https://docs.openzeppelin.com/learn/developing-smart-contracts
 
 Token ID should be different in each chain. For example, Rinkeby token ID is 0-999, and Kovan token ID is 1000-1999.
 After deploying the contract to each chain, all contract connections should be registered.
+
+# Publish
+
+```
+cd packages/contracts && yarn cpx 'contracts/**/*.sol' dist && yarn cpx package.json dist/ && yarn cpx README.md dist/ && cd dist && npm publish && cd .. && rm -rf dist && cd ../..
+```
