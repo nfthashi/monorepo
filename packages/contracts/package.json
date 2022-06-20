@@ -1,6 +1,6 @@
 {
   "name": "@nfthashi/contracts",
-  "version": "0.3.9",
+  "version": "0.3.10",
   "license": "UNLICENSED",
   "scripts": {
     "test": "run-p test:*",
