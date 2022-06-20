@@ -1,17 +1,22 @@
 import "@nomiclabs/hardhat-etherscan";
 import "@nomiclabs/hardhat-waffle";
+import "@openzeppelin/hardhat-upgrades";
 import "@typechain/hardhat";
 import "hardhat-gas-reporter";
 import "solidity-coverage";
 import "./tasks/__experimental/deploy-x-nft-trader";
 import "./tasks/__experimental/create-order";
 import "./tasks/__experimental/x-fill-order";
-import "./tasks/__faucet/deploy-faucet";
+import "./tasks/__faucet/deploy";
 import "./tasks/cmd/deploy-bridge";
-import "./tasks/cmd/deploy-implementation";
+import "./tasks/cmd/deploy-wrapped-nft-impl";
 import "./tasks/cmd/register";
+import "./tasks/cmd/upgrade-bridge";
+import "./tasks/cmd/upgrade-wrapped-nft-impl";
 import "./tasks/integration/register";
 import "./tasks/integration/deploy";
+import "./tasks/integration/upgrade-bridge";
+import "./tasks/integration/upgrade-wrapped-nft-impl";
 
 import * as dotenv from "dotenv";
 import { HardhatUserConfig } from "hardhat/config";

@@ -1,6 +1,6 @@
 import { task } from "hardhat/config";
 
-task("deploy-faucet", "deploy faucet").setAction(async (_, { ethers }) => {
+task("deploy", "deploy faucet").setAction(async (_, { ethers }) => {
   const HashiFaucetERC721 = await ethers.getContractFactory("HashiFaucetERC721");
   const hashiFaucetERC721 = await HashiFaucetERC721.deploy();
   await hashiFaucetERC721.deployed();

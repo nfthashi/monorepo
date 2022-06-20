@@ -7,7 +7,7 @@ import { isChain } from "../../types/chain";
 
 task("integration-deploy", "integration deploy")
   .addOptionalParam("skipVerify", "skip verify")
-  .setAction(async ({ skipVerify }, { network, run }) => {
+  .setAction(async (_, { network, run }) => {
     const { name } = network;
     if (!isChain(name)) {
       console.log("network invalid");
@@ -16,23 +16,17 @@ task("integration-deploy", "integration deploy")
     const { domainId: selfDomainNum, contracts } = networks[name];
     const { connext, testToken: dummyTransactingAssetId } = contracts;
     const selfDomain = selfDomainNum.toString();
-    const nftImplementation = await run("cmd-deploy-implementation");
-    const bridge = await run("cmd-deploy-bridge", { selfDomain, connext, dummyTransactingAssetId, nftImplementation });
+    const wrappedNftImplementation = await run("cmd-deploy-wrapped-nft-impl");
+    const bridge = await run("cmd-deploy-bridge", {
+      selfDomain,
+      connext,
+      dummyTransactingAssetId,
+      wrappedNftImplementation,
+    });
+    networks[name].contracts.wrappedNftImplementation = wrappedNftImplementation;
     networks[name].contracts.bridge = bridge;
 
     fs.writeFileSync(path.join(__dirname, "../../networks.json"), JSON.stringify(networks));
-
-    if (!skipVerify) {
-      await run("verify:verify", {
-        address: nftImplementation,
-        constructorArguments: [],
-      }).catch((err) => console.log(err.message));
-
-      await run("verify:verify", {
-        address: bridge,
-        constructorArguments: [selfDomain, connext, dummyTransactingAssetId, nftImplementation],
-      }).catch((err) => console.log(err.message));
-    }
 
     console.log("DONE");
   });
