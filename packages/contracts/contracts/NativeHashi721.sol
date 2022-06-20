@@ -16,19 +16,18 @@ contract NativeHashi721 is Initializable, ERC165Upgradeable, INativeHashi721, Ha
     string memory name,
     string memory symbol
   ) {
-    __NativeHashi721_init(selfDomain, connext, dummyTransactingAssetId, name, symbol);
+    initialize(selfDomain, connext, dummyTransactingAssetId, name, symbol);
   }
 
-  function __NativeHashi721_init(
+  function initialize(
     uint32 selfDomain,
     address connext,
     address dummyTransactingAssetId,
     string memory name,
     string memory symbol
-  ) internal initializer {
-    __Ownable_init_unchained();
-    __ERC721_init_unchained(name, symbol);
+  ) public initializer {
     __HashiConnextAdapter_init(selfDomain, connext, dummyTransactingAssetId);
+    __ERC721_init_unchained(name, symbol);
   }
 
   function xSend(

@@ -20,25 +20,15 @@ contract Hashi721Bridge is ERC165Upgradeable, HashiConnextAdapter {
   address private _nftImplementation;
 
   event AllowListSet(address nftContractAddress, bool isAllowed);
-  event IsAllowListRequired(bool IsAllowListRequired);
+  event IsAllowListRequired(bool isAllowListRequired);
 
-  constructor(
+  function initialize(
     uint32 selfDomain,
     address connext,
     address dummyTransactingAssetId,
     address nftImplementation
-  ) {
+  ) public initializer {
     __Hashi721Bridge_init(selfDomain, connext, dummyTransactingAssetId, nftImplementation);
-  }
-
-  function __Hashi721Bridge_init(
-    uint32 selfDomain,
-    address connext,
-    address dummyTransactingAssetId,
-    address nftImplementation
-  ) internal initializer {
-    __HashiConnextAdapter_init(selfDomain, connext, dummyTransactingAssetId);
-    _nftImplementation = nftImplementation;
   }
 
   function setIsAllowListRequired(bool isRequired) public onlyOwner {
@@ -131,6 +121,23 @@ contract Hashi721Bridge is ERC165Upgradeable, HashiConnextAdapter {
 
   function isWrappedNFT(address nftContractAddress) public view returns (bool) {
     return _contracts[nftContractAddress] != address(0x0) && _domains[nftContractAddress] != 0;
+  }
+
+  // solhint-disable-next-line func-name-mixedcase
+  function __Hashi721Bridge_init(
+    uint32 selfDomain,
+    address connext,
+    address dummyTransactingAssetId,
+    address nftImplementation
+  ) internal onlyInitializing {
+    __Ownable_init_unchained();
+    __HashiConnextAdapter_init_unchained(selfDomain, connext, dummyTransactingAssetId);
+    __Hashi721Bridge_init_unchained(nftImplementation);
+  }
+
+  // solhint-disable-next-line func-name-mixedcase
+  function __Hashi721Bridge_init_unchained(address nftImplementation) internal onlyInitializing {
+    _nftImplementation = nftImplementation;
   }
 
   function _validateNFT(address nftContractAddress) internal {

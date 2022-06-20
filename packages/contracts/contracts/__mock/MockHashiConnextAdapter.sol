@@ -9,6 +9,14 @@ contract MockHashiConnextAdapter is HashiConnextAdapter {
     address connext,
     address transactingAssetId
   ) {
+    initialize(selfDomain, connext, transactingAssetId);
+  }
+
+  function initialize(
+    uint32 selfDomain,
+    address connext,
+    address transactingAssetId
+  ) public initializer {
     __HashiConnextAdapter_init(selfDomain, connext, transactingAssetId);
   }
 
