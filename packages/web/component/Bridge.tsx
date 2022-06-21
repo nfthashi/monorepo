@@ -95,11 +95,15 @@ export const Bridge: React.FC = () => {
     const { chainId } = await library.getNetwork();
     const { ethereum } = window;
     const sourceChainId = config[sourceChain].chainId;
+    setIsLoading(true);
+
     if (chainId != sourceChainId) {
-      await ethereum.request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId: ethers.utils.hexValue(sourceChainId) }],
-      });
+      await ethereum
+        .request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: ethers.utils.hexValue(sourceChainId) }],
+        })
+        .catch(() => setIsLoading(false));
     }
 
     const nftContract = new ethers.Contract(selectedNFT.nftContractAddress, IERC721.abi, library.getSigner());
@@ -110,17 +114,15 @@ export const Bridge: React.FC = () => {
     const nftContractAddress = selectedNFT.nftContractAddress;
     const tokenId = selectedNFT.tokenId;
     if (approvedAddress != bridgeContract && isApprovedForAll != true) {
-      const approveTx = await nftContract.setApprovalForAll(bridgeContract, true);
+      const approveTx = await nftContract.setApprovalForAll(bridgeContract, true).catch(() => setIsLoading(false));
+      if (!approveTx) return;
       toast({
         title: `Approve Tx Hash: ${approveTx.hash}, please wait for confirmation`,
         status: "success",
         isClosable: true,
       });
-      clearSelectedNFT();
-      setIsLoading(true);
       await approveTx.wait(1);
     }
-    setIsLoading(false);
     const contract = new ethers.Contract(bridgeContract, Hashi721Bridge.abi, library.getSigner());
     const transaction = await contract.xSend(
       nftContractAddress,
@@ -133,7 +135,7 @@ export const Bridge: React.FC = () => {
         gasLimit: "1000000",
       }
     );
-
+    setIsLoading(false);
     clearSelectedNFT();
     toast({
       title: `Bridge Tx Hash: ${transaction.hash}`,
@@ -253,8 +255,15 @@ export const Bridge: React.FC = () => {
             <Button width={"50%"} onClick={clearSelectedNFT} fontSize={"sm"} rounded={"2xl"} variant="outline">
               Back
             </Button>
-            <Button width={"50%"} onClick={xCall} fontSize={"sm"} colorScheme={"blue"} rounded={"2xl"}>
-              Bridge NFT
+            <Button
+              width={"50%"}
+              onClick={xCall}
+              fontSize={"sm"}
+              colorScheme={"blue"}
+              rounded={"2xl"}
+              disabled={isLoading}
+            >
+              Bridge NFT {isLoading && <Spinner ml="2" h={4} w={4} />}
             </Button>
           </Flex>
         </Box>
