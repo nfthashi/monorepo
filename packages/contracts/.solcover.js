@@ -1,3 +1,3 @@
 module.exports = {
-  skipFiles: ["__faucet", "__mock"],
+  skipFiles: ["__experimental", "__faucet", "__mock"],
 };

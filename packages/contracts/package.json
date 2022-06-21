@@ -1,11 +1,11 @@
 {
   "name": "@nfthashi/contracts",
-  "version": "0.3.9",
+  "version": "0.4.0",
   "license": "UNLICENSED",
   "scripts": {
     "test": "run-p test:*",
-    "test:unit-test": "hardhat test --grep 'Unit Test'",
-    "test:integration-test": "cross-env FORK_RINKEBY=true hardhat test --grep 'Integration Test'",
+    "test:unit": "hardhat test --grep 'Unit Test'",
+    "test:integration": "cross-env FORK_RINKEBY=true hardhat test --grep 'Integration Test'",
     "coverage": "hardhat coverage --testfiles 'test/unit/**/*.ts'",
     "lint": "run-s lint:*",
     "lint:eslint": "eslint '**/*.{js,ts}' --ignore-path .gitignore",
@@ -21,6 +21,7 @@
     "@nomiclabs/hardhat-ethers": "^2.0.6",
     "@nomiclabs/hardhat-etherscan": "^3.0.3",
     "@nomiclabs/hardhat-waffle": "^2.0.3",
+    "@openzeppelin/hardhat-upgrades": "^1.19.0",
     "@typechain/ethers-v5": "^7.2.0",
     "@typechain/hardhat": "^2.3.1",
     "@types/chai": "^4.3.1",

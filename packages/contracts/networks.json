@@ -4,7 +4,8 @@
     "chainId": 4,
     "domainId": 1111,
     "contracts": {
-      "bridge": "0x5CD712E58645b8e4F0A688aD63DDB50e87841e87",
+      "wrappedNftImplementation": "0x9f9925e674fB221F88bFa96b5eF84E32d9c541c7",
+      "bridge": "0xFE87BcC2D9323A7023039790EE70fCc13643628B",
       "connext": "0x2307Ed9f152FA9b3DcDfe2385d279D8C2A9DF2b0",
       "faucet": "0x5B26da852945f37638Ff987c060022e8159a57c5",
       "testToken": "0x3FFc03F05D1869f493c7dbf913E636C6280e0ff9"
@@ -17,7 +18,8 @@
     "chainId": 5,
     "domainId": 3331,
     "contracts": {
-      "bridge": "0x86CB60B53f47654D93Ef6f30f7D37Ebc0b3bf2Cc",
+      "wrappedNftImplementation": "0xE9bA21232D0Ece2e550a203b3E5bFC104800e792",
+      "bridge": "0xEFFe8cA56B164c797305924395d1Dd0400AFE3e3",
       "connext": "0xEC3A723DE47a644b901DC269829bf8718F175EBF",
       "faucet": "0x35de708c2355B5f02c2F5bFB800E22d4Bb40233A",
       "testToken": "0x3FFc03F05D1869f493c7dbf913E636C6280e0ff9"

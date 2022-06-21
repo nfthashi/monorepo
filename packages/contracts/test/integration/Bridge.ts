@@ -24,7 +24,8 @@ describe("Integration Test for Bridge", function () {
     const baseTokenURL = "http://localhost:3000/";
 
     const Hashi721Bridge = await ethers.getContractFactory("Hashi721Bridge");
-    hashi721Bridge = await Hashi721Bridge.deploy(
+    hashi721Bridge = await Hashi721Bridge.deploy();
+    await hashi721Bridge.initialize(
       selfDomain,
       connextHandlerAddress,
       dummyTransactingAssetId,

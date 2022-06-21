@@ -1,6 +1,6 @@
 {
   "name": "nfthashi",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "license": "UNLICENSED",
   "private": true,
   "workspaces": [
@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "prepare": "husky install",
-    "ci": "run-p lint build test",
+    "ci": "run-s build lint test",
     "lint": "run-p lint:*",
     "lint:contracts": "yarn workspace @nfthashi/contracts lint",
     "lint:web": "yarn workspace @nfthashi/web lint",

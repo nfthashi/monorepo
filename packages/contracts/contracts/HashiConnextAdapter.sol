@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol";
 
 import "@connext/nxtp-contracts/contracts/libraries/LibConnextStorage.sol";
 import "@connext/nxtp-contracts/contracts/interfaces/IExecutor.sol";
@@ -10,13 +10,13 @@ import "@connext/nxtp-contracts/contracts/interfaces/IConnextHandler.sol";
 
 import "hardhat/console.sol";
 
-contract HashiConnextAdapter is Ownable, ERC165 {
+contract HashiConnextAdapter is OwnableUpgradeable, ERC165Upgradeable {
   mapping(uint32 => address) private _bridgeContracts;
 
-  address private immutable _connext;
-  address private immutable _executor;
-  address private immutable _transactingAssetId;
-  uint32 private immutable _selfDomain;
+  address private _connext;
+  address private _executor;
+  address private _transactingAssetId;
+  uint32 private _selfDomain;
 
   event BridgeSet(uint32 domain, address bridgeContract);
 
@@ -27,17 +27,6 @@ contract HashiConnextAdapter is Ownable, ERC165 {
       "HashiConnextAdapter: origin sender invalid"
     );
     _;
-  }
-
-  constructor(
-    uint32 selfDomain,
-    address connext,
-    address transactingAssetId
-  ) {
-    _selfDomain = selfDomain;
-    _connext = connext;
-    _executor = address(IConnextHandler(_connext).executor());
-    _transactingAssetId = transactingAssetId;
   }
 
   function setBridgeContract(uint32 domain, address bridgeContract) public onlyOwner {
@@ -63,6 +52,28 @@ contract HashiConnextAdapter is Ownable, ERC165 {
 
   function getTransactingAssetId() public view returns (address) {
     return _transactingAssetId;
+  }
+
+  // solhint-disable-next-line func-name-mixedcase
+  function __HashiConnextAdapter_init(
+    uint32 selfDomain,
+    address connext,
+    address transactingAssetId
+  ) internal onlyInitializing {
+    __Ownable_init_unchained();
+    __HashiConnextAdapter_init_unchained(selfDomain, connext, transactingAssetId);
+  }
+
+  // solhint-disable-next-line func-name-mixedcase
+  function __HashiConnextAdapter_init_unchained(
+    uint32 selfDomain,
+    address connext,
+    address transactingAssetId
+  ) internal onlyInitializing {
+    _selfDomain = selfDomain;
+    _connext = connext;
+    _executor = address(IConnextHandler(_connext).executor());
+    _transactingAssetId = transactingAssetId;
   }
 
   function _xcall(uint32 destinationDomain, bytes memory callData) internal {

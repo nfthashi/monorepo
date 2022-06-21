@@ -130,7 +130,7 @@ export const Bridge: React.FC = () => {
       destinationDomainId,
       isTokenURIIncluded,
       {
-        gasLimit: "500000",
+        gasLimit: "1000000",
       }
     );
 

@@ -8,13 +8,12 @@ contract XNFTTrader is HashiConnextAdapter {
   Hashi721Bridge private _hashi721Bridge;
   MockMarket private _mockMarket;
 
-  constructor(Hashi721Bridge hashi721Bridge, MockMarket mockMarket)
-    HashiConnextAdapter(
+  constructor(Hashi721Bridge hashi721Bridge, MockMarket mockMarket) {
+    __HashiConnextAdapter_init_unchained(
       hashi721Bridge.getSelfDomain(),
       hashi721Bridge.getConnext(),
       hashi721Bridge.getTransactingAssetId()
-    )
-  {
+    );
     _hashi721Bridge = hashi721Bridge;
     _mockMarket = mockMarket;
   }

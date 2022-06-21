@@ -8,7 +8,17 @@ contract MockHashiConnextAdapter is HashiConnextAdapter {
     uint32 selfDomain,
     address connext,
     address transactingAssetId
-  ) HashiConnextAdapter(selfDomain, connext, transactingAssetId) {} // solhint-disable no-empty-blocks
+  ) {
+    initialize(selfDomain, connext, transactingAssetId);
+  }
+
+  function initialize(
+    uint32 selfDomain,
+    address connext,
+    address transactingAssetId
+  ) public initializer {
+    __HashiConnextAdapter_init(selfDomain, connext, transactingAssetId);
+  }
 
   // solhint-disable-next-line no-empty-blocks
   function testOnlyExecutor() public onlyExecutor {}

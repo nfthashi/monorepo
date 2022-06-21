@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
+import "@openzeppelin/contracts-upgradeable/interfaces/IERC165Upgradeable.sol";
 
-interface IWrappedHashi721 is IERC165 {
+interface IWrappedHashi721 is IERC165Upgradeable {
   function initialize() external;
 
   function mint(
