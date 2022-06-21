@@ -6,6 +6,4 @@ export const supportedChainIds = Object.values(config).map(({ chainId }) => {
   return chainId;
 });
 
-export const injected = new InjectedConnector({
-  supportedChainIds,
-});
+export const injected = new InjectedConnector({});
