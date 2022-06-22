@@ -10,7 +10,7 @@
       "faucet": "0x5B26da852945f37638Ff987c060022e8159a57c5",
       "testToken": "0x3FFc03F05D1869f493c7dbf913E636C6280e0ff9"
     },
-    "exproler": "https://rinkeby.etherscan.io/",
+    "explorer": "https://rinkeby.etherscan.io/",
     "rpc": "https://rinkeby.infura.io/v3/95f65ab099894076814e8526f52c9149"
   },
   "goerli": {
@@ -24,7 +24,7 @@
       "faucet": "0x35de708c2355B5f02c2F5bFB800E22d4Bb40233A",
       "testToken": "0x3FFc03F05D1869f493c7dbf913E636C6280e0ff9"
     },
-    "exproler": "https://goerli.etherscan.io/",
+    "explorer": "https://goerli.etherscan.io/",
     "rpc": "https://goerli.infura.io/v3/95f65ab099894076814e8526f52c9149"
   }
 }

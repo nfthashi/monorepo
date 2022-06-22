@@ -1,4 +1,4 @@
-import { ArrowRightIcon } from "@chakra-ui/icons";
+import { ArrowRightIcon, CheckCircleIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -117,9 +117,24 @@ export const Bridge: React.FC = () => {
       const approveTx = await nftContract.setApprovalForAll(bridgeContract, true).catch(() => setIsLoading(false));
       if (!approveTx) return;
       toast({
-        title: `Approve Tx Hash: ${approveTx.hash}, please wait for confirmation`,
-        status: "success",
+        render: () => (
+          <Box color="white" p={3} bg="green.500" rounded={"md"}>
+            <CheckCircleIcon mr="2" />
+            Please wait for confirmation of the Approve Tx:{" "}
+            <Link
+              textDecoration={"underline"}
+              fontSize="sm"
+              isExternal
+              href={`${config[sourceChain].explorer}tx/${approveTx.hash}`}
+              maxWidth={80}
+              noOfLines={1}
+            >
+              {approveTx.hash}
+            </Link>
+          </Box>
+        ),
         isClosable: true,
+        duration: 10000,
       });
       await approveTx.wait(1);
     }
@@ -138,9 +153,24 @@ export const Bridge: React.FC = () => {
     setIsLoading(false);
     clearSelectedNFT();
     toast({
-      title: `Bridge Tx Hash: ${transaction.hash}`,
-      status: "success",
+      render: () => (
+        <Box color="white" p={3} bg="green.500" rounded={"md"}>
+          <CheckCircleIcon mr="2" />
+          Please wait for confirmation of the Bridge Tx:{" "}
+          <Link
+            textDecoration={"underline"}
+            fontSize="sm"
+            isExternal
+            href={`${config[sourceChain].explorer}tx/${transaction.hash}`}
+            maxWidth={80}
+            noOfLines={1}
+          >
+            {transaction.hash}
+          </Link>
+        </Box>
+      ),
       isClosable: true,
+      duration: 10000,
     });
   };
 
@@ -246,7 +276,7 @@ export const Bridge: React.FC = () => {
               {selectedNFT.name ? selectedNFT.name : "untitled"} - #{selectedNFT.tokenId}
             </Text>
             <Text textAlign={"center"} fontSize={"xs"}>
-              <Link target={"_blank"} href={`${config[sourceChain].exproler}address/${selectedNFT.nftContractAddress}`}>
+              <Link target={"_blank"} href={`${config[sourceChain].explorer}address/${selectedNFT.nftContractAddress}`}>
                 {selectedNFT.nftContractAddress}
               </Link>
             </Text>
