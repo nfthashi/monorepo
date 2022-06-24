@@ -15,6 +15,7 @@ import {
   Spinner,
   Text,
   useDisclosure,
+  useTheme,
   useToast,
 } from "@chakra-ui/react";
 import { Web3Provider } from "@ethersproject/providers";
@@ -32,6 +33,7 @@ import { NFT } from "../types/nft";
 import { NFTList } from "./NFTList";
 
 export const Bridge: React.FC = () => {
+  const theme = useTheme();
   const isTokenURIIncluded = true;
   const [selectedNFT, setSelectedNFT] = useState<NFT>();
   const [sourceChain, setSourceChain] = useState<Chain>("rinkeby");
@@ -118,7 +120,7 @@ export const Bridge: React.FC = () => {
       if (!approveTx) return;
       toast({
         render: () => (
-          <Box color="white" p={3} bg="green.500" rounded={"md"}>
+          <Box color="white" p={3} bg={theme.colors.success.main} rounded={"md"}>
             <CheckCircleIcon mr="2" />
             Please wait for confirmation of the Approve Tx:{" "}
             <Link
@@ -154,7 +156,7 @@ export const Bridge: React.FC = () => {
     clearSelectedNFT();
     toast({
       render: () => (
-        <Box color="white" p={3} bg="green.500" rounded={"md"}>
+        <Box color="white" p={3} bg={theme.colors.success.main} rounded={"md"}>
           <CheckCircleIcon mr="2" />
           Please wait for confirmation of the Bridge Tx:{" "}
           <Link

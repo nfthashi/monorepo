@@ -1,5 +1,16 @@
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
-import { Box, Button, Flex, Icon, IconButton, Link, Text, useColorMode } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  Icon,
+  IconButton,
+  Image,
+  Link,
+  Text,
+  useColorMode,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import { Web3Provider } from "@ethersproject/providers";
 import { useWeb3React } from "@web3-react/core";
 import React from "react";
@@ -21,9 +32,9 @@ export const Header: React.FC<HeaderProps> = ({ isLanding }) => {
 
   return (
     <Box>
-      <Flex minH={"64px"} alignItems={"center"} justifyContent={"space-between"} py="8" px="4">
+      <Flex minH={"64px"} alignItems={"center"} justifyContent={"space-between"} pb="8" pt="4" px="4">
         <Link fontSize={isLanding ? "2xl" : "lg"} fontWeight={"bold"} href="/" _focus={{ boxShadow: "none" }}>
-          NFTHashi
+          <Image src={useColorModeValue("/assets/light_logo.png", "/assets/dark_logo.png")} width={"16"} alt="logo" />
         </Link>
         <Flex gap={"1"}>
           <>

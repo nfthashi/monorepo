@@ -13,6 +13,7 @@ import {
   Stack,
   Text,
   useColorModeValue,
+  useTheme,
 } from "@chakra-ui/react";
 import React from "react";
 import { BsPlayCircleFill } from "react-icons/bs";
@@ -20,6 +21,7 @@ import { FaDiscord, FaTwitter } from "react-icons/fa";
 import { IoDocumentText } from "react-icons/io5";
 
 export const Landing: React.FC = () => {
+  const theme = useTheme();
   const communities = [
     { icon: FaDiscord, link: "https://discord.gg/TnQX6ZjN4Z" },
     { icon: FaTwitter, link: "https://twitter.com/nfthashi" },
@@ -46,7 +48,7 @@ export const Landing: React.FC = () => {
                 position: "absolute",
                 bottom: 1,
                 left: 0,
-                bg: "teal.400",
+                bg: theme.colors.primary.main,
                 zIndex: -1,
               }}
             >
@@ -54,7 +56,7 @@ export const Landing: React.FC = () => {
             </Text>
             <br />
             <Text fontSize={{ base: "3xl", md: "5xl" }}>
-              <Text as={"span"} color={"teal.400"}>
+              <Text as={"span"} color={theme.colors.secondary.main}>
                 Trust minimized{" "}
               </Text>
               cross-chain NFT bridge
@@ -68,8 +70,7 @@ export const Landing: React.FC = () => {
               size={"lg"}
               fontWeight={"normal"}
               px={6}
-              colorScheme={"teal"}
-              bg={"teal.400"}
+              bg={theme.colors.secondary.main}
               leftIcon={<Icon as={BsPlayCircleFill} color={"gray.300"} />}
             >
               Get started
