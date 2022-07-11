@@ -93,11 +93,7 @@ contract HashiConnextAdapter is OwnableUpgradeable, ERC165Upgradeable {
       relayerFee: 0,
       slippageTol: 9995
     });
-    XCallArgs memory xcallArgs = XCallArgs({
-      params: callParams,
-      transactingAssetId: _transactingAssetId,
-      amount: 0
-    });
+    XCallArgs memory xcallArgs = XCallArgs({params: callParams, transactingAssetId: _transactingAssetId, amount: 0});
     IConnextHandler(_connext).xcall(xcallArgs);
   }
 }
