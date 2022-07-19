@@ -47,8 +47,8 @@ https://docs.nfthashi.com/developer-guide/how-to-deploy-your-own-cross-chain-nft
 - Copy the transaction hash on the origin chain
 - Use this code in subQuery of the origin chain to get “Transaction ID”
   - subgraph URL
-    - Kovan [https://thegraph.com/hosted-service/subgraph/connext/nxtp-amarok-runtime-v0-kovan](https://thegraph.com/hosted-service/subgraph/connext/nxtp-amarok-runtime-v0-kovan)
     - Rinkeby [https://thegraph.com/hosted-service/subgraph/connext/nxtp-amarok-runtime-v0-rinkeby](https://thegraph.com/hosted-service/subgraph/connext/nxtp-amarok-runtime-v0-rinkeby)
+    - Goerli [https://thegraph.com/hosted-service/subgraph/connext/nxtp-amarok-runtime-v0-goerli](https://thegraph.com/hosted-service/subgraph/connext/nxtp-amarok-runtime-v0-goerli)
 
 ```
 {
