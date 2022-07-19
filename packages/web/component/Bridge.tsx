@@ -1,3 +1,4 @@
+import { useQuery } from "@apollo/react-hooks";
 import { ArrowRightIcon } from "@chakra-ui/icons";
 import {
   Box,
@@ -21,12 +22,13 @@ import { Web3Provider } from "@ethersproject/providers";
 import { useWeb3React } from "@web3-react/core";
 import axios from "axios";
 import { ethers } from "ethers";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import IERC721 from "../../contracts/artifacts/@openzeppelin/contracts/token/ERC721/IERC721.sol/IERC721.json";
 import Hashi721Bridge from "../../contracts/artifacts/contracts/Hashi721Bridge.sol/Hashi721Bridge.json";
 import config from "../../contracts/networks.json";
 import { Chain, isChain } from "../../contracts/types/chain";
+import GET_TRANSFER_ID2 from "../lib/graphql/subgraph";
 import { injected } from "../lib/web3";
 import { NFT } from "../types/nft";
 import { NFTList } from "./NFTList";
@@ -36,6 +38,7 @@ export const Bridge: React.FC = () => {
   const [selectedNFT, setSelectedNFT] = useState<NFT>();
   const [sourceChain, setSourceChain] = useState<Chain>("rinkeby");
   const [isLoading, setIsLoading] = useState(false);
+  const [transferID, setTransferID] = useState([]);
 
   const [destinationChain, setDestinationChain] = useState<Chain>("goerli");
   const [nftList, setNFTList] = useState<NFT[]>([]);
@@ -44,6 +47,19 @@ export const Bridge: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const { activate, library, account } = useWeb3React<Web3Provider>();
+  const { loading, error, data } = useQuery(GET_TRANSFER_ID2);
+
+  useEffect(() => {
+    if (!loading && !error && data) {
+      console.log("a")
+      setTransferID(data.originTransfers);
+    }
+  }, [loading, error, data]);
+
+  const GetTransferId = () => {
+    // const hash = "0xe4bb83bf4015d12944c3ebf658095bffae4fa44738809c6c5d959150b2e89a1b";
+    console.log(transferID);
+  };
 
   const clearSelectedNFT = () => {
     setSelectedNFT(undefined);
@@ -158,6 +174,7 @@ export const Bridge: React.FC = () => {
 
   return (
     <Box>
+      <Button onClick={GetTransferId}>Get Transfer Code</Button>
       <Flex mb={"8"} gap={"1"} justify={"space-between"}>
         <Box width={"45%"}>
           <Text align={"center"} fontWeight="bold" mb={2} fontSize={"sm"}>
