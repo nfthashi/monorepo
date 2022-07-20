@@ -36,37 +36,42 @@ contract HashiConnextAdapter is OwnableUpgradeable, ERC165Upgradeable {
     _bridgeContracts[domain] = bridgeContract;
     emit BridgeSet(domain, bridgeContract);
   }
+
   function setConnext(address connextContract) public onlyOwner {
     _connext = connextContract;
     _executor = address(IConnextHandler(_connext).executor());
     emit ConnextSet(connextContract, _executor);
   }
+
   function setSelfDomain(uint32 selfDomain) public onlyOwner {
     _selfDomain = selfDomain;
     emit SelfDomainSet(selfDomain);
   }
+
   function setTransactingAssetId(address transactingAssetId) public onlyOwner {
     _transactingAssetId = transactingAssetId;
     emit TransactingAssetIdSet(transactingAssetId);
   }
 
-
   function getBridgeContract(uint32 domain) public view returns (address) {
     return _bridgeContracts[domain];
   }
+
   function getConnext() public view returns (address) {
     return _connext;
   }
+
   function getExecutor() public view returns (address) {
     return _executor;
   }
+
   function getSelfDomain() public view returns (uint32) {
     return _selfDomain;
   }
+
   function getTransactingAssetId() public view returns (address) {
     return _transactingAssetId;
   }
-
 
   // solhint-disable-next-line func-name-mixedcase
   function __HashiConnextAdapter_init(
