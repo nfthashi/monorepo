@@ -1,4 +1,5 @@
-import { Box, Button, Heading, Select, useToast } from "@chakra-ui/react";
+import { CheckCircleIcon } from "@chakra-ui/icons";
+import { Box, Button, Heading, Link, Select, useTheme, useToast } from "@chakra-ui/react";
 import { Web3Provider } from "@ethersproject/providers";
 import { useWeb3React } from "@web3-react/core";
 import { ethers } from "ethers";
@@ -10,6 +11,7 @@ import { Chain, isChain } from "../../contracts/types/chain";
 import { injected } from "../lib/web3";
 
 export const Faucet: React.FC = () => {
+  const theme = useTheme();
   const [chain, setChain] = useState<Chain>("rinkeby");
   const { activate, library, account } = useWeb3React<Web3Provider>();
   const toast = useToast();
@@ -46,6 +48,26 @@ export const Faucet: React.FC = () => {
       title: `Minted Tx Hash: ${tx.hash}`,
       status: "success",
       isClosable: true,
+    });
+    toast({
+      render: () => (
+        <Box color="white" p={3} bg={theme.colors.success.main} rounded={"md"}>
+          <CheckCircleIcon mr="2" />
+          Please wait for confirmation of the Mint Tx:{" "}
+          <Link
+            textDecoration={"underline"}
+            fontSize="sm"
+            isExternal
+            href={`${config[chain].explorer}tx/${tx.hash}`}
+            maxWidth={80}
+            noOfLines={1}
+          >
+            {tx.hash}
+          </Link>
+        </Box>
+      ),
+      isClosable: true,
+      duration: 10000,
     });
     await tx.wait(1);
   };
