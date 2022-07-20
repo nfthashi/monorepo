@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.0;
 
-import "@connext/nxtp-contracts/contracts/libraries/LibConnextStorage.sol";
-import "@connext/nxtp-contracts/contracts/interfaces/IExecutor.sol";
+import "@connext/nxtp-contracts/contracts/core/connext/libraries/LibConnextStorage.sol";
+import "@connext/nxtp-contracts/contracts/core/connext/interfaces/IExecutor.sol";
 
 contract MockConnextHandler {
   IExecutor private _executor;

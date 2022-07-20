@@ -4,9 +4,9 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol";
 
-import "@connext/nxtp-contracts/contracts/libraries/LibConnextStorage.sol";
-import "@connext/nxtp-contracts/contracts/interfaces/IExecutor.sol";
-import "@connext/nxtp-contracts/contracts/interfaces/IConnextHandler.sol";
+import "@connext/nxtp-contracts/contracts/core/connext/libraries/LibConnextStorage.sol";
+import "@connext/nxtp-contracts/contracts/core/connext/interfaces/IExecutor.sol";
+import "@connext/nxtp-contracts/contracts/core/connext/interfaces/IConnextHandler.sol";
 
 import "hardhat/console.sol";
 
@@ -84,18 +84,16 @@ contract HashiConnextAdapter is OwnableUpgradeable, ERC165Upgradeable {
       callData: callData,
       originDomain: _selfDomain,
       destinationDomain: destinationDomain,
+      agent: msg.sender,
       recovery: destinationContract,
+      forceSlow: true,
+      receiveLocal: false,
       callback: address(0),
       callbackFee: 0,
-      forceSlow: true,
-      receiveLocal: false
+      relayerFee: 0,
+      slippageTol: 9995
     });
-    XCallArgs memory xcallArgs = XCallArgs({
-      params: callParams,
-      transactingAssetId: _transactingAssetId,
-      amount: 0,
-      relayerFee: 0
-    });
+    XCallArgs memory xcallArgs = XCallArgs({params: callParams, transactingAssetId: _transactingAssetId, amount: 0});
     IConnextHandler(_connext).xcall(xcallArgs);
   }
 }
