@@ -382,6 +382,189 @@
           }
         }
       }
+    },
+    "90edcbdc7a6f0c928401b7abf673321c9e4f3f711f62bda6c7ed2dfef1f2140d": {
+      "address": "0x8b645f04574ea08833965cC67775a7E15B9FF062",
+      "txHash": "0x98df81ae8985ae321324ba7cc8e5efdf34ef69e369f8222cee31df0a5bd8ec1f",
+      "layout": {
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:87"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ERC165Upgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol:41"
+          },
+          {
+            "label": "_bridgeContracts",
+            "offset": 0,
+            "slot": "151",
+            "type": "t_mapping(t_uint32,t_address)",
+            "contract": "HashiConnextAdapter",
+            "src": "contracts/HashiConnextAdapter.sol:14"
+          },
+          {
+            "label": "_connext",
+            "offset": 0,
+            "slot": "152",
+            "type": "t_address",
+            "contract": "HashiConnextAdapter",
+            "src": "contracts/HashiConnextAdapter.sol:16"
+          },
+          {
+            "label": "_executor",
+            "offset": 0,
+            "slot": "153",
+            "type": "t_address",
+            "contract": "HashiConnextAdapter",
+            "src": "contracts/HashiConnextAdapter.sol:17"
+          },
+          {
+            "label": "_transactingAssetId",
+            "offset": 0,
+            "slot": "154",
+            "type": "t_address",
+            "contract": "HashiConnextAdapter",
+            "src": "contracts/HashiConnextAdapter.sol:18"
+          },
+          {
+            "label": "_selfDomain",
+            "offset": 20,
+            "slot": "154",
+            "type": "t_uint32",
+            "contract": "HashiConnextAdapter",
+            "src": "contracts/HashiConnextAdapter.sol:19"
+          },
+          {
+            "label": "_contracts",
+            "offset": 0,
+            "slot": "155",
+            "type": "t_mapping(t_address,t_address)",
+            "contract": "Hashi721Bridge",
+            "src": "contracts/Hashi721Bridge.sol:14"
+          },
+          {
+            "label": "_domains",
+            "offset": 0,
+            "slot": "156",
+            "type": "t_mapping(t_address,t_uint32)",
+            "contract": "Hashi721Bridge",
+            "src": "contracts/Hashi721Bridge.sol:15"
+          },
+          {
+            "label": "_nftAllowedList",
+            "offset": 0,
+            "slot": "157",
+            "type": "t_mapping(t_address,t_bool)",
+            "contract": "Hashi721Bridge",
+            "src": "contracts/Hashi721Bridge.sol:17"
+          },
+          {
+            "label": "_isAllowListRequired",
+            "offset": 0,
+            "slot": "158",
+            "type": "t_bool",
+            "contract": "Hashi721Bridge",
+            "src": "contracts/Hashi721Bridge.sol:18"
+          },
+          {
+            "label": "_nftImplementation",
+            "offset": 1,
+            "slot": "158",
+            "type": "t_address",
+            "contract": "Hashi721Bridge",
+            "src": "contracts/Hashi721Bridge.sol:20"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_mapping(t_address,t_address)": {
+            "label": "mapping(address => address)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_uint32)": {
+            "label": "mapping(address => uint32)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint32,t_address)": {
+            "label": "mapping(uint32 => address)",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint32": {
+            "label": "uint32",
+            "numberOfBytes": "4"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
     }
   }
 }

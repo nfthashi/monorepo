@@ -19,6 +19,9 @@ contract HashiConnextAdapter is OwnableUpgradeable, ERC165Upgradeable {
   uint32 private _selfDomain;
 
   event BridgeSet(uint32 domain, address bridgeContract);
+  event ConnextSet(address connextContract);
+  event SelfDomainSet(uint32 selfDomain);
+  event TransactingAssetIdSet(address transactingAssetId);
 
   modifier onlyExecutor() {
     require(msg.sender == _executor, "HashiConnextAdapter: sender invalid");
@@ -32,6 +35,22 @@ contract HashiConnextAdapter is OwnableUpgradeable, ERC165Upgradeable {
   function setBridgeContract(uint32 domain, address bridgeContract) public onlyOwner {
     _bridgeContracts[domain] = bridgeContract;
     emit BridgeSet(domain, bridgeContract);
+  }
+
+  function setConnext(address connextContract) public onlyOwner {
+    _connext = connextContract;
+    _executor = address(IConnextHandler(_connext).executor());
+    emit ConnextSet(connextContract);
+  }
+
+  function setSelfDomain(uint32 selfDomain) public onlyOwner {
+    _selfDomain = selfDomain;
+    emit SelfDomainSet(selfDomain);
+  }
+
+  function setTransactingAssetId(address transactingAssetId) public onlyOwner {
+    _transactingAssetId = transactingAssetId;
+    emit TransactingAssetIdSet(transactingAssetId);
   }
 
   function getBridgeContract(uint32 domain) public view returns (address) {
