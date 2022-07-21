@@ -29,7 +29,7 @@ const accounts = process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KE
 
 const config: HardhatUserConfig = {
   solidity: {
-    compilers: [{ version: "0.8.2" },{ version: "0.8.11" }, { version: "0.8.15" }],
+    compilers: [{ version: "0.8.11" }, { version: "0.8.15" }],
   },
   networks: {
     hardhat: process.env.FORK_RINKEBY
