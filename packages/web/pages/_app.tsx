@@ -1,7 +1,7 @@
 import "../styles/globals.css";
 
 import { ChakraProvider } from "@chakra-ui/react";
-import { ExternalProvider,Web3Provider } from "@ethersproject/providers";
+import { ExternalProvider, Web3Provider } from "@ethersproject/providers";
 import { Web3ReactProvider } from "@web3-react/core";
 import type { AppProps } from "next/app";
 
