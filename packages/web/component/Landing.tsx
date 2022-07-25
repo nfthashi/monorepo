@@ -20,6 +20,11 @@ import { BsPlayCircleFill } from "react-icons/bs";
 import { FaDiscord, FaTwitter } from "react-icons/fa";
 import { IoDocumentText } from "react-icons/io5";
 
+import { Characteristics } from "./Characteristics";
+import { Multichain } from "./Multichain";
+import { Team } from "./Team";
+import { Usecases } from "./Usecases";
+
 export const Landing: React.FC = () => {
   const theme = useTheme();
   const communities = [
@@ -59,7 +64,7 @@ export const Landing: React.FC = () => {
               <Text as={"span"} color={theme.colors.secondary.main}>
                 Trust minimized{" "}
               </Text>
-              cross-chain NFT bridge
+              cross-chain NFT protocol
             </Text>
           </Heading>
           <HStack spacing={{ base: 4, md: 6 }}>
@@ -109,6 +114,7 @@ export const Landing: React.FC = () => {
           </Box>
         </Flex>
       </Stack>
+
       <Stack spacing={4} as={Container} maxW={"3xl"} textAlign={"center"} align={"center"} mb="24">
         <Heading fontSize={"2xl"} my="2">
           Powered By
@@ -132,6 +138,7 @@ export const Landing: React.FC = () => {
           </Link>
         </HStack>
       </Stack>
+
       <Stack spacing={4} as={Container} maxW={"3xl"} textAlign={"center"} align={"center"} my="16">
         <Heading fontSize={"2xl"} mb="8">
           Join Our Community
@@ -154,6 +161,12 @@ export const Landing: React.FC = () => {
           })}
         </Grid>
       </Stack>
+      <Box mt="10">
+        <Multichain></Multichain>
+        <Characteristics></Characteristics>
+      </Box>
+      <Usecases></Usecases>
+      <Team></Team>
     </Box>
   );
 };
