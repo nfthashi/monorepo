@@ -186,7 +186,7 @@ export const Bridge: React.FC = () => {
             href={`${config[sourceChain].explorer}tx/${transaction.hash}`}
             maxWidth={80}
             noOfLines={1}
-            >
+          >
             {transaction.hash}
           </Link>
         </Box>
@@ -196,7 +196,7 @@ export const Bridge: React.FC = () => {
     });
     transaction.wait(1).then(async () => {
       const _sleep = (ms: any) => new Promise((resolve) => setTimeout(resolve, ms));
-      
+
       await _sleep(5000);
       const data = await Query(chainId, transaction.hash);
       let connextTransferId = "";
