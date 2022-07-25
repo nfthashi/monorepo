@@ -28,6 +28,8 @@ import IERC721 from "../../contracts/artifacts/@openzeppelin/contracts/token/ERC
 import Hashi721Bridge from "../../contracts/artifacts/contracts/Hashi721Bridge.sol/Hashi721Bridge.json";
 import config from "../../contracts/networks.json";
 import { Chain, isChain } from "../../contracts/types/chain";
+import { clients } from "../lib/client";
+import GET_TRANSFERS_ID from "../lib/subgraph";
 import { injected } from "../lib/web3";
 import { NFT } from "../types/nft";
 import { NFTList } from "./NFTList";
@@ -38,7 +40,6 @@ export const Bridge: React.FC = () => {
   const [selectedNFT, setSelectedNFT] = useState<NFT>();
   const [sourceChain, setSourceChain] = useState<Chain>("rinkeby");
   const [isLoading, setIsLoading] = useState(false);
-
   const [destinationChain, setDestinationChain] = useState<Chain>("goerli");
   const [nftList, setNFTList] = useState<NFT[]>([]);
 
@@ -49,6 +50,27 @@ export const Bridge: React.FC = () => {
 
   const clearSelectedNFT = () => {
     setSelectedNFT(undefined);
+  };
+
+  const Query = async (chainId: number, hash: string) => {
+    let data;
+    if (chainId == 4) {
+      console.log("rinkeby");
+      data = await clients.rinkeby.query({
+        query: GET_TRANSFERS_ID(hash),
+      });
+    }
+    if (chainId == 5) {
+      data = await clients.goerli.query({
+        query: GET_TRANSFERS_ID(hash),
+      });
+    }
+    if (chainId == 42) {
+      data = await clients.kovan.query({
+        query: GET_TRANSFERS_ID(hash),
+      });
+    }
+    return data;
   };
 
   const handleDestinationChainChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -152,8 +174,6 @@ export const Bridge: React.FC = () => {
         gasLimit: "1000000",
       }
     );
-    setIsLoading(false);
-    clearSelectedNFT();
     toast({
       render: () => (
         <Box color="white" p={3} bg={theme.colors.success.main} rounded={"md"}>
@@ -173,6 +193,38 @@ export const Bridge: React.FC = () => {
       ),
       isClosable: true,
       duration: 10000,
+    });
+    transaction.wait(1).then(async () => {
+      const _sleep = (ms: any) => new Promise((resolve) => setTimeout(resolve, ms));
+
+      await _sleep(5000);
+      const data = await Query(chainId, transaction.hash);
+      let connextTransferId = "";
+      if (data && data.data && data.data.originTransfers[0] && data.data.originTransfers[0].transferId) {
+        connextTransferId = data.data.originTransfers[0].transferId;
+      }
+      setIsLoading(false);
+      clearSelectedNFT();
+      toast({
+        render: () => (
+          <Box color="white" p={3} bg={theme.colors.success.main} rounded={"md"}>
+            <CheckCircleIcon mr="2" />
+            You can chack the status of transfer from here :
+            <Link
+              textDecoration={"underline"}
+              fontSize="sm"
+              isExternal
+              href={`https://testnet.amarok.connextscan.io/tx/${connextTransferId}`}
+              maxWidth={80}
+              noOfLines={1}
+            >
+              ConnextScan
+            </Link>
+          </Box>
+        ),
+        isClosable: true,
+        duration: 10000,
+      });
     });
   };
 
