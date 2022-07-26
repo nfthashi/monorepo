@@ -5,30 +5,30 @@
     "name": "Taiju Sanagi",
     "bio": "CEO & CTO",
     "followerCount": 84,
-    "profile" : "https://twitter.com/taijusanagi"
+    "profile": "https://twitter.com/taijusanagi"
   },
   {
-      "isVerified": false,
-      "src": "https://pbs.twimg.com/profile_images/1159388626398019584/vZbySKu__400x400.jpg",
-      "name": "Kentaro Y",
-      "bio": "COO",
-      "followerCount": 10,
-      "profile" : "https://twitter.com/KentaroYamamura"
-    },
-    {
-      "isVerified": false,
-      "src": "https://pbs.twimg.com/profile_images/1460113940189691904/O9GXlmqF_400x400.jpg",
-      "name": "Ponta",
-      "bio": "Blockchain & Frontend Engineer",
-      "followerCount": 10,
-      "profile" : "https://twitter.com/suhara_ponta"
-    },
+    "isVerified": false,
+    "src": "https://pbs.twimg.com/profile_images/1159388626398019584/vZbySKu__400x400.jpg",
+    "name": "Kentaro Y",
+    "bio": "COO",
+    "followerCount": 10,
+    "profile": "https://twitter.com/KentaroYamamura"
+  },
+  {
+    "isVerified": false,
+    "src": "https://pbs.twimg.com/profile_images/1460113940189691904/O9GXlmqF_400x400.jpg",
+    "name": "Ponta",
+    "bio": "Blockchain & Frontend Engineer",
+    "followerCount": 10,
+    "profile": "https://twitter.com/suhara_ponta"
+  },
   {
     "isVerified": false,
     "src": "https://pbs.twimg.com/profile_images/1517210325707370496/vqYXWuI1_400x400.jpg",
     "name": "Yuzu",
     "bio": "Reseacher & Integration Engineer",
     "followerCount": 24,
-    "profile" : "https://twitter.com/0x_Yuzu"
+    "profile": "https://twitter.com/0x_Yuzu"
   }
 ]
