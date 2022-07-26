@@ -30,7 +30,6 @@ export const Usecases: React.FC = () => {
               NFTs that did not exist before
             </Text>
           </Stack>
-          <Divider mb={12} />
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} columnGap={8} rowGap={{ base: 10, md: 16 }}>
             {usecases.map((usecase) => (
               <Stack key={usecase.name} spacing={{ base: "4", md: "5" }} align="center" textAlign="center">

@@ -21,6 +21,7 @@ import { FaDiscord, FaTwitter } from "react-icons/fa";
 import { IoDocumentText } from "react-icons/io5";
 
 import { Characteristics } from "./Characteristics";
+import { Contact } from "./Contact";
 import { Multichain } from "./Multichain";
 import { Team } from "./Team";
 import { Usecases } from "./Usecases";
@@ -166,7 +167,8 @@ export const Landing: React.FC = () => {
         <Characteristics></Characteristics>
       </Box>
       <Usecases></Usecases>
-      <Team></Team>
+      <Contact></Contact>
+      {/* <Team></Team> */}
     </Box>
   );
 };
