@@ -8,7 +8,7 @@ import { getNetworkFromChainId } from "../lib/web3";
 export const OrderHistory: React.FC = () => {
   const { account } = useWeb3React<Web3Provider>();
 
-  const getTxHistories = () => {
+  const getTxHistory = () => {
     let array = [];
     if (account && typeof window !== "undefined") {
       if (window.localStorage) {
@@ -21,7 +21,7 @@ export const OrderHistory: React.FC = () => {
     return array;
   };
 
-  const data = getTxHistories();
+  const data = getTxHistory();
 
   console.log(account);
 
@@ -31,7 +31,7 @@ export const OrderHistory: React.FC = () => {
         <Box mt="10px">
           <Divider mb={12} />
           <Heading fontSize={{ base: "xl", md: "3xl" }} px="2px">
-            Bridge Histories
+            Bridge History
           </Heading>
           <TableContainer>
             <Table size="sm">
