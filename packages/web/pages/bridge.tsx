@@ -25,7 +25,9 @@ const BridgePage: NextPage = () => {
       <Link textAlign={"center"} href="./faucet" _focus={{ boxShadow: "none" }} fontSize="sm">
         If you do not have Test NFTs, mint at the faucet!
       </Link>
-      <OrderHistory></OrderHistory>
+      <Flex justifyContent="center" mb="2">
+        <OrderHistory />
+      </Flex>
     </Layout>
   );
 };

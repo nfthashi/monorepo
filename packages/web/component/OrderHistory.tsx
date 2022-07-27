@@ -3,7 +3,10 @@ import { Box, Divider, Heading, Link, Table, TableContainer, Tbody, Td, Th, Thea
 import { Web3Provider } from "@ethersproject/providers";
 import { useWeb3React } from "@web3-react/core";
 
+import config from "../../contracts/networks.json";
+import { Chain } from "../../contracts/types/chain";
 import { getNetworkFromChainId } from "../lib/web3";
+import { truncate } from "./utils/truncate";
 
 export const OrderHistory: React.FC = () => {
   const { account } = useWeb3React<Web3Provider>();
@@ -30,10 +33,10 @@ export const OrderHistory: React.FC = () => {
       {account && (
         <Box mt="10px">
           <Divider mb={12} />
-          <Heading fontSize={{ base: "xl", md: "3xl" }} px="2px">
+          <Heading fontSize={{ base: "xl", md: "2xl" }} px="2px" textAlign={"center"}>
             Bridge History
           </Heading>
-          <TableContainer>
+          <TableContainer mt="10">
             <Table size="sm">
               <Thead>
                 <Tr textAlign={"center"}>
@@ -44,21 +47,23 @@ export const OrderHistory: React.FC = () => {
               </Thead>
               <Tbody>
                 {data.map((d: [string, string, number], index: number) => {
-                  const chainName = getNetworkFromChainId(d[2]);
-                  const chaineExplorer = "https://" + chainName + ".etherscan.io/tx/" + d[0];
-                  const ConnextScan = "https://testnet.amarok.connextscan.io/tx/" + d[1];
+                  const chainName: Chain = getNetworkFromChainId(d[2]);
+                  if (!chainName) {
+                    console.log("no network name");
+                    return;
+                  }
                   return (
                     <Tr key={d[0]}>
                       <Td>{index + 1}</Td>
                       <Td>
-                        <Link href={chaineExplorer} isExternal>
-                          {d[0]}
+                        <Link href={`${config[chainName].explorer}tx/${d[0]}`} isExternal>
+                          {truncate(d[0], 5, 5)}
                           <ExternalLinkIcon mx="2px" />
                         </Link>
                       </Td>
                       <Td>
-                        <Link href={ConnextScan} isExternal>
-                          {d[1]}
+                        <Link href={`https://testnet.amarok.connextscan.io/tx/${d[1]}`} isExternal>
+                          {truncate(d[1], 5, 5)}
                           <ExternalLinkIcon mx="2px" />
                         </Link>
                       </Td>
