@@ -107,7 +107,7 @@ export const Bridge: React.FC = () => {
   };
 
   const xCall = async () => {
-    if (!library || !selectedNFT || !account) {
+    if (!library || !selectedNFT || !account || !sourceChain || !destinationChain) {
       return;
     }
     const { chainId } = await library.getNetwork();
@@ -307,45 +307,50 @@ export const Bridge: React.FC = () => {
           )}
         </Box>
       ) : (
-        <Box>
-          <Flex justify={"center"}>
-            <Box>
-              <Image
-                src={selectedNFT.image}
-                alt={"Selected NFT Image"}
-                height={"32"}
-                width={"32"}
-                fit="cover"
-                fallbackSrc={"/assets/placeholder.png"}
-              />
+        sourceChain&&(
+          <Box>
+            <Flex justify={"center"}>
+              <Box>
+                <Image
+                  src={selectedNFT.image}
+                  alt={"Selected NFT Image"}
+                  height={"32"}
+                  width={"32"}
+                  fit="cover"
+                  fallbackSrc={"/assets/placeholder.png"}
+                />
+              </Box>
+            </Flex>
+            <Box padding="8">
+              <Text textAlign={"center"} fontSize={"sm"} mb="1">
+                {selectedNFT.name ? selectedNFT.name : "untitled"} - #{selectedNFT.tokenId}
+              </Text>
+              <Text textAlign={"center"} fontSize={"xs"}>
+                <Link
+                  target={"_blank"}
+                  href={`${config[sourceChain].explorer}address/${selectedNFT.nftContractAddress}`}
+                >
+                  {selectedNFT.nftContractAddress}
+                </Link>
+              </Text>
             </Box>
-          </Flex>
-          <Box padding="8">
-            <Text textAlign={"center"} fontSize={"sm"} mb="1">
-              {selectedNFT.name ? selectedNFT.name : "untitled"} - #{selectedNFT.tokenId}
-            </Text>
-            <Text textAlign={"center"} fontSize={"xs"}>
-              <Link target={"_blank"} href={`${config[sourceChain].explorer}address/${selectedNFT.nftContractAddress}`}>
-                {selectedNFT.nftContractAddress}
-              </Link>
-            </Text>
+            <Flex gap="4">
+              <Button width={"50%"} onClick={clearSelectedNFT} fontSize={"sm"} rounded={"2xl"} variant="outline">
+                Back
+              </Button>
+              <Button
+                width={"50%"}
+                onClick={xCall}
+                fontSize={"sm"}
+                colorScheme={"blue"}
+                rounded={"2xl"}
+                disabled={isLoading}
+              >
+                Bridge NFT {isLoading && <Spinner ml="2" h={4} w={4} />}
+              </Button>
+            </Flex>
           </Box>
-          <Flex gap="4">
-            <Button width={"50%"} onClick={clearSelectedNFT} fontSize={"sm"} rounded={"2xl"} variant="outline">
-              Back
-            </Button>
-            <Button
-              width={"50%"}
-              onClick={xCall}
-              fontSize={"sm"}
-              colorScheme={"blue"}
-              rounded={"2xl"}
-              disabled={isLoading}
-            >
-              Bridge NFT {isLoading && <Spinner ml="2" h={4} w={4} />}
-            </Button>
-          </Flex>
-        </Box>
+        )
       )}
     </Box>
   );
