@@ -23,10 +23,7 @@ export const OrderHistory: React.FC = () => {
     }
     return array;
   };
-
   const data = getTxHistory();
-
-  console.log(account);
 
   return (
     <Box>
