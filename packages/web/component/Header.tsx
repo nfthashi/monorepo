@@ -6,10 +6,18 @@ import {
   Icon,
   IconButton,
   Image,
+  Input,
   Link,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalOverlay,
   Text,
+  useClipboard,
   useColorMode,
   useColorModeValue,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { Web3Provider } from "@ethersproject/providers";
 import { useWeb3React } from "@web3-react/core";
@@ -17,6 +25,8 @@ import React from "react";
 import { IoDocumentText } from "react-icons/io5";
 
 import { injected } from "../lib/web3";
+import { OrderHistory } from "./OrderHistory";
+import { truncate } from "./utils/truncate";
 
 export interface HeaderProps {
   isLanding?: boolean;
@@ -24,10 +34,19 @@ export interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ isLanding }) => {
   const { activate, account, deactivate } = useWeb3React<Web3Provider>();
+  const [value, setValue] = React.useState("");
+  const { hasCopied, onCopy } = useClipboard(value);
   const connect = async () => {
     activate(injected);
   };
-
+  const openModal = async () => {
+    if (!account) {
+      return;
+    }
+    setValue(account);
+    onOpen();
+  };
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const { colorMode, toggleColorMode } = useColorMode();
 
   return (
@@ -40,14 +59,43 @@ export const Header: React.FC<HeaderProps> = ({ isLanding }) => {
           <>
             {!isLanding && (
               <>
+                <Modal isOpen={isOpen} onClose={onClose} scrollBehavior={"inside"}>
+                  <ModalOverlay />
+                  <ModalContent padding={"4"}>
+                    <Flex mb={2}>
+                      <Text>Account</Text>
+                      <ModalCloseButton mb={2} />
+                    </Flex>
+                    <Flex>
+                      <Input value={value} isReadOnly placeholder="Welcome" size={"md"} borderRadius={"8px"} />
+                      <Button onClick={onCopy} ml={2} size={"md"}>
+                        {hasCopied ? "Copied" : "Copy"}
+                      </Button>
+                    </Flex>
+                    <Button
+                      mt={"2"}
+                      fontSize={"xs"}
+                      rounded={"2xl"}
+                      onClick={() => {
+                        deactivate(), onClose();
+                      }}
+                    >
+                      <Text noOfLines={1}>Disconnect</Text>
+                    </Button>
+                    <ModalBody>
+                      <Flex justify={"center"}></Flex>
+                      <OrderHistory />
+                    </ModalBody>
+                  </ModalContent>
+                </Modal>
                 {!account ? (
                   <Button onClick={connect} fontSize={"xs"} rounded={"2xl"}>
                     Connect Wallet
                   </Button>
                 ) : (
                   <>
-                    <Button fontSize={"xs"} maxWidth={"32"} rounded={"2xl"} onClick={deactivate}>
-                      <Text noOfLines={1}>{account}</Text>
+                    <Button width={"100%"} onClick={openModal} fontSize={"sm"} rounded={"2xl"}>
+                      {truncate(account, 5, 5)}
                     </Button>
                   </>
                 )}
