@@ -1,11 +1,8 @@
 import {
   Box,
-  chakra,
   Container,
-  createIcon,
   Divider,
   Flex,
-  GridItem,
   Heading,
   Icon,
   IconProps,
