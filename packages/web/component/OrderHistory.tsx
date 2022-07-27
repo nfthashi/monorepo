@@ -4,7 +4,7 @@ import { Web3Provider } from "@ethersproject/providers";
 import { useWeb3React } from "@web3-react/core";
 
 import config from "../../contracts/networks.json";
-import { Chain } from "../../contracts/types/chain";
+import { isChain } from "../../contracts/types/chain";
 import { getNetworkFromChainId } from "../lib/web3";
 import { truncate } from "./utils/truncate";
 
@@ -47,9 +47,9 @@ export const OrderHistory: React.FC = () => {
               </Thead>
               <Tbody>
                 {data.map((d: [string, string, number], index: number) => {
-                  const chainName: Chain = getNetworkFromChainId(d[2]);
-                  if (!chainName) {
-                    console.log("no network name");
+                  const chainName = getNetworkFromChainId(d[2]);
+                  if (!isChain(chainName)) {
+                    console.log("network invalid");
                     return;
                   }
                   return (

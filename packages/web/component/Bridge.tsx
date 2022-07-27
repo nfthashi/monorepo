@@ -51,7 +51,7 @@ export const Bridge: React.FC = () => {
     setSelectedNFT(undefined);
   };
 
-  const updateOrderHistory = (txHash: string, account: string, transferId: string, chainId:number) => {
+  const updateOrderHistory = (txHash: string, account: string, transferId: string, chainId: number) => {
     if (typeof window !== "undefined") {
       if (window.localStorage) {
         const pastJson = localStorage.getItem(account);
@@ -107,7 +107,7 @@ export const Bridge: React.FC = () => {
   };
 
   const xCall = async () => {
-    if (!library || !selectedNFT || !account || !sourceChain || !destinationChain) {
+    if (!library || !selectedNFT || !account) {
       return;
     }
     const { chainId } = await library.getNetwork();
@@ -192,7 +192,7 @@ export const Bridge: React.FC = () => {
     clearSelectedNFT();
     transaction.wait(1).then(async () => {
       const _sleep = (ms: any) => new Promise((resolve) => setTimeout(resolve, ms));
-      
+
       await _sleep(10000);
       const data = await CustomizedQuery(chainId, transaction.hash);
       let connextTransferId = "";
@@ -307,50 +307,45 @@ export const Bridge: React.FC = () => {
           )}
         </Box>
       ) : (
-        sourceChain&&(
-          <Box>
-            <Flex justify={"center"}>
-              <Box>
-                <Image
-                  src={selectedNFT.image}
-                  alt={"Selected NFT Image"}
-                  height={"32"}
-                  width={"32"}
-                  fit="cover"
-                  fallbackSrc={"/assets/placeholder.png"}
-                />
-              </Box>
-            </Flex>
-            <Box padding="8">
-              <Text textAlign={"center"} fontSize={"sm"} mb="1">
-                {selectedNFT.name ? selectedNFT.name : "untitled"} - #{selectedNFT.tokenId}
-              </Text>
-              <Text textAlign={"center"} fontSize={"xs"}>
-                <Link
-                  target={"_blank"}
-                  href={`${config[sourceChain].explorer}address/${selectedNFT.nftContractAddress}`}
-                >
-                  {selectedNFT.nftContractAddress}
-                </Link>
-              </Text>
+        <Box>
+          <Flex justify={"center"}>
+            <Box>
+              <Image
+                src={selectedNFT.image}
+                alt={"Selected NFT Image"}
+                height={"32"}
+                width={"32"}
+                fit="cover"
+                fallbackSrc={"/assets/placeholder.png"}
+              />
             </Box>
-            <Flex gap="4">
-              <Button width={"50%"} onClick={clearSelectedNFT} fontSize={"sm"} rounded={"2xl"} variant="outline">
-                Back
-              </Button>
-              <Button
-                width={"50%"}
-                onClick={xCall}
-                fontSize={"sm"}
-                colorScheme={"blue"}
-                rounded={"2xl"}
-                disabled={isLoading}
-              >
-                Bridge NFT {isLoading && <Spinner ml="2" h={4} w={4} />}
-              </Button>
-            </Flex>
+          </Flex>
+          <Box padding="8">
+            <Text textAlign={"center"} fontSize={"sm"} mb="1">
+              {selectedNFT.name ? selectedNFT.name : "untitled"} - #{selectedNFT.tokenId}
+            </Text>
+            <Text textAlign={"center"} fontSize={"xs"}>
+              <Link target={"_blank"} href={`${config[sourceChain].explorer}address/${selectedNFT.nftContractAddress}`}>
+                {selectedNFT.nftContractAddress}
+              </Link>
+            </Text>
           </Box>
-        )
+          <Flex gap="4">
+            <Button width={"50%"} onClick={clearSelectedNFT} fontSize={"sm"} rounded={"2xl"} variant="outline">
+              Back
+            </Button>
+            <Button
+              width={"50%"}
+              onClick={xCall}
+              fontSize={"sm"}
+              colorScheme={"blue"}
+              rounded={"2xl"}
+              disabled={isLoading}
+            >
+              Bridge NFT {isLoading && <Spinner ml="2" h={4} w={4} />}
+            </Button>
+          </Flex>
+        </Box>
       )}
     </Box>
   );
