@@ -3,6 +3,7 @@ import type { NextPage } from "next";
 
 import { Bridge } from "../component/Bridge";
 import { Layout } from "../component/Layout";
+import { OrderHistory } from "../component/OrderHistory";
 import { Seo } from "../component/Seo";
 
 const BridgePage: NextPage = () => {
@@ -24,6 +25,7 @@ const BridgePage: NextPage = () => {
       <Link textAlign={"center"} href="./faucet" _focus={{ boxShadow: "none" }} fontSize="sm">
         If you do not have Test NFTs, mint at the faucet!
       </Link>
+      <OrderHistory></OrderHistory>
     </Layout>
   );
 };
