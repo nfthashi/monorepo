@@ -12,11 +12,11 @@ task("experimental-deploy-x-nft-trader", "experimental deploy cross nft trader")
     }
 
     const { domainId: selfDomainNum, contracts } = networks[name];
-    const { connext, testToken: dummyTransactingAssetId } = contracts;
+    const { connext } = contracts;
     const selfDomain = selfDomainNum.toString();
 
     const nftImplementation = await run("cmd-deploy-implementation");
-    const bridge = await run("cmd-deploy-bridge", { selfDomain, connext, dummyTransactingAssetId, nftImplementation });
+    const bridge = await run("cmd-deploy-bridge", { selfDomain, connext, nftImplementation });
 
     const MockMarket = await ethers.getContractFactory("MockMarket");
     const mockMarket = await MockMarket.deploy();

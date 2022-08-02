@@ -15,13 +15,11 @@ contract HashiConnextAdapter is OwnableUpgradeable, ERC165Upgradeable {
 
   address private _connext;
   address private _executor;
-  address private _transactingAssetId;
   uint32 private _selfDomain;
 
   event BridgeSet(uint32 domain, address bridgeContract);
   event ConnextSet(address connextContract);
   event SelfDomainSet(uint32 selfDomain);
-  event TransactingAssetIdSet(address transactingAssetId);
 
   modifier onlyExecutor() {
     require(msg.sender == _executor, "HashiConnextAdapter: sender invalid");
@@ -48,11 +46,6 @@ contract HashiConnextAdapter is OwnableUpgradeable, ERC165Upgradeable {
     emit SelfDomainSet(selfDomain);
   }
 
-  function setTransactingAssetId(address transactingAssetId) public onlyOwner {
-    _transactingAssetId = transactingAssetId;
-    emit TransactingAssetIdSet(transactingAssetId);
-  }
-
   function getBridgeContract(uint32 domain) public view returns (address) {
     return _bridgeContracts[domain];
   }
@@ -69,30 +62,17 @@ contract HashiConnextAdapter is OwnableUpgradeable, ERC165Upgradeable {
     return _selfDomain;
   }
 
-  function getTransactingAssetId() public view returns (address) {
-    return _transactingAssetId;
-  }
-
   // solhint-disable-next-line func-name-mixedcase
-  function __HashiConnextAdapter_init(
-    uint32 selfDomain,
-    address connext,
-    address transactingAssetId
-  ) internal onlyInitializing {
+  function __HashiConnextAdapter_init(uint32 selfDomain, address connext) internal onlyInitializing {
     __Ownable_init_unchained();
-    __HashiConnextAdapter_init_unchained(selfDomain, connext, transactingAssetId);
+    __HashiConnextAdapter_init_unchained(selfDomain, connext);
   }
 
   // solhint-disable-next-line func-name-mixedcase
-  function __HashiConnextAdapter_init_unchained(
-    uint32 selfDomain,
-    address connext,
-    address transactingAssetId
-  ) internal onlyInitializing {
+  function __HashiConnextAdapter_init_unchained(uint32 selfDomain, address connext) internal onlyInitializing {
     _selfDomain = selfDomain;
     _connext = connext;
     _executor = address(IConnextHandler(_connext).executor());
-    _transactingAssetId = transactingAssetId;
   }
 
   function _xcall(uint32 destinationDomain, bytes memory callData) internal {
@@ -112,7 +92,7 @@ contract HashiConnextAdapter is OwnableUpgradeable, ERC165Upgradeable {
       relayerFee: 0,
       slippageTol: 9995
     });
-    XCallArgs memory xcallArgs = XCallArgs({params: callParams, transactingAssetId: _transactingAssetId, amount: 0});
+    XCallArgs memory xcallArgs = XCallArgs({params: callParams, transactingAssetId: address(0), amount: 0});
     IConnextHandler(_connext).xcall(xcallArgs);
   }
 }

@@ -17,8 +17,6 @@ describe("Unit Test for HashiConnextAdapter", function () {
   const opponentDomain = 1;
   const opponentContract = ADDRESS_1;
 
-  const dummyTransactingAssetId = ADDRESS_1;
-
   beforeEach(async function () {
     [, malicious] = await ethers.getSigners();
     const MockConnextHandler = await ethers.getContractFactory("MockConnextHandler");
@@ -32,7 +30,6 @@ describe("Unit Test for HashiConnextAdapter", function () {
     mockHashiConnextAdapter = await MockHashiConnextAdapter.deploy(
       selfDomain,
       mockConnextHandler.address,
-      dummyTransactingAssetId
     );
   });
 
@@ -52,11 +49,7 @@ describe("Unit Test for HashiConnextAdapter", function () {
   it("getSelfDomain", async function () {
     expect(await mockHashiConnextAdapter.getSelfDomain()).to.equal(selfDomain);
   });
-
-  it("getTransactingAssetId", async function () {
-    expect(await mockHashiConnextAdapter.getTransactingAssetId()).to.equal(dummyTransactingAssetId);
-  });
-
+  
   it("setBridgeContract", async function () {
     expect(await mockHashiConnextAdapter.getBridgeContract(opponentDomain)).to.equal(NULL_ADDRESS);
     await expect(mockHashiConnextAdapter.setBridgeContract(opponentDomain, opponentContract))

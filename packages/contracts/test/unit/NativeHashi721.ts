@@ -15,7 +15,6 @@ describe("Unit Test for NativeHashi721", function () {
   const selfDomain = "0";
   const opponentDomain = "1";
   const opponentContract = ADDRESS_1;
-  const dummyTransactingAssetId = ADDRESS_1;
   const name = "name";
   const symbol = "symbol";
 
@@ -33,7 +32,6 @@ describe("Unit Test for NativeHashi721", function () {
     nativeHashi721 = await NativeHashi721.deploy(
       selfDomain,
       mockConnextHandler.address,
-      dummyTransactingAssetId,
       name,
       symbol
     );

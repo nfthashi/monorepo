@@ -26,7 +26,6 @@ describe("Unit Test for Hashi721Bridge", function () {
   const baseTokenURL = "http://localhost:3000/";
 
   const selfDomain = "0";
-  const dummyTransactingAssetId = ADDRESS_1;
 
   beforeEach(async function () {
     [signer, malicious] = await ethers.getSigners();
@@ -46,7 +45,6 @@ describe("Unit Test for Hashi721Bridge", function () {
     await hashi721Bridge.initialize(
       selfDomain,
       mockConnextHandler.address,
-      dummyTransactingAssetId,
       wrappedHashi721.address
     );
 

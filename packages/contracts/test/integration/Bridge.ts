@@ -20,7 +20,6 @@ describe("Integration Test for Bridge", function () {
 
     const selfDomain = "1111";
     const connextHandlerAddress = networks.rinkeby.contracts.connext;
-    const dummyTransactingAssetId = networks.rinkeby.contracts.testToken;
     const baseTokenURL = "http://localhost:3000/";
 
     const Hashi721Bridge = await ethers.getContractFactory("Hashi721Bridge");
@@ -28,7 +27,6 @@ describe("Integration Test for Bridge", function () {
     await hashi721Bridge.initialize(
       selfDomain,
       connextHandlerAddress,
-      dummyTransactingAssetId,
       wrappedHashi721.address
     );
 
