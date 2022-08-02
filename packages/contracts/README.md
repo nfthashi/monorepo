@@ -35,13 +35,12 @@ contract NativeHashi721Example is NativeHashi721 {
   constructor(
     uint32 selfDomain,
     address connext,
-    address dummyTransactingAssetId,
     string memory name,
     string memory symbol,
     uint256 startTokenId,
     uint256 endTokenId,
     string memory baseTokenURI
-  ) NativeHashi721(selfDomain, connext, dummyTransactingAssetId, name, symbol) {
+  ) NativeHashi721(selfDomain, connext, name, symbol) {
     _startTokenId = startTokenId;
     _endTokenId = endTokenId;
     _baseTokenURI = baseTokenURI;
@@ -76,10 +75,6 @@ See documentation for variables required to deploy to other chains
 #### connext
 
 => The connext handler address of the network you deploy
-
-#### dummyTransactionAssetId
-
-=> The test ERC20 token address of the network you deploy
 
 You can find the each variables from
 https://docs.nfthashi.com/developer-guide/informations
