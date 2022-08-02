@@ -12,21 +12,19 @@ contract NativeHashi721 is Initializable, ERC165Upgradeable, INativeHashi721, Ha
   constructor(
     uint32 selfDomain,
     address connext,
-    address dummyTransactingAssetId,
     string memory name,
     string memory symbol
   ) {
-    initialize(selfDomain, connext, dummyTransactingAssetId, name, symbol);
+    initialize(selfDomain, connext, name, symbol);
   }
 
   function initialize(
     uint32 selfDomain,
     address connext,
-    address dummyTransactingAssetId,
     string memory name,
     string memory symbol
   ) public initializer {
-    __HashiConnextAdapter_init(selfDomain, connext, dummyTransactingAssetId);
+    __HashiConnextAdapter_init(selfDomain, connext);
     __ERC721_init_unchained(name, symbol);
   }
 

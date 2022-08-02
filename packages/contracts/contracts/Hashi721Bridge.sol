@@ -25,10 +25,9 @@ contract Hashi721Bridge is ERC165Upgradeable, HashiConnextAdapter {
   function initialize(
     uint32 selfDomain,
     address connext,
-    address dummyTransactingAssetId,
     address nftImplementation
   ) public initializer {
-    __Hashi721Bridge_init(selfDomain, connext, dummyTransactingAssetId, nftImplementation);
+    __Hashi721Bridge_init(selfDomain, connext, nftImplementation);
   }
 
   function setIsAllowListRequired(bool isRequired) public onlyOwner {
@@ -127,11 +126,10 @@ contract Hashi721Bridge is ERC165Upgradeable, HashiConnextAdapter {
   function __Hashi721Bridge_init(
     uint32 selfDomain,
     address connext,
-    address dummyTransactingAssetId,
     address nftImplementation
   ) internal onlyInitializing {
     __Ownable_init_unchained();
-    __HashiConnextAdapter_init_unchained(selfDomain, connext, dummyTransactingAssetId);
+    __HashiConnextAdapter_init_unchained(selfDomain, connext);
     __Hashi721Bridge_init_unchained(nftImplementation);
   }
 
