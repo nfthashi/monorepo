@@ -11,50 +11,51 @@ import "@connext/nxtp-contracts/contracts/core/connext/interfaces/IConnextHandle
 import "hardhat/console.sol";
 
 contract HashiConnextAdapter is OwnableUpgradeable, ERC165Upgradeable {
-  mapping(uint32 => address) private _bridgeContracts;
+  mapping(bytes32 => address) public bridgeContracts;
 
   address private _connext;
   address private _executor;
   address private _transactingAssetId;
   uint32 private _selfDomain;
 
-  event BridgeSet(uint32 domain, address bridgeContract);
+  event BridgeSet(uint32 domain, uint32 version, address bridgeContract);
   event ConnextSet(address connextContract);
   event SelfDomainSet(uint32 selfDomain);
   event TransactingAssetIdSet(address transactingAssetId);
 
-  modifier onlyExecutor() {
+  modifier onlyExecutor(uint32 version) {
     require(msg.sender == _executor, "HashiConnextAdapter: sender invalid");
     require(
-      IExecutor(msg.sender).originSender() == _bridgeContracts[IExecutor(msg.sender).origin()],
+      IExecutor(msg.sender).originSender() ==
+        bridgeContracts[keccak256(abi.encodePacked(IExecutor(msg.sender).origin(), version))],
       "HashiConnextAdapter: origin sender invalid"
     );
     _;
   }
 
-  function setBridgeContract(uint32 domain, address bridgeContract) public onlyOwner {
-    _bridgeContracts[domain] = bridgeContract;
-    emit BridgeSet(domain, bridgeContract);
+  // TODO : 複数アドレスを管理できるようにする？
+  // TODO : 変更に追従して他を調整
+  function setBridgeContract(
+    uint32 domain,
+    uint32 version,
+    address bridgeContract
+  ) public onlyOwner {
+    bytes32 domainIdAndVersion = keccak256(abi.encodePacked(domain, version));
+    require(
+      bridgeContracts[domainIdAndVersion] == address(0x0),
+      "HashiConnextAdaptor: This version is already resistered"
+    );
+    bridgeContracts[domainIdAndVersion] = bridgeContract;
+    emit BridgeSet(domain, version, bridgeContract);
   }
 
-  function setConnext(address connextContract) public onlyOwner {
-    _connext = connextContract;
-    _executor = address(IConnextHandler(_connext).executor());
-    emit ConnextSet(connextContract);
-  }
-
-  function setSelfDomain(uint32 selfDomain) public onlyOwner {
-    _selfDomain = selfDomain;
-    emit SelfDomainSet(selfDomain);
+  function getBridgeContract(uint32 domain, uint32 version) public view returns (address) {
+    return bridgeContracts[keccak256(abi.encodePacked(domain, version))];
   }
 
   function setTransactingAssetId(address transactingAssetId) public onlyOwner {
     _transactingAssetId = transactingAssetId;
     emit TransactingAssetIdSet(transactingAssetId);
-  }
-
-  function getBridgeContract(uint32 domain) public view returns (address) {
-    return _bridgeContracts[domain];
   }
 
   function getConnext() public view returns (address) {
@@ -95,8 +96,12 @@ contract HashiConnextAdapter is OwnableUpgradeable, ERC165Upgradeable {
     _transactingAssetId = transactingAssetId;
   }
 
-  function _xcall(uint32 destinationDomain, bytes memory callData) internal {
-    address destinationContract = _bridgeContracts[destinationDomain];
+  function _xcall(
+    uint32 destinationDomain,
+    uint32 domainVersion,
+    bytes memory callData
+  ) internal {
+    address destinationContract = bridgeContracts[keccak256(abi.encodePacked(destinationDomain, domainVersion))];
     require(destinationContract != address(0x0), "HashiConnextAdapter: invalid bridge");
     CallParams memory callParams = CallParams({
       to: destinationContract,

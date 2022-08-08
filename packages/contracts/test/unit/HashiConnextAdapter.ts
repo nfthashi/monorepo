@@ -15,6 +15,7 @@ describe("Unit Test for HashiConnextAdapter", function () {
 
   const selfDomain = 0;
   const opponentDomain = 1;
+  const domainVersion = 1;
   const opponentContract = ADDRESS_1;
 
   const dummyTransactingAssetId = ADDRESS_1;
@@ -37,9 +38,12 @@ describe("Unit Test for HashiConnextAdapter", function () {
   });
 
   it("getBridgeContract", async function () {
-    await mockHashiConnextAdapter.setBridgeContract(opponentDomain, opponentContract);
-    expect(await mockHashiConnextAdapter.getBridgeContract(opponentDomain)).to.equal(opponentContract);
+    await mockHashiConnextAdapter.setBridgeContract(opponentDomain, domainVersion, opponentContract);
+    expect(
+      await mockHashiConnextAdapter.getBridgeContract(opponentDomain, domainVersion)
+    ).to.equal(opponentContract);
   });
+
 
   it("getConnext", async function () {
     expect(await mockHashiConnextAdapter.getConnext()).to.equal(mockConnextHandler.address);
@@ -58,18 +62,18 @@ describe("Unit Test for HashiConnextAdapter", function () {
   });
 
   it("setBridgeContract", async function () {
-    expect(await mockHashiConnextAdapter.getBridgeContract(opponentDomain)).to.equal(NULL_ADDRESS);
-    await expect(mockHashiConnextAdapter.setBridgeContract(opponentDomain, opponentContract))
+    expect(await mockHashiConnextAdapter.getBridgeContract(opponentDomain, domainVersion)).to.equal(NULL_ADDRESS);
+    await expect(mockHashiConnextAdapter.setBridgeContract(opponentDomain, domainVersion, opponentContract))
       .to.emit(mockHashiConnextAdapter, "BridgeSet")
       .withArgs(opponentDomain, opponentContract);
     await expect(
-      mockHashiConnextAdapter.connect(malicious).setBridgeContract(opponentDomain, opponentContract)
+      mockHashiConnextAdapter.connect(malicious).setBridgeContract(opponentDomain, domainVersion, opponentContract)
     ).to.revertedWith("Ownable: caller is not the owner");
   });
 
   it("onlyExecutor", async function () {
     const testOnlyExecutorSighash = mockHashiConnextAdapter.interface.getSighash("testOnlyExecutor()");
-    await mockHashiConnextAdapter.setBridgeContract(opponentDomain, opponentContract);
+    await mockHashiConnextAdapter.setBridgeContract(opponentDomain, domainVersion,opponentContract);
     await mockExecutor.execute(mockHashiConnextAdapter.address, testOnlyExecutorSighash);
 
     const malciousMockExecutor = await MockExecutor.deploy();
@@ -78,17 +82,17 @@ describe("Unit Test for HashiConnextAdapter", function () {
     ).to.revertedWith("HashiConnextAdapter: sender invalid");
 
     const mistakeContract = ADDRESS_2;
-    await mockHashiConnextAdapter.setBridgeContract(opponentDomain, mistakeContract);
+    await mockHashiConnextAdapter.setBridgeContract(opponentDomain, domainVersion, mistakeContract);
     await expect(mockExecutor.execute(mockHashiConnextAdapter.address, testOnlyExecutorSighash)).to.revertedWith(
       "HashiConnextAdapter: origin sender invalid"
     );
   });
 
   it("xCall", async function () {
-    await expect(mockHashiConnextAdapter.testXCall(opponentDomain, "0x")).to.revertedWith(
+    await expect(mockHashiConnextAdapter.testXCall(opponentDomain, domainVersion,"0x")).to.revertedWith(
       "HashiConnextAdapter: invalid bridge"
     );
-    await mockHashiConnextAdapter.setBridgeContract(opponentDomain, opponentContract);
-    await mockHashiConnextAdapter.testXCall(opponentDomain, "0x");
+    await mockHashiConnextAdapter.setBridgeContract(opponentDomain, domainVersion,opponentContract);
+    await mockHashiConnextAdapter.testXCall(opponentDomain, domainVersion, "0x");
   });
 });

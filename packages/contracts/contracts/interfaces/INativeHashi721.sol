@@ -8,10 +8,11 @@ interface INativeHashi721 is IERC165Upgradeable {
     address from,
     address to,
     uint256 tokenId,
-    uint32 sendToDomain
+    uint32 sendToDomain,
+    uint32 version
   ) external;
 
-  function xReceive(address to, uint256 tokenId) external;
+  function xReceive(address to, uint256 tokenId, uint32 version) external;
 
   function isNativeHashi721() external view returns (bool);
 }

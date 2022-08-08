@@ -12,7 +12,7 @@ import {
   WrappedHashi721__factory,
 } from "../../typechain";
 
-describe("Unit Test for Hashi721Bridge", function () {
+describe.only("Unit Test for Hashi721Bridge", function () {
   let signer: SignerWithAddress;
   let malicious: SignerWithAddress;
 
@@ -64,34 +64,41 @@ describe("Unit Test for Hashi721Bridge", function () {
     const tokenId_2 = "1";
 
     const sendToDomain = "1";
+    const domainVersion = "1";
     const toContract = ADDRESS_1;
-    await hashi721Bridge.setBridgeContract(sendToDomain, toContract);
-    await hashi721Bridge.setIsAllowListRequired(true);
+    await hashi721Bridge.setBridgeContract(sendToDomain, domainVersion, toContract);
+    // await hashi721Bridge.setIsAllowListRequired(true);
 
     await expect(
-      hashi721Bridge.xSend(mockNFT.address, signer.address, ADDRESS_1, tokenId_1, sendToDomain, true)
+      hashi721Bridge.xSend(mockNFT.address, signer.address, ADDRESS_1, tokenId_1, sendToDomain, domainVersion, true)
     ).to.revertedWith("Hashi721Bridge: invalid nft");
 
-    await hashi721Bridge.setAllowList(mockNFT.address, true);
+    // await hashi721Bridge.setAllowList(mockNFT.address, true);
     await expect(
-      hashi721Bridge.connect(malicious).xSend(mockNFT.address, signer.address, ADDRESS_1, tokenId_1, sendToDomain, true)
+      hashi721Bridge
+        .connect(malicious)
+        .xSend(mockNFT.address, signer.address, ADDRESS_1, tokenId_1, sendToDomain, domainVersion, true)
     ).to.revertedWith("Hashi721Bridge: invalid sender");
 
     await expect(
-      hashi721Bridge.xSend(mockNFT.address, malicious.address, ADDRESS_1, tokenId_1, sendToDomain, true)
+      hashi721Bridge.xSend(mockNFT.address, malicious.address, ADDRESS_1, tokenId_1, sendToDomain, domainVersion, true)
     ).to.revertedWith("Hashi721Bridge: invalid from");
 
     // for is token uri included = true
-    await expect(hashi721Bridge.xSend(mockNFT.address, signer.address, ADDRESS_1, tokenId_1, sendToDomain, true))
+    await expect(
+      hashi721Bridge.xSend(mockNFT.address, signer.address, ADDRESS_1, tokenId_1, sendToDomain, domainVersion, true)
+    )
       .to.emit(mockNFT, "Transfer")
       .withArgs(signer.address, hashi721Bridge.address, tokenId_1);
 
-    await hashi721Bridge.setAllowList(mockNFT.address, false);
-    await hashi721Bridge.setIsAllowListRequired(false);
+    // await hashi721Bridge.setAllowList(mockNFT.address, false);
+    // await hashi721Bridge.setIsAllowListRequired(false);
 
     // for is token uri included = false
     // for allowlist
-    await expect(hashi721Bridge.xSend(mockNFT.address, signer.address, ADDRESS_1, tokenId_2, sendToDomain, false))
+    await expect(
+      hashi721Bridge.xSend(mockNFT.address, signer.address, ADDRESS_1, tokenId_2, sendToDomain, domainVersion, false)
+    )
       .to.emit(mockNFT, "Transfer")
       .withArgs(signer.address, hashi721Bridge.address, tokenId_2);
   });
@@ -101,11 +108,11 @@ describe("Unit Test for Hashi721Bridge", function () {
     const tokenId = "0";
 
     const birthDomain = "1";
-
     const fromDomain = birthDomain;
+    const domainVersion = "1";
     const fromContract = ADDRESS_1;
 
-    await hashi721Bridge.setBridgeContract(fromDomain, fromContract);
+    await hashi721Bridge.setBridgeContract(fromDomain, domainVersion, fromContract);
     await mockExecutor.setOriginSender(fromContract);
     await mockExecutor.setOrigin(fromDomain);
 
@@ -114,6 +121,7 @@ describe("Unit Test for Hashi721Bridge", function () {
       signer.address,
       tokenId,
       birthDomain,
+      domainVersion,
       baseTokenURL,
     ]);
 
@@ -126,7 +134,9 @@ describe("Unit Test for Hashi721Bridge", function () {
     );
     const deployedContract = WrappedHashi721.attach(deployedContractAddress);
 
-    await expect(hashi721Bridge.xSend(deployedContract.address, signer.address, ADDRESS_1, tokenId, fromDomain, true))
+    await expect(
+      hashi721Bridge.xSend(deployedContract.address, signer.address, ADDRESS_1, tokenId, fromDomain, domainVersion,true)
+    )
       .to.emit(deployedContract, "Transfer")
       .withArgs(signer.address, NULL_ADDRESS, tokenId);
   });
@@ -139,9 +149,10 @@ describe("Unit Test for Hashi721Bridge", function () {
     const birthDomain = selfDomain;
 
     const fromDomain = "1";
+    const domainVersion = "1";
     const fromContract = ADDRESS_1;
 
-    await hashi721Bridge.setBridgeContract(fromDomain, fromContract);
+    await hashi721Bridge.setBridgeContract(fromDomain, domainVersion, fromContract);
     await mockExecutor.setOriginSender(fromContract);
     await mockExecutor.setOrigin(fromDomain);
 
@@ -150,6 +161,7 @@ describe("Unit Test for Hashi721Bridge", function () {
       signer.address,
       tokenId,
       birthDomain,
+      domainVersion,
       baseTokenURL,
     ]);
     await mockExecutor.execute(hashi721Bridge.address, data_1);
@@ -161,11 +173,11 @@ describe("Unit Test for Hashi721Bridge", function () {
     const tokenId_2 = "1";
 
     const birthDomain = "1";
-
+const domainVersion = "1";
     const fromDomain = "2";
     const fromContract = ADDRESS_1;
 
-    await hashi721Bridge.setBridgeContract(fromDomain, fromContract);
+    await hashi721Bridge.setBridgeContract(fromDomain, domainVersion, fromContract);
 
     await mockExecutor.setOriginSender(fromContract);
     await mockExecutor.setOrigin(fromDomain);
@@ -175,6 +187,7 @@ describe("Unit Test for Hashi721Bridge", function () {
       signer.address,
       tokenId_1,
       birthDomain,
+      domainVersion,
       baseTokenURL,
     ]);
     await mockExecutor.execute(hashi721Bridge.address, data_1);
@@ -184,6 +197,7 @@ describe("Unit Test for Hashi721Bridge", function () {
       signer.address,
       tokenId_2,
       birthDomain,
+      domainVersion,
       baseTokenURL,
     ]);
     await mockExecutor.execute(hashi721Bridge.address, data_2);

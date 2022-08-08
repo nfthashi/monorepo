@@ -41,9 +41,12 @@ describe("Integration Test for Bridge", function () {
   it("Bridge NFT from Rinkeby to Goerli", async function () {
     const tokenId = "0";
     const sendToDomain = "3331";
+    const domainVersion = "1"
     const toContract = ADDRESS_1;
-    await hashi721Bridge.setBridgeContract(sendToDomain, toContract);
-    await expect(hashi721Bridge.xSend(mockNFT.address, signer.address, ADDRESS_1, tokenId, sendToDomain, true))
+    await hashi721Bridge.setBridgeContract(sendToDomain,domainVersion, toContract);
+    await expect(
+      hashi721Bridge.xSend(mockNFT.address, signer.address, ADDRESS_1, tokenId, domainVersion, sendToDomain, true)
+    )
       .to.emit(mockNFT, "Transfer")
       .withArgs(signer.address, hashi721Bridge.address, tokenId);
   });

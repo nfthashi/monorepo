@@ -34,16 +34,21 @@ contract NativeHashi721 is Initializable, ERC165Upgradeable, INativeHashi721, Ha
     address from,
     address to,
     uint256 tokenId,
-    uint32 sendToDomain
+    uint32 sendToDomain,
+    uint32 version
   ) public {
     require(_isApprovedOrOwner(_msgSender(), tokenId), "NativeHashi721: invalid sender");
     require(ownerOf(tokenId) == from, "NativeHashi721: invalid from");
     _burn(tokenId);
-    bytes memory callData = abi.encodeWithSelector(this.xReceive.selector, to, tokenId);
-    _xcall(sendToDomain, callData);
+    bytes memory callData = abi.encodeWithSelector(this.xReceive.selector, to, tokenId, version);
+    _xcall(sendToDomain, version, callData);
   }
 
-  function xReceive(address to, uint256 tokenId) public onlyExecutor {
+  function xReceive(
+    address to,
+    uint256 tokenId,
+    uint32 version
+  ) public onlyExecutor(version) {
     _mint(to, tokenId);
   }
 

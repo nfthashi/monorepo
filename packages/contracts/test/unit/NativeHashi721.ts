@@ -14,6 +14,7 @@ describe("Unit Test for NativeHashi721", function () {
 
   const selfDomain = "0";
   const opponentDomain = "1";
+  const domainVersion = "1";
   const opponentContract = ADDRESS_1;
   const dummyTransactingAssetId = ADDRESS_1;
   const name = "name";
@@ -37,30 +38,30 @@ describe("Unit Test for NativeHashi721", function () {
       name,
       symbol
     );
-    await nativeHashi721.setBridgeContract(opponentDomain, opponentContract);
+    await nativeHashi721.setBridgeContract(opponentDomain, domainVersion, opponentContract);
   });
 
   it("xReceive", async function () {
     const tokenId = 0;
-    const data = nativeHashi721.interface.encodeFunctionData("xReceive", [signer.address, tokenId]);
+    const data = nativeHashi721.interface.encodeFunctionData("xReceive", [signer.address, tokenId, domainVersion]);
     await mockExecutor.execute(nativeHashi721.address, data);
     expect(await nativeHashi721.ownerOf(tokenId)).to.equal(signer.address);
   });
 
   it("xSend", async function () {
     const tokenId = 0;
-    const data = nativeHashi721.interface.encodeFunctionData("xReceive", [signer.address, tokenId]);
+    const data = nativeHashi721.interface.encodeFunctionData("xReceive", [signer.address, tokenId, domainVersion]);
     await mockExecutor.execute(nativeHashi721.address, data);
 
     await expect(
-      nativeHashi721.connect(malicious).xSend(signer.address, ADDRESS_1, tokenId, opponentDomain)
+      nativeHashi721.connect(malicious).xSend(signer.address, ADDRESS_1, tokenId, opponentDomain, domainVersion)
     ).to.revertedWith("NativeHashi721: invalid sender");
 
-    await expect(nativeHashi721.xSend(malicious.address, ADDRESS_1, tokenId, opponentDomain)).to.revertedWith(
-      "NativeHashi721: invalid from"
-    );
+    await expect(
+      nativeHashi721.xSend(malicious.address, ADDRESS_1, tokenId, opponentDomain, domainVersion)
+    ).to.revertedWith("NativeHashi721: invalid from");
 
-    await expect(nativeHashi721.xSend(signer.address, ADDRESS_1, tokenId, opponentDomain))
+    await expect(nativeHashi721.xSend(signer.address, ADDRESS_1, tokenId, opponentDomain, domainVersion))
       .to.emit(nativeHashi721, "Transfer")
       .withArgs(signer.address, NULL_ADDRESS, tokenId);
   });
