@@ -23,7 +23,11 @@ contract MockHashiConnextAdapter is HashiConnextAdapter {
   // solhint-disable-next-line no-empty-blocks
   function testOnlyExecutor(uint32 version) public onlyExecutor(version) {}
 
-  function testXCall(uint32 destinationDomain, uint32 destinationDomainVersion, bytes memory callData) public {
+  function testXCall(
+    uint32 destinationDomain,
+    uint32 destinationDomainVersion,
+    bytes memory callData
+  ) public {
     _xcall(destinationDomain, destinationDomainVersion, callData);
   }
 }

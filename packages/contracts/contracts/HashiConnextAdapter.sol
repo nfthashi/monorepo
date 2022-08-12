@@ -33,8 +33,7 @@ contract HashiConnextAdapter is OwnableUpgradeable, ERC165Upgradeable {
     _;
   }
 
-  // TODO : 複数アドレスを管理できるようにする？
-  // TODO : 変更に追従して他を調整
+  // TODO : 複数アドレスを管理できるようにする
   function setBridgeContract(
     uint32 domain,
     uint32 version,
@@ -49,13 +48,13 @@ contract HashiConnextAdapter is OwnableUpgradeable, ERC165Upgradeable {
     emit BridgeSet(domain, version, bridgeContract);
   }
 
-  function getBridgeContract(uint32 domain, uint32 version) public view returns (address) {
-    return bridgeContracts[keccak256(abi.encodePacked(domain, version))];
-  }
-
   function setTransactingAssetId(address transactingAssetId) public onlyOwner {
     _transactingAssetId = transactingAssetId;
     emit TransactingAssetIdSet(transactingAssetId);
+  }
+
+  function getBridgeContract(uint32 domain, uint32 version) public view returns (address) {
+    return bridgeContracts[keccak256(abi.encodePacked(domain, version))];
   }
 
   function getConnext() public view returns (address) {

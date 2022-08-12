@@ -27,7 +27,7 @@ contract XNFTTrader is HashiConnextAdapter {
     //need to validate the bridged currency address and amount
 
     bytes memory callData = abi.encodeWithSelector(this.xReceive.selector, order, msg.sender, isIncludeTokenURI);
-    _xcall(destinationDomainId, version,callData);
+    _xcall(destinationDomainId, version, callData);
   }
 
   function xReceive(
@@ -40,6 +40,14 @@ contract XNFTTrader is HashiConnextAdapter {
 
     _mockMarket.fill(order);
     uint32 origin = IExecutor(msg.sender).origin();
-    _hashi721Bridge.xSend(order.nftContractAddress, address(this), to, order.tokenId, origin, version, isIncludeTokenURI);
+    _hashi721Bridge.xSend(
+      order.nftContractAddress,
+      address(this),
+      to,
+      order.tokenId,
+      origin,
+      version,
+      isIncludeTokenURI
+    );
   }
 }
