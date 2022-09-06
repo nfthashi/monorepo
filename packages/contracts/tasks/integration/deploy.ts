@@ -14,13 +14,12 @@ task("integration-deploy", "integration deploy")
       return;
     }
     const { domainId: selfDomainNum, contracts } = networks[name];
-    const { connext, testToken: dummyTransactingAssetId } = contracts;
+    const { connext } = contracts;
     const selfDomain = selfDomainNum.toString();
     const wrappedNftImplementation = await run("cmd-deploy-wrapped-nft-impl");
     const bridge = await run("cmd-deploy-bridge", {
       selfDomain,
       connext,
-      dummyTransactingAssetId,
       wrappedNftImplementation,
     });
     networks[name].contracts.wrappedNftImplementation = wrappedNftImplementation;
