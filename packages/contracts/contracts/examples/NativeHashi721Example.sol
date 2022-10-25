@@ -12,7 +12,7 @@ contract NativeHashi721Example is NativeHashi721 {
 
   constructor(
     uint32 selfDomain,
-    address connext,
+    IConnext connext,
     string memory name,
     string memory symbol,
     uint256 startTokenId,

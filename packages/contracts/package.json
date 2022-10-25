@@ -15,7 +15,8 @@
     "fix:eslint": "yarn lint:eslint --fix",
     "fix:prettier": "yarn lint:prettier --write",
     "fix:solhint": "yarn lint:solhint --fix",
-    "build": "hardhat compile"
+    "build": "hardhat compile",
+    "exec": "hardhat run scripts/exec.ts"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.6",
@@ -47,8 +48,8 @@
     "typescript": "^4.6.4"
   },
   "dependencies": {
-    "@connext/nxtp-contracts": "0.2.0-beta.14",
+    "@connext/nxtp-contracts": "^0.2.0-alpha.29",
     "@openzeppelin/contracts": "4.6.0",
-    "@openzeppelin/contracts-upgradeable": "4.6.0"
+    "@openzeppelin/contracts-upgradeable": "^4.8.0-rc.1"
   }
 }

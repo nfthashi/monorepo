@@ -47,13 +47,25 @@ const config: HardhatUserConfig = {
       url: networks.goerli.rpc,
       accounts,
     },
+    polygonMumbai: {
+      url: networks.polygonMumbai.rpc,
+      accounts,
+    },
+    optimisticGoerli: {
+      url: networks.optimisticGoerli.rpc,
+      accounts,
+    },
   },
   gasReporter: {
     enabled: process.env.REPORT_GAS !== undefined,
     currency: "USD",
   },
   etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY,
+    apiKey: {
+      goerli: process.env.ETHERSCAN_API_KEY || "",
+      polygonMumbai: process.env.POLYGONSCAN_API_KEY || "",
+      optimisticGoerli: process.env.OPTIMISM_ETHERSCAN_API_KEY || "",
+    },
   },
 };
 

@@ -5,27 +5,27 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol";
 
 import "@connext/nxtp-contracts/contracts/core/connext/libraries/LibConnextStorage.sol";
-import "@connext/nxtp-contracts/contracts/core/connext/interfaces/IExecutor.sol";
-import "@connext/nxtp-contracts/contracts/core/connext/interfaces/IConnextHandler.sol";
+
 
 import "hardhat/console.sol";
+import {IConnext} from "@connext/nxtp-contracts/contracts/core/connext/interfaces/IConnext.sol";
+
 
 contract HashiConnextAdapter is OwnableUpgradeable, ERC165Upgradeable {
   mapping(uint32 => address) private _bridgeContracts;
 
-  address private _connext;
-  address private _executor;
+  IConnext public connext;
   uint32 private _selfDomain;
 
   event BridgeSet(uint32 domain, address bridgeContract);
-  event ConnextSet(address connextContract);
-  event SelfDomainSet(uint32 selfDomain);
+  event ConnextSet(IConnext connextContract);
+    event SelfDomainSet(uint32 selfDomain);
 
-  modifier onlyExecutor() {
-    require(msg.sender == _executor, "HashiConnextAdapter: sender invalid");
+  modifier onlySource(address _originSender, uint32 _origin) {
     require(
-      IExecutor(msg.sender).originSender() == _bridgeContracts[IExecutor(msg.sender).origin()],
-      "HashiConnextAdapter: origin sender invalid"
+        _originSender == _bridgeContracts[_origin] &&
+        msg.sender == address(connext),
+      "Expected source contract on origin domain called by Connext"
     );
     _;
   }
@@ -35,13 +35,12 @@ contract HashiConnextAdapter is OwnableUpgradeable, ERC165Upgradeable {
     emit BridgeSet(domain, bridgeContract);
   }
 
-  function setConnext(address connextContract) public onlyOwner {
-    _connext = connextContract;
-    _executor = address(IConnextHandler(_connext).executor());
+  function setConnext(IConnext connextContract) public onlyOwner {
+    connext = connextContract;
     emit ConnextSet(connextContract);
   }
 
-  function setSelfDomain(uint32 selfDomain) public onlyOwner {
+    function setSelfDomain(uint32 selfDomain) public onlyOwner {
     _selfDomain = selfDomain;
     emit SelfDomainSet(selfDomain);
   }
@@ -50,12 +49,8 @@ contract HashiConnextAdapter is OwnableUpgradeable, ERC165Upgradeable {
     return _bridgeContracts[domain];
   }
 
-  function getConnext() public view returns (address) {
-    return _connext;
-  }
-
-  function getExecutor() public view returns (address) {
-    return _executor;
+  function getConnext() public view returns (IConnext) {
+    return connext;
   }
 
   function getSelfDomain() public view returns (uint32) {
@@ -63,36 +58,26 @@ contract HashiConnextAdapter is OwnableUpgradeable, ERC165Upgradeable {
   }
 
   // solhint-disable-next-line func-name-mixedcase
-  function __HashiConnextAdapter_init(uint32 selfDomain, address connext) internal onlyInitializing {
+  function __HashiConnextAdapter_init(uint32 selfDomain, IConnext connext) internal onlyInitializing {
     __Ownable_init_unchained();
     __HashiConnextAdapter_init_unchained(selfDomain, connext);
   }
 
   // solhint-disable-next-line func-name-mixedcase
-  function __HashiConnextAdapter_init_unchained(uint32 selfDomain, address connext) internal onlyInitializing {
+  function __HashiConnextAdapter_init_unchained(uint32 selfDomain, IConnext connext) internal onlyInitializing {
+    connext = connext;
     _selfDomain = selfDomain;
-    _connext = connext;
-    _executor = address(IConnextHandler(_connext).executor());
   }
 
-  function _xcall(uint32 destinationDomain, bytes memory callData) internal {
-    address destinationContract = _bridgeContracts[destinationDomain];
-    require(destinationContract != address(0x0), "HashiConnextAdapter: invalid bridge");
-    CallParams memory callParams = CallParams({
-      to: destinationContract,
-      callData: callData,
-      originDomain: _selfDomain,
-      destinationDomain: destinationDomain,
-      agent: msg.sender,
-      recovery: destinationContract,
-      forceSlow: true,
-      receiveLocal: false,
-      callback: address(0),
-      callbackFee: 0,
-      relayerFee: 0,
-      slippageTol: 9995
-    });
-    XCallArgs memory xcallArgs = XCallArgs({params: callParams, transactingAssetId: address(0), amount: 0});
-    IConnextHandler(_connext).xcall(xcallArgs);
+  function _xcall(uint32 destinationDomain, uint256 relayerFee, bytes memory callData) internal {
+    connext.xcall(
+      destinationDomain, 
+      _bridgeContracts[destinationDomain],
+      address(0),
+      msg.sender,
+      0,
+      0,
+      callData
+    );
   }
 }

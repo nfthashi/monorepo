@@ -33,10 +33,6 @@ describe("Unit Test for Hashi721Bridge", function () {
     const MockConnextHandler = await ethers.getContractFactory("MockConnextHandler");
     const mockConnextHandler = await MockConnextHandler.deploy();
 
-    const MockExecutor = await ethers.getContractFactory("MockExecutor");
-    mockExecutor = await MockExecutor.deploy();
-    await mockConnextHandler.setExecutor(mockExecutor.address);
-
     WrappedHashi721 = await ethers.getContractFactory("WrappedHashi721");
     wrappedHashi721 = await WrappedHashi721.deploy();
 
@@ -47,6 +43,8 @@ describe("Unit Test for Hashi721Bridge", function () {
       mockConnextHandler.address,
       wrappedHashi721.address
     );
+    await hashi721Bridge.setConnext(mockConnextHandler.address);
+    await hashi721Bridge.setSelfDomain(selfDomain);
 
     const MockNFT = await ethers.getContractFactory("MockNFT");
     mockNFT = await MockNFT.deploy(baseTokenURL);
@@ -57,7 +55,7 @@ describe("Unit Test for Hashi721Bridge", function () {
     mockClone = await MockClone.deploy();
   });
 
-  it("xSend - sender is in birth chain and other tests", async function () {
+  it.only("xSend - sender is in birth chain and other tests", async function () {
     const tokenId_1 = "0";
     const tokenId_2 = "1";
 
@@ -65,27 +63,36 @@ describe("Unit Test for Hashi721Bridge", function () {
     const toContract = ADDRESS_1;
     await hashi721Bridge.setBridgeContract(sendToDomain, toContract);
     await hashi721Bridge.setIsAllowListRequired(true);
+   
 
     await expect(
       hashi721Bridge.xSend(mockNFT.address, signer.address, ADDRESS_1, tokenId_1, sendToDomain, true)
     ).to.revertedWith("Hashi721Bridge: invalid nft");
+
+    console.log("a")
 
     await hashi721Bridge.setAllowList(mockNFT.address, true);
     await expect(
       hashi721Bridge.connect(malicious).xSend(mockNFT.address, signer.address, ADDRESS_1, tokenId_1, sendToDomain, true)
     ).to.revertedWith("Hashi721Bridge: invalid sender");
 
+    console.log("a");
+
     await expect(
       hashi721Bridge.xSend(mockNFT.address, malicious.address, ADDRESS_1, tokenId_1, sendToDomain, true)
     ).to.revertedWith("Hashi721Bridge: invalid from");
 
+    console.log(await hashi721Bridge.getConnext());
+
     // for is token uri included = true
-    await expect(hashi721Bridge.xSend(mockNFT.address, signer.address, ADDRESS_1, tokenId_1, sendToDomain, true))
+    await expect(hashi721Bridge.xSend(mockNFT.address, signer.address, signer.address, tokenId_1, sendToDomain, true))
       .to.emit(mockNFT, "Transfer")
       .withArgs(signer.address, hashi721Bridge.address, tokenId_1);
 
     await hashi721Bridge.setAllowList(mockNFT.address, false);
     await hashi721Bridge.setIsAllowListRequired(false);
+
+    console.log("a");
 
     // for is token uri included = false
     // for allowlist

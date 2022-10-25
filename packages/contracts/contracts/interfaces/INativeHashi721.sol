@@ -11,7 +11,5 @@ interface INativeHashi721 is IERC165Upgradeable {
     uint32 sendToDomain
   ) external;
 
-  function xReceive(address to, uint256 tokenId) external;
-
   function isNativeHashi721() external view returns (bool);
 }
