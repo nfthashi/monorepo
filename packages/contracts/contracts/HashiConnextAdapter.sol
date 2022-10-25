@@ -70,9 +70,10 @@ contract HashiConnextAdapter is OwnableUpgradeable, ERC165Upgradeable {
   }
 
   function _xcall(uint32 destinationDomain, uint256 relayerFee, bytes memory callData) internal {
+    address toContract = _bridgeContracts[destinationDomain];
     connext.xcall(
       destinationDomain, 
-      _bridgeContracts[destinationDomain],
+      toContract,
       address(0),
       msg.sender,
       0,

@@ -87,17 +87,7 @@ contract Hashi721Bridge is ERC165Upgradeable, HashiConnextAdapter, IXReceiver {
       tokenURI
     );
     uint256 relayerFee = 0;
-    address contractTo = getBridgeContract(destinationDomain);
-    connext.xcall{value: relayerFee}(
-      destinationDomain, 
-      contractTo,
-      address(0),
-      msg.sender,
-      0,
-      0,
-      callData
-    );
-    // _xcall(destinationDomain, relayerFee, callData);
+    _xcall(destinationDomain, relayerFee, callData);
   }
 
   function xReceive(
