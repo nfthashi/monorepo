@@ -48,7 +48,7 @@ const config: HardhatUserConfig = {
       accounts,
     },
     polygonMumbai: {
-      url: networks.polygonMumbai.rpc,
+      url: networks.mumbai.rpc,
       accounts,
     },
     optimisticGoerli: {
