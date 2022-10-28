@@ -40,7 +40,7 @@ contract HashiConnextAdapter is OwnableUpgradeable, ERC165Upgradeable {
     emit ConnextSet(connextContract);
   }
 
-    function setSelfDomain(uint32 selfDomain) public onlyOwner {
+  function setSelfDomain(uint32 selfDomain) public onlyOwner {
     _selfDomain = selfDomain;
     emit SelfDomainSet(selfDomain);
   }
