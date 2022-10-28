@@ -32,17 +32,13 @@ const config: HardhatUserConfig = {
     compilers: [{ version: "0.8.11" }, { version: "0.8.15" }],
   },
   networks: {
-    hardhat: process.env.FORK_RINKEBY
+    hardhat: process.env.FORK_GOERLI
       ? {
           forking: {
-            url: networks.rinkeby.rpc,
+            url: networks.goerli.rpc,
           },
         }
       : {},
-    rinkeby: {
-      url: networks.rinkeby.rpc,
-      accounts,
-    },
     goerli: {
       url: networks.goerli.rpc,
       accounts,
