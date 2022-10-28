@@ -15,7 +15,11 @@ export const initMorarils = async () => {
 
 export const getNFTs = async (userAddress: string, chain: Chain): Promise<NFT[]> => {
   await initMorarils();
-  const options = { address: userAddress, chain };
+  // TODO: NFT API for optimism
+  if (chain == "optimisticGoerli") {
+    return []
+  }
+    const options = { address: userAddress, chain };
   const { result } = await Moralis.Web3API.account.getNFTs(options);
   if (!result) {
     return [];

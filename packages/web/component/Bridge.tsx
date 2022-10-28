@@ -37,9 +37,9 @@ export const Bridge: React.FC = () => {
   const theme = useTheme();
   const isTokenURIIncluded = true;
   const [selectedNFT, setSelectedNFT] = useState<NFT>();
-  const [sourceChain, setSourceChain] = useState<Chain>("rinkeby");
+  const [sourceChain, setSourceChain] = useState<Chain>("goerli");
   const [isLoading, setIsLoading] = useState(false);
-  const [destinationChain, setDestinationChain] = useState<Chain>("goerli");
+  const [destinationChain, setDestinationChain] = useState<Chain>("optimisticGoerli");
   const [nftList, setNFTList] = useState<NFT[]>([]);
 
   const toast = useToast();
