@@ -79,7 +79,7 @@ contract Hashi721Bridge is ERC165Upgradeable, HashiConnextAdapter, IXReceiver {
       IWrappedHashi721(processingNFTContractAddress).burn(tokenId);
     }
 
-    bytes memory callData = abi.encodePacked(
+    bytes memory callData = abi.encode(
       birthChainNFTContractAddress,
       to,
       tokenId,

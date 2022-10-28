@@ -1,4 +1,3 @@
-
 import { providers, Wallet } from "ethers";
 import { ethers } from "hardhat";
 
@@ -13,18 +12,18 @@ const optimismWallet = new Wallet(walletPrivateKey, optimismProvider);
 const tokenId = "0";
 const goerliDomainId = "1735353714";
 const optimisticGoerliDomainId = "1735356532";
-const goerliConnextAddress = "0x549CE89d40Cf1D28597CbC535F669d1FEEFfbC6f";
-const optimisticGoerliConnextAddress = "0x2DB8F4D9D1dbE8787FF3131b64b0ae335e08Dc93";
+const goerliConnextAddress = "0x99A784d082476E551E5fc918ce3d849f2b8e89B6";
+const optimisticGoerliConnextAddress = "0x705791AD27229dd4CCf41b6720528AfE1bcC2910";
 
 const main = async () => {
   // Deploying to Goerli
-  const GoerliWrappedHashi = await(await ethers.getContractFactory("WrappedHashi721")).connect(goerliWallet);
+  const GoerliWrappedHashi = await (await ethers.getContractFactory("WrappedHashi721")).connect(goerliWallet);
   console.log("Deploying GoerliWrappedHashi 👋");
   const goerliWrappedHashi = await GoerliWrappedHashi.deploy();
   await goerliWrappedHashi.deployed();
   console.log(`deployed to ${goerliWrappedHashi.address}`);
 
-  const GoerliHashi721Bridge = await(await ethers.getContractFactory("Hashi721Bridge")).connect(goerliWallet);
+  const GoerliHashi721Bridge = await (await ethers.getContractFactory("Hashi721Bridge")).connect(goerliWallet);
   console.log("Deploying GoerliHashi721Bridge 👋");
   const goerliHashi721Bridge = await GoerliHashi721Bridge.deploy();
   await goerliHashi721Bridge.deployed();
@@ -39,7 +38,7 @@ const main = async () => {
     }
   );
   const setGoerliInitRec = await setGoerliInitTx.wait();
-  console.log(`Initialize txn confirmed on Polygon! 🙌 ${setGoerliInitRec.transactionHash}`);
+  console.log(`Initialize txn confirmed on Goerli! 🙌 ${setGoerliInitRec.transactionHash}`);
 
   // Deploying to Optimism
   const OptimismWrappedHashi = await (await ethers.getContractFactory("WrappedHashi721")).connect(optimismWallet);
@@ -84,49 +83,50 @@ const main = async () => {
   console.log("Counterpart contract addresses set in both contracts 👍");
 
   // Deploy, Mint, Approve Test NFTs
-  // Polygon
-  const TestGoerliNFT = await (await ethers.getContractFactory("TestNFT")).connect(goerliWallet);
+  // Optimism
+  const TestOpNFT = await (await ethers.getContractFactory("TestNFT")).connect(optimismWallet);
   console.log("Deploying TestGoerliNFT 👋");
-  const testGoerliNFT = await TestGoerliNFT.deploy();
-  await testGoerliNFT.deployed();
-  console.log(`deployed to ${testGoerliNFT.address}`);
+  const testOpNFT = await TestOpNFT.deploy();
+  await testOpNFT.deployed();
+  console.log(`deployed to ${testOpNFT.address}`);
 
   console.log("Approving TestPolygonNFT");
-  const approvedGoerliTx = await testGoerliNFT.approve(goerliHashi721Bridge.address, tokenId, {
+  const approvedOpTx = await testOpNFT.approve(optimismHashi721Bridge.address, tokenId, {
     gasLimit: 3000000,
   });
-  await approvedGoerliTx.wait();
+  await approvedOpTx.wait();
   console.log("Successfully approved");
 
-
-
-  // Set Constructor on Polygon
-  console.log(`Setting Connext Address`);
-  const setPolygonConnextTx = await goerliHashi721Bridge.setConnext(goerliConnextAddress, {
+  // Set Constructor on Op
+  console.log(`Setting Connext Address on Optimism`);
+  const setOpConnextTx = await optimismHashi721Bridge.setConnext(optimisticGoerliConnextAddress, {
     gasLimit: 3000000,
   });
-  await setPolygonConnextTx.wait();
+  await setOpConnextTx.wait();
 
   console.log(`Setting Self Domain`);
-  const setPolygonSelfDomainTx = await goerliHashi721Bridge.setSelfDomain(goerliDomainId, {
+  const setOpSelfDomainTx = await optimismHashi721Bridge.setSelfDomain(optimisticGoerliDomainId, {
     gasLimit: 3000000,
   });
-  await setPolygonSelfDomainTx.wait();
+  await setOpSelfDomainTx.wait();
 
-
+  console.log(`Setting Connext Address on Goerli`);
+  const setGoerliConnextTx = await goerliHashi721Bridge.setConnext(goerliConnextAddress, {
+    gasLimit: 3000000,
+  });
+  await setGoerliConnextTx.wait();
   console.log(`Setting NFT Implementation`);
-  const setNftImplementationTx = await optimismHashi721Bridge.setNftImplementation(optimismWrappedHashi.address, {
+  const setNftImplementationTx = await goerliHashi721Bridge.setNftImplementation(goerliWrappedHashi.address, {
     gasLimit: 3000000,
   });
   await setNftImplementationTx.wait();
 
-
   // Bridge from Polygon to Op
-  console.log("Bridge NFT from Mumbai to Optimism");
-  const setGoerliXSendTx = await goerliHashi721Bridge.xSend(
-    testGoerliNFT.address,
-    goerliWallet.address,
+  console.log("Bridge NFT from Optimism to Goerli");
+  const setOpXSendTx = await optimismHashi721Bridge.xSend(
+    testOpNFT.address,
     optimismWallet.address,
+    goerliWallet.address,
     tokenId,
     goerliDomainId,
     true,
@@ -134,8 +134,8 @@ const main = async () => {
       gasLimit: 3000000,
     }
   );
-  const setGoerliXSendRec = await setGoerliXSendTx.wait();
-  console.log(`Bridging txn confirmed on L1! 🙌 ${setGoerliXSendRec.transactionHash}`);
+  const setOpXSendRec = await setOpXSendTx.wait();
+  console.log(`Bridging txn confirmed on Optimism! 🙌 ${setOpXSendRec.transactionHash}`);
 };
 
 main()

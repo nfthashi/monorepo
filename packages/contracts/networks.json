@@ -34,7 +34,7 @@
     "contracts": {
       "wrappedNftImplementation": "0x205D80A85F9cE674bA38339Ec37AFAe655afAe6a",
       "bridge": "0x59816a276D7bfe90a2798B795c9F85f3dc9641Fd",
-      "connext": "0x73175967D3B06eC39A9097Ad7dEbb5edf6896e2f",
+      "connext": "0xfeBBcfe9a88aadefA6e305945F2d2011493B15b4",
       "faucet": "",
       "testToken": ""
     },
