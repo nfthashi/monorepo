@@ -157,7 +157,7 @@ describe("Unit Test for Hashi721Bridge", function () {
     expect(await mockNFT.ownerOf(tokenId)).to.equal(signer.address);
   });
 
-  it("xReceive - receiver is not in birth chain", async function () {
+  it.only("xReceive - receiver is not in birth chain", async function () {
     const tokenId_1 = "0";
 
     const birthDomain = "1";

@@ -14,7 +14,7 @@ contract MockConnextHandler {
     uint256 amount, // _amount: 0 because no funds are being transferred
     uint256 slippage, // _slippage: can be anything between 0-10000 because no funds are being transferred
     bytes32 callData
-  ) public payable returns (bytes32) {
+  ) external returns (bytes32) {
     return "";
   }
 }
