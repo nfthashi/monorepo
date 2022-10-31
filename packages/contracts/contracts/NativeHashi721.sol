@@ -9,7 +9,14 @@ import {IXReceiver} from "@connext/nxtp-contracts/contracts/core/connext/interfa
 import "./HashiConnextAdapter.sol";
 import "./interfaces/INativeHashi721.sol";
 
-contract NativeHashi721 is Initializable, ERC165Upgradeable, HashiConnextAdapter, INativeHashi721, ERC721Upgradeable, IXReceiver {
+contract NativeHashi721 is
+  Initializable,
+  ERC165Upgradeable,
+  HashiConnextAdapter,
+  INativeHashi721,
+  ERC721Upgradeable,
+  IXReceiver
+{
   constructor(
     uint32 selfDomain,
     IConnext connext,
@@ -17,6 +24,18 @@ contract NativeHashi721 is Initializable, ERC165Upgradeable, HashiConnextAdapter
     string memory symbol
   ) {
     initialize(selfDomain, connext, name, symbol);
+  }
+
+  function xReceive(
+    bytes32 _transferId,
+    uint256 _amount,
+    address _asset,
+    address _originSender,
+    uint32 _origin,
+    bytes memory _callData
+  ) external onlySource(_originSender, _origin) returns (bytes memory) {
+    (address to, uint256 tokenId) = abi.decode(_callData, (address, uint256));
+    _mint(to, tokenId);
   }
 
   function initialize(
@@ -42,17 +61,6 @@ contract NativeHashi721 is Initializable, ERC165Upgradeable, HashiConnextAdapter
     uint256 relayerFee = 0;
     _xcall(sendToDomain, relayerFee, callData);
   }
-
-  function xReceive(bytes32 _transferId,
-    uint256 _amount,
-    address _asset,
-    address _originSender,
-    uint32 _origin,
-    bytes memory _callData) external onlySource(_originSender, _origin) returns(bytes memory) {
-    (address to, uint256 tokenId) = abi.decode(_callData, (address, uint256));
-    _mint(to, tokenId);
-  }
-
 
   function supportsInterface(bytes4 interfaceId)
     public

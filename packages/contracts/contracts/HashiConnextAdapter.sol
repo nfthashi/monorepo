@@ -6,10 +6,8 @@ import "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeabl
 
 import "@connext/nxtp-contracts/contracts/core/connext/libraries/LibConnextStorage.sol";
 
-
 import "hardhat/console.sol";
 import {IConnext} from "@connext/nxtp-contracts/contracts/core/connext/interfaces/IConnext.sol";
-
 
 contract HashiConnextAdapter is OwnableUpgradeable, ERC165Upgradeable {
   mapping(uint32 => address) private _bridgeContracts;
@@ -19,12 +17,11 @@ contract HashiConnextAdapter is OwnableUpgradeable, ERC165Upgradeable {
 
   event BridgeSet(uint32 domain, address bridgeContract);
   event ConnextSet(IConnext connextContract);
-    event SelfDomainSet(uint32 selfDomain);
+  event SelfDomainSet(uint32 selfDomain);
 
   modifier onlySource(address _originSender, uint32 _origin) {
     require(
-        _originSender == _bridgeContracts[_origin] &&
-        msg.sender == address(connext),
+      _originSender == _bridgeContracts[_origin] && msg.sender == address(connext),
       "Expected source contract on origin domain called by Connext"
     );
     _;
@@ -69,16 +66,12 @@ contract HashiConnextAdapter is OwnableUpgradeable, ERC165Upgradeable {
     _selfDomain = selfDomain;
   }
 
-  function _xcall(uint32 destinationDomain, uint256 relayerFee, bytes memory callData) internal {
+  function _xcall(
+    uint32 destinationDomain,
+    uint256 relayerFee,
+    bytes memory callData
+  ) internal {
     address toContract = _bridgeContracts[destinationDomain];
-    connext.xcall(
-      destinationDomain, 
-      toContract,
-      address(0),
-      msg.sender,
-      0,
-      100,
-      callData
-    );
+    connext.xcall{value: relayerFee}(destinationDomain, toContract, address(0), msg.sender, 0, 100, callData);
   }
 }
