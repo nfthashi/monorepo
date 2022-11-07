@@ -12,7 +12,7 @@ import { injected } from "../lib/web3";
 
 export const Faucet: React.FC = () => {
   const theme = useTheme();
-  const [chain, setChain] = useState<Chain>("goerli");
+  const [chain, setChain] = useState<Chain>("rinkeby");
   const { activate, library, account } = useWeb3React<Web3Provider>();
   const toast = useToast();
   const connect = async () => {

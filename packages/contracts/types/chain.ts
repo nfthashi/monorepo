@@ -1,5 +1,5 @@
-export type Chain = "goerli" | "mumbai" | "optimisticGoerli";
+export type Chain = "rinkeby" | "goerli";
 
 export const isChain = (chain: string): chain is Chain => {
-  return chain === "goerli" || chain === "mumbai" || chain === "optimisticGoerli";
+  return chain === "rinkeby" || chain === "goerli";
 };
