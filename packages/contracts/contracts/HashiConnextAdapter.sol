@@ -61,8 +61,8 @@ contract HashiConnextAdapter is OwnableUpgradeable, ERC165Upgradeable {
   }
 
   // solhint-disable-next-line func-name-mixedcase
-  function __HashiConnextAdapter_init_unchained(uint32 selfDomain, IConnext connext) internal onlyInitializing {
-    connext = connext;
+  function __HashiConnextAdapter_init_unchained(uint32 selfDomain, IConnext _connext) internal onlyInitializing {
+    connext = _connext;
     _selfDomain = selfDomain;
   }
 
@@ -72,6 +72,7 @@ contract HashiConnextAdapter is OwnableUpgradeable, ERC165Upgradeable {
     bytes memory callData
   ) internal {
     address toContract = _bridgeContracts[destinationDomain];
+    require(toContract != address(0), "HashiConnextAdapter: invalid domainID");
     connext.xcall{value: relayerFee}(destinationDomain, toContract, address(0), msg.sender, 0, 100, callData);
   }
 }
