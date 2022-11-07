@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts (last updated v4.6.0) (governance/TimelockController.sol)
 
-pragma solidity ^0.8.15;
+pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
@@ -136,28 +136,6 @@ contract TimelockController is AccessControl, IERC721Receiver, IERC1155Receiver 
   }
 
   /**
-   * @dev Schedule an operation containing a single transaction.
-   *
-   * Emits a {CallScheduled} event.
-   *
-   * Requirements:
-   *
-   * - the caller must have the 'proposer' role.
-   */
-  function schedule(
-    address target,
-    uint256 value,
-    bytes calldata data,
-    bytes32 predecessor,
-    bytes32 salt,
-    uint256 delay
-  ) public virtual onlyRole(PROPOSER_ROLE) {
-    bytes32 id = hashOperation(target, value, data, predecessor, salt);
-    _schedule(id, delay);
-    emit CallScheduled(id, 0, target, value, data, predecessor, delay);
-  }
-
-  /**
    * @dev Cancel an operation.
    *
    * Requirements:
@@ -224,30 +202,25 @@ contract TimelockController is AccessControl, IERC721Receiver, IERC1155Receiver 
   }
 
   /**
-   * @dev Schedule an operation containing a batch of transactions.
+   * @dev Schedule an operation containing a single transaction.
    *
-   * Emits one {CallScheduled} event per transaction in the batch.
+   * Emits a {CallScheduled} event.
    *
    * Requirements:
    *
    * - the caller must have the 'proposer' role.
    */
-  function scheduleBatch(
-    address[] calldata targets,
-    uint256[] calldata values,
-    bytes[] calldata payloads,
+  function schedule(
+    address target,
+    uint256 value,
+    bytes calldata data,
     bytes32 predecessor,
     bytes32 salt,
     uint256 delay
   ) public virtual onlyRole(PROPOSER_ROLE) {
-    require(targets.length == values.length, "TimelockController: length mismatch");
-    require(targets.length == payloads.length, "TimelockController: length mismatch");
-
-    bytes32 id = hashOperationBatch(targets, values, payloads, predecessor, salt);
+    bytes32 id = hashOperation(target, value, data, predecessor, salt);
     _schedule(id, delay);
-    for (uint256 i = 0; i < targets.length; ++i) {
-      emit CallScheduled(id, i, targets[i], values[i], payloads[i], predecessor, delay);
-    }
+    emit CallScheduled(id, 0, target, value, data, predecessor, delay);
   }
 
   /**
@@ -286,6 +259,33 @@ contract TimelockController is AccessControl, IERC721Receiver, IERC1155Receiver 
     bytes memory
   ) public virtual override returns (bytes4) {
     return this.onERC1155BatchReceived.selector;
+  }
+
+  /**
+   * @dev Schedule an operation containing a batch of transactions.
+   *
+   * Emits one {CallScheduled} event per transaction in the batch.
+   *
+   * Requirements:
+   *
+   * - the caller must have the 'proposer' role.
+   */
+  function scheduleBatch(
+    address[] calldata targets,
+    uint256[] calldata values,
+    bytes[] calldata payloads,
+    bytes32 predecessor,
+    bytes32 salt,
+    uint256 delay
+  ) public virtual onlyRole(PROPOSER_ROLE) {
+    require(targets.length == values.length, "TimelockController: length mismatch");
+    require(targets.length == payloads.length, "TimelockController: length mismatch");
+
+    bytes32 id = hashOperationBatch(targets, values, payloads, predecessor, salt);
+    _schedule(id, delay);
+    for (uint256 i = 0; i < targets.length; ++i) {
+      emit CallScheduled(id, i, targets[i], values[i], payloads[i], predecessor, delay);
+    }
   }
 
   /**
