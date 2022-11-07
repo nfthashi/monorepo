@@ -1,30 +1,44 @@
 {
-  "rinkeby": {
-    "name": "Rinkeby",
-    "chainId": 4,
-    "domainId": 1111,
-    "contracts": {
-      "wrappedNftImplementation": "0x9f9925e674fB221F88bFa96b5eF84E32d9c541c7",
-      "bridge": "0xFE87BcC2D9323A7023039790EE70fCc13643628B",
-      "connext": "0x4cAA6358a3d9d1906B5DABDE60A626AAfD80186F",
-      "faucet": "0x5B26da852945f37638Ff987c060022e8159a57c5",
-      "testToken": "0x3FFc03F05D1869f493c7dbf913E636C6280e0ff9"
-    },
-    "explorer": "https://rinkeby.etherscan.io/",
-    "rpc": "https://rinkeby.infura.io/v3/95f65ab099894076814e8526f52c9149"
-  },
   "goerli": {
     "name": "Goerli",
     "chainId": 5,
-    "domainId": 3331,
+    "domainId": 1735353714,
     "contracts": {
       "wrappedNftImplementation": "0xE9bA21232D0Ece2e550a203b3E5bFC104800e792",
       "bridge": "0xEFFe8cA56B164c797305924395d1Dd0400AFE3e3",
-      "connext": "0x6c9a905Ab3f4495E2b47f5cA131ab71281E0546e",
+      "connext": "0x99A784d082476E551E5fc918ce3d849f2b8e89B6",
       "faucet": "0x35de708c2355B5f02c2F5bFB800E22d4Bb40233A",
       "testToken": "0x26FE8a8f86511d678d031a022E48FfF41c6a3e3b"
     },
     "explorer": "https://goerli.etherscan.io/",
     "rpc": "https://goerli.infura.io/v3/95f65ab099894076814e8526f52c9149"
+  },
+  "mumbai": {
+    "name": "Mumbai",
+    "chainId": 80001,
+    "domainId": 9991,
+    "contracts": {
+      "wrappedNftImplementation": "0x205D80A85F9cE674bA38339Ec37AFAe655afAe6a",
+      "bridge": "0x59816a276D7bfe90a2798B795c9F85f3dc9641Fd",
+      "connext": "0xfeBBcfe9a88aadefA6e305945F2d2011493B15b4",
+      "faucet": "",
+      "testToken": ""
+    },
+    "explorer": "https://mumbai.polygonscan.com/",
+    "rpc": "https://matic-mumbai.chainstacklabs.com"
+  },
+  "optimisticGoerli": {
+    "name": "Optimism Goerli",
+    "chainId": 420,
+    "domainId": 1735356532,
+    "contracts": {
+      "wrappedNftImplementation": "0xda371C102f58745A662DE736D659f5F5cc75BF2f",
+      "bridge": "0x489835EFb7dB94d41eC274280795d36FbbE4D6f7",
+      "connext": "0x705791AD27229dd4CCf41b6720528AfE1bcC2910",
+      "faucet": "",
+      "testToken": ""
+    },
+    "explorer": "https://goerli-optimism.etherscan.io//",
+    "rpc": "https://opt-goerli.g.alchemy.com/v2/DCyQlgktFpcJJljGd5fup_dPJTgVNFmk"
   }
 }

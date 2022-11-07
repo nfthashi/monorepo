@@ -32,19 +32,23 @@ const config: HardhatUserConfig = {
     compilers: [{ version: "0.8.11" }, { version: "0.8.15" }],
   },
   networks: {
-    hardhat: process.env.FORK_RINKEBY
+    hardhat: process.env.FORK_GOERLI
       ? {
           forking: {
-            url: networks.rinkeby.rpc,
+            url: networks.goerli.rpc,
           },
         }
       : {},
-    rinkeby: {
-      url: networks.rinkeby.rpc,
-      accounts,
-    },
     goerli: {
       url: networks.goerli.rpc,
+      accounts,
+    },
+    polygonMumbai: {
+      url: networks.mumbai.rpc,
+      accounts,
+    },
+    optimisticGoerli: {
+      url: networks.optimisticGoerli.rpc,
       accounts,
     },
   },
@@ -53,7 +57,11 @@ const config: HardhatUserConfig = {
     currency: "USD",
   },
   etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY,
+    apiKey: {
+      goerli: process.env.ETHERSCAN_API_KEY || "",
+      polygonMumbai: process.env.POLYGONSCAN_API_KEY || "",
+      optimisticGoerli: process.env.OPTIMISM_ETHERSCAN_API_KEY || "",
+    },
   },
 };
 
