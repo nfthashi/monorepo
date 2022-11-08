@@ -24,7 +24,7 @@
       "wrappedNftImplementation": "0xc0342576a9e49F914e287274D4749fe042c27055",
       "bridge": "0xEeCCDE6FD998561b5e8698F02478159A8AF0511a",
       "connext": "0xfeBBcfe9a88aadefA6e305945F2d2011493B15b4",
-      "faucet": ""
+      "faucet": "0x971986437ed3adB51D6Ed7b57B5D69cDDE1E9661"
     },
     "explorer": "https://mumbai.polygonscan.com/",
     "rpc": "https://matic-mumbai.chainstacklabs.com",
@@ -41,7 +41,7 @@
       "wrappedNftImplementation": "0x6D7E731D55284575619624e3f3e1282619A73bBB",
       "bridge": "0xF02eb01aFF74e76991f79f3f13aBF0486d1Da803",
       "connext": "0x705791AD27229dd4CCf41b6720528AfE1bcC2910",
-      "faucet": ""
+      "faucet": "0x77E84Aa0f70383567a12af98EFcBbe8b39e847A1"
     },
     "explorer": "https://goerli-optimism.etherscan.io//",
     "rpc": "https://opt-goerli.g.alchemy.com/v2/DCyQlgktFpcJJljGd5fup_dPJTgVNFmk",
