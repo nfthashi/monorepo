@@ -7,11 +7,14 @@
       "wrappedNftImplementation": "0xF4fF583FC167Ae59cDA2B57a82a129048Fe06c42",
       "bridge": "0x490bb6Ba22E652934509eF6a6c7b68F630eFB25E",
       "connext": "0x99A784d082476E551E5fc918ce3d849f2b8e89B6",
-      "faucet": "0x35de708c2355B5f02c2F5bFB800E22d4Bb40233A",
-      "testToken": "0x26FE8a8f86511d678d031a022E48FfF41c6a3e3b"
+      "faucet": "0x35de708c2355B5f02c2F5bFB800E22d4Bb40233A"
     },
     "explorer": "https://goerli.etherscan.io/",
-    "rpc": "https://goerli.infura.io/v3/95f65ab099894076814e8526f52c9149"
+    "rpc": "https://goerli.infura.io/v3/95f65ab099894076814e8526f52c9149",
+    "nft_api": {
+      "type": "moralis",
+      "name": "goerli"
+    }
   },
   "polygonMumbai": {
     "name": "Mumbai",
@@ -21,11 +24,14 @@
       "wrappedNftImplementation": "0xc0342576a9e49F914e287274D4749fe042c27055",
       "bridge": "0xEeCCDE6FD998561b5e8698F02478159A8AF0511a",
       "connext": "0xfeBBcfe9a88aadefA6e305945F2d2011493B15b4",
-      "faucet": "",
-      "testToken": ""
+      "faucet": ""
     },
     "explorer": "https://mumbai.polygonscan.com/",
-    "rpc": "https://matic-mumbai.chainstacklabs.com"
+    "rpc": "https://matic-mumbai.chainstacklabs.com",
+    "nft_api": {
+      "type": "alchemy",
+      "name": "polygon-mumbai"
+    }
   },
   "optimisticGoerli": {
     "name": "Optimism Goerli",
@@ -35,10 +41,13 @@
       "wrappedNftImplementation": "0x6D7E731D55284575619624e3f3e1282619A73bBB",
       "bridge": "0xF02eb01aFF74e76991f79f3f13aBF0486d1Da803",
       "connext": "0x705791AD27229dd4CCf41b6720528AfE1bcC2910",
-      "faucet": "",
-      "testToken": ""
+      "faucet": ""
     },
     "explorer": "https://goerli-optimism.etherscan.io//",
-    "rpc": "https://opt-goerli.g.alchemy.com/v2/DCyQlgktFpcJJljGd5fup_dPJTgVNFmk"
+    "rpc": "https://opt-goerli.g.alchemy.com/v2/DCyQlgktFpcJJljGd5fup_dPJTgVNFmk",
+    "nft_api": {
+      "type": "alchemy",
+      "name": "opt-goerli"
+    }
   }
 }
