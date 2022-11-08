@@ -12,7 +12,7 @@ describe.only("Integration Test for Timelock Upgrade", function () {
   let timelockController: TimelockController;
   let minTime: BigNumberish;
   const NULL_DATA = "0x0000000000000000000000000000000000000000000000000000000000000000";
-  const proxyAdminAddress = "0x67F43CCd8c7183559cF2a46627BBAA6b4c846b9e";
+  const proxyAdminAddress = "0x376Cff03f76fa4b7dC5a68869Ec62DEd339c0f34";
 
   beforeEach(async function () {
     [signer] = await ethers.getSigners();
