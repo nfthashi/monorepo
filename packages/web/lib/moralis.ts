@@ -1,6 +1,6 @@
 import Moralis from "moralis/node";
 
-import { Chain, isChain } from "../../contracts/types/chain";
+import { Chain } from "../../contracts/types/chain";
 import { NFT } from "../types/nft";
 
 const serverUrl = process.env.MORALIS_SERVER_URL;
@@ -13,23 +13,17 @@ export const initMorarils = async () => {
   }
 };
 
-export const getNFTs = async (userAddress: string, chain: Chain): Promise<NFT[]> => {
+export const getNFTsFromMoralis = async (userAddress: string, chain: Chain): Promise<NFT[]> => {
   await initMorarils();
-  // TODO: NFT API for optimism
-  let result:any ;
-  if (chain == "optimisticGoerli") {
+  if (chain != "goerli") {
     return [];
   }
-  if (chain == "polygonMumbai") {
-    result = await Moralis.Web3API.account.getNFTs({ address: userAddress, chain: "mumbai" });
-  } else {
-    const options = { address: userAddress, chain };
-    result = await Moralis.Web3API.account.getNFTs(options);
-  }
+  const options = { address: userAddress, chain };
+  const { result } = await Moralis.Web3API.account.getNFTs(options);
   if (!result) {
     return [];
   }
-  const nfts = result.map((nft:any) => {
+  const nfts = result.map((nft) => {
     const metadata = {
       name: "",
       image: "",
