@@ -9,10 +9,6 @@ export const Footer: React.FC = () => {
         <Link href="https://www.connext.network/" target="_blank">
           Connext
         </Link>{" "}
-        &{" "}
-        <Link href="https://www.nomad.xyz/" target="_blank">
-          Nomad
-        </Link>
       </Text>
     </Flex>
   );

@@ -4,9 +4,6 @@ import "@openzeppelin/hardhat-upgrades";
 import "@typechain/hardhat";
 import "hardhat-gas-reporter";
 import "solidity-coverage";
-import "./tasks/__experimental/deploy-x-nft-trader";
-import "./tasks/__experimental/create-order";
-import "./tasks/__experimental/x-fill-order";
 import "./tasks/__faucet/deploy";
 import "./tasks/cmd/deploy-bridge";
 import "./tasks/cmd/deploy-wrapped-nft-impl";
@@ -45,6 +42,14 @@ const config: HardhatUserConfig = {
     },
     goerli: {
       url: networks.goerli.rpc,
+      accounts,
+    },
+    polygonMumbai: {
+      url: networks.polygonMumbai.rpc,
+      accounts,
+    },
+    optimisticGoerli: {
+      url: networks.optimisticGoerli.rpc,
       accounts,
     },
   },

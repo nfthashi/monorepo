@@ -24,6 +24,7 @@
     "@titelmedia/react-apollo-multiple-clients": "^4.0.5",
     "@web3-react/core": "^6.1.9",
     "@web3-react/injected-connector": "^6.0.7",
+    "alchemy-sdk": "^2.2.0",
     "apollo-boost": "^0.4.9",
     "axios": "^0.27.2",
     "framer-motion": "^6",
