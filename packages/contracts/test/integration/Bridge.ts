@@ -18,8 +18,8 @@ describe("Integration Test for Bridge", function () {
     const WrappedHashi721 = await ethers.getContractFactory("WrappedHashi721");
     const wrappedHashi721 = await WrappedHashi721.deploy();
 
-    const selfDomain = "1735353714";
-    const connextHandlerAddress = networks.goerli.contracts.connext;
+    const selfDomain = "1111";
+    const connextHandlerAddress = networks.rinkeby.contracts.connext;
     const baseTokenURL = "http://localhost:3000/";
 
     const Hashi721Bridge = await ethers.getContractFactory("Hashi721Bridge");
@@ -38,10 +38,10 @@ describe("Integration Test for Bridge", function () {
 
   it("Bridge NFT from Rinkeby to Goerli", async function () {
     const tokenId = "0";
-    const sendToDomain = "1735356532";
-    const toContract = "0x489835EFb7dB94d41eC274280795d36FbbE4D6f7";
+    const sendToDomain = "3331";
+    const toContract = ADDRESS_1;
     await hashi721Bridge.setBridgeContract(sendToDomain, toContract);
-    await expect(hashi721Bridge.xSend(mockNFT.address, signer.address, signer.address, tokenId, sendToDomain, true))
+    await expect(hashi721Bridge.xSend(mockNFT.address, signer.address, ADDRESS_1, tokenId, sendToDomain, true))
       .to.emit(mockNFT, "Transfer")
       .withArgs(signer.address, hashi721Bridge.address, tokenId);
   });

@@ -1,8 +1,22 @@
 {
+  "rinkeby": {
+    "name": "Rinkeby",
+    "chainId": 4,
+    "domainId": 1111,
+    "contracts": {
+      "wrappedNftImplementation": "0x9f9925e674fB221F88bFa96b5eF84E32d9c541c7",
+      "bridge": "0xFE87BcC2D9323A7023039790EE70fCc13643628B",
+      "connext": "0x4cAA6358a3d9d1906B5DABDE60A626AAfD80186F",
+      "faucet": "0x5B26da852945f37638Ff987c060022e8159a57c5",
+      "testToken": "0x3FFc03F05D1869f493c7dbf913E636C6280e0ff9"
+    },
+    "explorer": "https://rinkeby.etherscan.io/",
+    "rpc": "https://rinkeby.infura.io/v3/95f65ab099894076814e8526f52c9149"
+  },
   "goerli": {
     "name": "Goerli",
     "chainId": 5,
-    "domainId": 1735353714,
+    "domainId": 3331,
     "contracts": {
       "wrappedNftImplementation": "0xF4fF583FC167Ae59cDA2B57a82a129048Fe06c42",
       "bridge": "0x490bb6Ba22E652934509eF6a6c7b68F630eFB25E",
