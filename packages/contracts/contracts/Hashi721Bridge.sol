@@ -17,7 +17,7 @@ contract Hashi721Bridge is ERC165Upgradeable, HashiConnextAdapter, IXReceiver {
 
   mapping(address => bool) private _nftAllowedList;
   bool private _isAllowListRequired;
-  address private _nftImplementation;
+  address public _nftImplementation;
 
   event AllowListSet(address nftContractAddress, bool isAllowed);
   event IsAllowListRequired(bool isAllowListRequired);
