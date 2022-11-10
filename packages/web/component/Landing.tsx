@@ -129,14 +129,6 @@ export const Landing: React.FC = () => {
               alt={"Connext logo"}
             />
           </Link>
-          <Link href="https://www.nomad.xyz/" target="_blank">
-            <Image
-              w={36}
-              textAlign={"center"}
-              src={useColorModeValue("assets/nomad_black.svg", "assets/nomad_white.svg")}
-              alt={"Nomad logo"}
-            />
-          </Link>
         </HStack>
       </Stack>
 
