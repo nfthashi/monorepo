@@ -53,7 +53,7 @@ contract Hashi721Bridge is ERC721HolderUpgradeable, HashiConnextAdapter {
       originalAsset = asset;
     }
     bytes memory callData = _encodeCallData(originalDomainId, originalAsset, to, tokenId, tokenURI);
-    return _xcall(destination, relayerFee, slippage, callData);
+    return _xCall(destination, relayerFee, slippage, callData);
   }
 
   function _afterXReceive(bytes memory callData_) internal override {

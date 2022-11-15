@@ -1,18 +1,21 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+
 import "@connext/nxtp-contracts/contracts/core/connext/interfaces/IConnext.sol";
 import "@connext/nxtp-contracts/contracts/core/connext/interfaces/IXReceiver.sol";
 
-contract HashiConnextAdapter is IXReceiver, Initializable, ContextUpgradeable {
-  mapping(uint32 => address) public bridgeContracts;
+contract HashiConnextAdapter is IXReceiver, OwnableUpgradeable {
+  mapping(uint32 => address) public bridges;
 
   address public connext;
   uint32 public domainId;
 
+  event BridgeSet(uint32 indexed domainId, address indexed bridge);
+
   function __HashiConnextAdapter_init(address connext_, uint32 domainId_) internal onlyInitializing {
+    __Ownable_init_unchained();
     __HashiConnextAdapter_init_unchained(connext_, domainId_);
   }
 
@@ -21,40 +24,39 @@ contract HashiConnextAdapter is IXReceiver, Initializable, ContextUpgradeable {
     domainId = domainId_;
   }
 
+  function setBridge(uint32 domainId_, address bridge) public onlyOwner {
+    bridges[domainId_] = bridge;
+    emit BridgeSet(domainId_, bridge);
+  }
+
   function xReceive(
-    bytes32,
-    uint256,
-    address,
+    bytes32 transferId,
+    uint256 amount,
+    address asset,
     address originSender,
     uint32 origin,
     bytes memory callData
   ) external override returns (bytes memory) {
-    address bridgeContract = bridgeContracts[origin];
-    require(bridgeContract == originSender, "HashiConnextAdapter: invalid bridge contract");
+    address bridge = bridges[origin];
+    require(bridge == originSender, "HashiConnextAdapter: invalid bridge");
     require(_msgSender() == connext, "HashiConnextAdapter: invalid msg sender");
     _afterXReceive(callData);
     return "";
   }
 
-  function _xcall(
+  function _xCall(
     uint32 destination,
     uint256 relayerFee,
     uint256 slippage,
     bytes memory callData
   ) internal returns (bytes32) {
-    address bridgeContract = bridgeContracts[destination];
-    require(bridgeContract != address(0), "HashiConnextAdapter: invalid bridge contract");
+    address bridge = bridges[destination];
+    require(bridge != address(0), "HashiConnextAdapter: invalid bridge");
     return
-      IConnext(connext).xcall{value: relayerFee}(
-        domainId,
-        bridgeContract,
-        address(0),
-        _msgSender(),
-        0,
-        slippage,
-        callData
-      );
+      IConnext(connext).xcall{value: relayerFee}(destination, bridge, address(0), _msgSender(), 0, slippage, callData);
   }
 
-  function _afterXReceive(bytes memory callData) internal virtual {}
+  function _afterXReceive(bytes memory callData) internal virtual {
+    revert("HashiConnextAdapter: must override");
+  }
 }

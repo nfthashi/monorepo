@@ -2,15 +2,15 @@ import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 
-const ADDRESS_1 = "0x0000000000000000000000000000000000000001";
+import { ADDRESS_1 } from "./helper/constant";
 
 describe("WrappedHashi721", function () {
   const baseURI = "http://localhost:3000/";
 
   async function fixture() {
     const [signer, owner, malicious] = await ethers.getSigners();
-    const WrappedHashi721 = await ethers.getContractFactory("WrappedHashi721");
-    const wrappedHashi721 = await WrappedHashi721.deploy();
+    const WrappedHashi721 = await ethers.getContractFactory("TestWrappedHashi721");
+    const wrappedHashi721 = await WrappedHashi721.connect(signer).deploy();
     await wrappedHashi721.connect(owner).initialize();
     return { signer, owner, malicious, wrappedHashi721 };
   }
@@ -24,8 +24,10 @@ describe("WrappedHashi721", function () {
     });
 
     it("should not work when initialize more than one time", async function () {
-      const { wrappedHashi721 } = await loadFixture(fixture);
-      await expect(wrappedHashi721.initialize()).to.revertedWith("Initializable: contract is already initialized");
+      const { owner, wrappedHashi721 } = await loadFixture(fixture);
+      await expect(wrappedHashi721.connect(owner).initialize()).to.revertedWith(
+        "Initializable: contract is already initialized"
+      );
     });
   });
 
@@ -51,7 +53,7 @@ describe("WrappedHashi721", function () {
     });
   });
 
-  describe("mint", function () {
+  describe("burn", function () {
     it("should work", async function () {
       const { owner, wrappedHashi721 } = await loadFixture(fixture);
       const tokenId = 0;
