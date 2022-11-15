@@ -14,69 +14,73 @@ contract Hashi721Bridge is ERC721HolderUpgradeable, HashiConnextAdapter {
   mapping(address => uint32) public originalDomainIds;
   mapping(address => address) public originalAssets;
 
-  address public assetImplementation;
+  address public wrappedHashi721Implementation;
 
-  function initialize(address connext_, uint32 domainId_, address assetImplementation_) public virtual initializer {
+  function initialize(
+    address connext_,
+    uint32 domainId_,
+    address wrappedHashi721Implementation_
+  ) external virtual initializer {
     __HashiConnextAdapter_init(connext_, domainId_);
-    assetImplementation = assetImplementation_;
+    wrappedHashi721Implementation = wrappedHashi721Implementation_;
   }
 
-  function xSend(
+  function xCall(
     uint32 destination,
     uint256 relayerFee,
     uint256 slippage,
     address asset,
-    address from,
     address to,
     uint256 tokenId,
-    bool isTokenURIIncluded
-  ) public payable returns (bytes32) {
+    bool isTokenURIIgnored
+  ) external payable returns (bytes32) {
+    address currentHolder = IERC721Upgradeable(asset).ownerOf(tokenId);
     require(
-      IERC721Upgradeable(asset).ownerOf(tokenId) == _msgSender() ||
+      currentHolder == _msgSender() ||
         IERC721Upgradeable(asset).getApproved(tokenId) == _msgSender() ||
-        IERC721Upgradeable(asset).isApprovedForAll(from, _msgSender()),
+        IERC721Upgradeable(asset).isApprovedForAll(currentHolder, _msgSender()),
       "Hashi721Bridge: invalid msg sender"
     );
     string memory tokenURI;
-    if (isTokenURIIncluded) {
+    if (!isTokenURIIgnored) {
       tokenURI = IERC721MetadataUpgradeable(asset).tokenURI(tokenId);
     }
     uint32 originalDomainId;
     address originalAsset;
-    if (originalAssets[asset] != address(0x0) && originalDomainIds[asset] != 0) {
+    if (originalAssets[asset] == address(0x0) && originalDomainIds[asset] == 0) {
+      IERC721Upgradeable(asset).transferFrom(currentHolder, address(this), tokenId);
+      originalDomainId = domainId;
+      originalAsset = asset;
+    } else {
       IWrappedHashi721(asset).burn(tokenId);
       originalDomainId = originalDomainIds[asset];
       originalAsset = originalAssets[asset];
-    } else {
-      IERC721Upgradeable(asset).transferFrom(from, address(this), tokenId);
-      originalDomainId = domainId;
-      originalAsset = asset;
     }
     bytes memory callData = _encodeCallData(originalDomainId, originalAsset, to, tokenId, tokenURI);
     return _xCall(destination, relayerFee, slippage, callData);
   }
 
-  function _afterXReceive(bytes memory callData_) internal override {
+  function _xReceive(bytes memory callData) internal override {
     (
       uint32 originalDomainId,
       address originalAsset,
       address to,
       uint256 tokenId,
       string memory tokenURI
-    ) = _decodeCallData(callData_);
-    if (originalDomainId == domainId) {
-      address asset = originalAsset;
-      IERC721Upgradeable(asset).safeTransferFrom(address(this), to, tokenId);
-    } else {
+    ) = _decodeCallData(callData);
+    if (originalDomainId != domainId) {
       bytes32 salt = keccak256(abi.encodePacked(originalDomainId, originalAsset));
-      address asset = ClonesUpgradeable.predictDeterministicAddress(assetImplementation, salt);
+      address asset = ClonesUpgradeable.predictDeterministicAddress(wrappedHashi721Implementation, salt);
       if (!AddressUpgradeable.isContract(asset)) {
-        ClonesUpgradeable.cloneDeterministic(assetImplementation, salt);
+        ClonesUpgradeable.cloneDeterministic(wrappedHashi721Implementation, salt);
         IWrappedHashi721(asset).initialize();
         originalDomainIds[asset] = originalDomainId;
         originalAssets[asset] = originalAsset;
       }
       IWrappedHashi721(asset).mint(to, tokenId, tokenURI);
+    } else {
+      address asset = originalAsset;
+      IERC721Upgradeable(asset).safeTransferFrom(address(this), to, tokenId);
     }
   }
 

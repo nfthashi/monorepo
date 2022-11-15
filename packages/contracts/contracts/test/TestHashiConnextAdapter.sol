@@ -6,27 +6,27 @@ import "../HashiConnextAdapter.sol";
 contract TestHashiConnextAdapter is HashiConnextAdapter {
   event XReceiveCalled(bytes callData);
 
-  function initialize(address connext_, uint32 domainId_) public initializer {
+  function _xReceive(bytes memory callData) internal override {
+    emit XReceiveCalled(callData);
+  }
+
+  function initialize(address connext_, uint32 domainId_) external initializer {
     __HashiConnextAdapter_init(connext_, domainId_);
   }
 
-  function testHashiConnextAdapterInit(address connext_, uint32 domainId_) public {
+  function testHashiConnextAdapterInit(address connext_, uint32 domainId_) external {
     __HashiConnextAdapter_init(connext_, domainId_);
   }
 
-  function testHashiConnextAdapterInitUnchained(address connext_, uint32 domainId_) public {
+  function testHashiConnextAdapterInitUnchained(address connext_, uint32 domainId_) external {
     __HashiConnextAdapter_init_unchained(connext_, domainId_);
   }
 
-  function testXCall(uint32 destination, uint256 relayerFee, uint256 slippage, bytes memory callData) public {
+  function testXCall(uint32 destination, uint256 relayerFee, uint256 slippage, bytes memory callData) external {
     _xCall(destination, relayerFee, slippage, callData);
   }
 
-  function testAfterXReceive(bytes memory callData) public {
-    super._afterXReceive(callData);
-  }
-
-  function _afterXReceive(bytes memory callData) internal override {
-    emit XReceiveCalled(callData);
+  function testXReceive(bytes memory callData) external {
+    super._xReceive(callData);
   }
 }

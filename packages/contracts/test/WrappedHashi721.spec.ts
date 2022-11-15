@@ -23,7 +23,7 @@ describe("WrappedHashi721", function () {
       expect(await wrappedHashi721.owner()).to.eq(owner.address);
     });
 
-    it("should not work when initialize more than one time", async function () {
+    it("should not work when initialized more than one time", async function () {
       const { owner, wrappedHashi721 } = await loadFixture(fixture);
       await expect(wrappedHashi721.connect(owner).initialize()).to.revertedWith(
         "Initializable: contract is already initialized"

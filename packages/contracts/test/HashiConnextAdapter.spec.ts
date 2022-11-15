@@ -11,7 +11,7 @@ describe("HashiConnextAdapter", function () {
 
   async function fixture() {
     const [signer, owner, malicious] = await ethers.getSigners();
-    const Connext = await ethers.getContractFactory("MockConnext");
+    const Connext = await ethers.getContractFactory("TestConnext");
     const connext = await Connext.connect(signer).deploy();
     const maliciousConnext = await Connext.connect(signer).deploy();
     const HashiConnextAdapter = await ethers.getContractFactory("TestHashiConnextAdapter");
@@ -26,23 +26,21 @@ describe("HashiConnextAdapter", function () {
       expect(await hashiConnextAdapter.owner()).to.eq(owner.address);
     });
 
-    it("should not work when initialize more than one time", async function () {
+    it("should not work when initialized more than one time", async function () {
       const { owner, connext, hashiConnextAdapter } = await loadFixture(fixture);
       await expect(hashiConnextAdapter.connect(owner).initialize(connext.address, selfDomainId)).to.revertedWith(
         "Initializable: contract is already initialized"
       );
     });
 
-    describe("additinal initializable test for coverage", function () {
-      it("should not work when not initializing", async function () {
-        const { owner, connext, hashiConnextAdapter } = await loadFixture(fixture);
-        await expect(
-          hashiConnextAdapter.connect(owner).testHashiConnextAdapterInit(connext.address, selfDomainId)
-        ).to.revertedWith("Initializable: contract is not initializing");
-        await expect(
-          hashiConnextAdapter.connect(owner).testHashiConnextAdapterInitUnchained(connext.address, selfDomainId)
-        ).to.revertedWith("Initializable: contract is not initializing");
-      });
+    it("should not work when not initializing", async function () {
+      const { owner, connext, hashiConnextAdapter } = await loadFixture(fixture);
+      await expect(
+        hashiConnextAdapter.connect(owner).testHashiConnextAdapterInit(connext.address, selfDomainId)
+      ).to.revertedWith("Initializable: contract is not initializing");
+      await expect(
+        hashiConnextAdapter.connect(owner).testHashiConnextAdapterInitUnchained(connext.address, selfDomainId)
+      ).to.revertedWith("Initializable: contract is not initializing");
     });
   });
 
@@ -76,7 +74,16 @@ describe("HashiConnextAdapter", function () {
       const expectedAmount = 0;
       await expect(hashiConnextAdapter.connect(signer).testXCall(anotherDomainId, relayerFee, slippage, callData))
         .to.emit(connext, "XCallCalled")
-        .withArgs(anotherDomainId, bridge, expectedAsset, expectedDelegate, expectedAmount, slippage, callData);
+        .withArgs(
+          relayerFee,
+          anotherDomainId,
+          bridge,
+          expectedAsset,
+          expectedDelegate,
+          expectedAmount,
+          slippage,
+          callData
+        );
     });
 
     it("should not work when bridge contract not set", async function () {
@@ -149,9 +156,7 @@ describe("HashiConnextAdapter", function () {
     it("should work when not overridden", async function () {
       const { hashiConnextAdapter } = await loadFixture(fixture);
       const callData = BYTES_ZERO;
-      await expect(hashiConnextAdapter.testAfterXReceive(callData)).to.revertedWith(
-        "HashiConnextAdapter: must override"
-      );
+      await expect(hashiConnextAdapter.testXReceive(callData)).to.revertedWith("HashiConnextAdapter: must override");
     });
   });
 });

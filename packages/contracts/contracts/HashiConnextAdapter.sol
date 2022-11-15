@@ -6,7 +6,7 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@connext/nxtp-contracts/contracts/core/connext/interfaces/IConnext.sol";
 import "@connext/nxtp-contracts/contracts/core/connext/interfaces/IXReceiver.sol";
 
-contract HashiConnextAdapter is IXReceiver, OwnableUpgradeable {
+abstract contract HashiConnextAdapter is IXReceiver, OwnableUpgradeable {
   mapping(uint32 => address) public bridges;
 
   address public connext;
@@ -24,7 +24,7 @@ contract HashiConnextAdapter is IXReceiver, OwnableUpgradeable {
     domainId = domainId_;
   }
 
-  function setBridge(uint32 domainId_, address bridge) public onlyOwner {
+  function setBridge(uint32 domainId_, address bridge) external onlyOwner {
     bridges[domainId_] = bridge;
     emit BridgeSet(domainId_, bridge);
   }
@@ -40,7 +40,7 @@ contract HashiConnextAdapter is IXReceiver, OwnableUpgradeable {
     address bridge = bridges[origin];
     require(bridge == originSender, "HashiConnextAdapter: invalid bridge");
     require(_msgSender() == connext, "HashiConnextAdapter: invalid msg sender");
-    _afterXReceive(callData);
+    _xReceive(callData);
     return "";
   }
 
@@ -56,7 +56,7 @@ contract HashiConnextAdapter is IXReceiver, OwnableUpgradeable {
       IConnext(connext).xcall{value: relayerFee}(destination, bridge, address(0), _msgSender(), 0, slippage, callData);
   }
 
-  function _afterXReceive(bytes memory callData) internal virtual {
+  function _xReceive(bytes memory callData) internal virtual {
     revert("HashiConnextAdapter: must override");
   }
 }

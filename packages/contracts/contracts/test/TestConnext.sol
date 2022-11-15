@@ -3,8 +3,9 @@ pragma solidity ^0.8.0;
 
 import "@connext/nxtp-contracts/contracts/core/connext/interfaces/IXReceiver.sol";
 
-contract MockConnext {
+contract TestConnext {
   event XCallCalled(
+    uint256 relayerFee,
     uint32 destination,
     address to,
     address asset,
@@ -23,7 +24,7 @@ contract MockConnext {
     uint256 slippage,
     bytes calldata callData
   ) external payable returns (bytes32) {
-    emit XCallCalled(destination, to, asset, delegate, amount, slippage, callData);
+    emit XCallCalled(msg.value, destination, to, asset, delegate, amount, slippage, callData);
   }
 
   function testXReceive(
