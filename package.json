@@ -8,27 +8,16 @@
   ],
   "scripts": {
     "prepare": "husky install",
-    "ci": "run-s build lint test",
-    "lint": "run-p lint:*",
-    "lint:contracts": "yarn workspace @nfthashi/contracts lint",
-    "lint:web": "yarn workspace @nfthashi/web lint",
-    "fix": "run-p fix:*",
-    "fix:contracts": "yarn workspace @nfthashi/contracts fix",
-    "fix:web": "yarn workspace @nfthashi/web fix",
-    "test": "run-p test:*",
-    "test:contracts": "yarn workspace @nfthashi/contracts test",
-    "predev": "yarn build:contracts",
+    "ci": "run-s build test lint",
     "dev": "run-p dev:*",
-    "dev:web": "yarn workspace @nfthashi/web dev",
-    "build": "run-s build:contracts build:web",
-    "build:contracts": "yarn workspace @nfthashi/contracts build",
-    "build:web": "yarn workspace @nfthashi/web build"
+    "dev:app": "yarn workspace @nfthashi/app dev",
+    "build:app": "yarn workspace @nfthashi/app build",
+    "lint": "run-p lint:*",
+    "lint:app": "yarn workspace @nfthashi/app lint"
   },
   "devDependencies": {
     "@commitlint/cli": "^16.2.4",
     "@commitlint/config-conventional": "^16.2.4",
-    "cpx": "^1.5.0",
-    "cross-env": "^7.0.3",
     "husky": "^8.0.1",
     "lint-staged": "^12.4.1",
     "npm-run-all": "^4.1.5"
