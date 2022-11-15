@@ -14,9 +14,7 @@ contract WrappedHashi721 is IWrappedHashi721, OwnableUpgradeable, ERC721URIStora
 
   function mint(address to, uint256 tokenId, string memory _tokenURI) public onlyOwner {
     _mint(to, tokenId);
-    if (bytes(_tokenURI).length > 0) {
-      _setTokenURI(tokenId, _tokenURI);
-    }
+    _setTokenURI(tokenId, _tokenURI);
   }
 
   function burn(uint256 tokenId) public onlyOwner {
