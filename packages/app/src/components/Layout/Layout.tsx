@@ -41,7 +41,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         <HStack justify={"space-between"}>
           <Text fontSize={"xs"} color={configJsonFile.style.color.white.text.secondary} fontWeight={"medium"} py="4">
             <Text as="span" mr="2">
-              😘
+              🌉
             </Text>
             <Link href={configJsonFile.url.connext} target={"_blank"}>
               Build with Connext Amarok AMB
