@@ -1,5 +1,4 @@
-import { Box, BoxProps, Image, Text } from "@chakra-ui/react";
-import React from "react";
+import { Box, BoxProps, Image, Skeleton, Text } from "@chakra-ui/react";
 
 import { truncate } from "@/lib/utils";
 import { NFT as NFTType } from "@/types/NFT";
@@ -18,13 +17,13 @@ export const NFT: React.FC<NFTProps> = ({ nft, ...boxProps }) => {
         src={nft.metadata.image}
         alt="nft"
         rounded={configJsonFile.style.radius}
-        fallbackSrc="/img/utils/placeholder.png"
+        fallback={<Skeleton />}
         fit="cover"
       />
       <Box
         position="absolute"
-        top="1"
-        right="1"
+        top="2"
+        right="2"
         py="1"
         px="2"
         backgroundColor={configJsonFile.style.color.accent}

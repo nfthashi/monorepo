@@ -1,6 +1,5 @@
 import { Box, Container, Flex, HStack, Icon, Image, Link, Text } from "@chakra-ui/react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import React from "react";
 import { FaDiscord, FaGithub } from "react-icons/fa";
 import { MdArticle } from "react-icons/md";
 

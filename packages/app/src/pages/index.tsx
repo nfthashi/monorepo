@@ -1,5 +1,3 @@
-/* eslint-disable camelcase */
-
 import { Button, Flex, HStack, Image, Stack, Text } from "@chakra-ui/react";
 import { NextPage } from "next";
 import { useRouter } from "next/router";

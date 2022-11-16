@@ -7,7 +7,6 @@ import {
   Icon,
   IconButton,
   Select,
-  SimpleGrid,
   Stack,
   Text,
   useDisclosure,
@@ -16,14 +15,15 @@ import { useChainModal, useConnectModal } from "@rainbow-me/rainbowkit";
 import { NextPage } from "next";
 import { useState } from "react";
 import { MdSwapVerticalCircle } from "react-icons/md";
-import { useAccount } from "wagmi";
 
 import { Layout } from "@/components/Layout";
 import { Modal } from "@/components/Modal";
 import { NFT } from "@/components/NFT";
+import { SelectNFTButton } from "@/components/SelectNFTButton/SelectNFTButton";
 import { Unit } from "@/components/Unit";
 import { useIsWagmiConnected } from "@/hooks/isWagmiConnected";
 import { useConnectedChainId } from "@/hooks/useConnectedChainId";
+import { delay } from "@/lib/utils";
 import { NFT as NFTType } from "@/types/NFT";
 
 import networkJsonFile from "../../../contracts/network.json";
@@ -32,17 +32,23 @@ import configJsonFile from "../../config.json";
 
 const HomePage: NextPage = () => {
   const { isWagmiConnected } = useIsWagmiConnected();
-  const { address: connectedAddress } = useAccount();
   const { connectedChainId } = useConnectedChainId();
-
   const { openConnectModal } = useConnectModal();
   const { openChainModal } = useChainModal();
-  const modalDisclosure = useDisclosure();
+  const bridgeModalDisclosure = useDisclosure();
 
   const [source, setSource] = useState<ChainId>("5");
   const [destination, setDestitnaion] = useState<ChainId>("420");
-  const [nfts, setNFTs] = useState<NFTType[]>([]);
   const [nft, setNFT] = useState<NFTType>();
+
+  const [status, setStatus] = useState<
+    | "checkStatus"
+    | "waitForApprovalTxSignature"
+    | "waitForApprovalTxConfirmation"
+    | "waitForBridgeTxSignature"
+    | "waitForBridgeTxConfirmation"
+    | "confirmed"
+  >("checkStatus");
 
   const swap = () => {
     setDestitnaion(source);
@@ -160,50 +166,10 @@ const HomePage: NextPage = () => {
               )}
               {connectedChainId === source && (
                 <>
-                  {!nft && (
-                    <Button
-                      size={configJsonFile.style.size}
-                      fontSize="lg"
-                      rounded={configJsonFile.style.radius}
-                      fontWeight="bold"
-                      onClick={() => {
-                        fetch(`/api/nft?userAddress=${connectedAddress}&chainId=${connectedChainId}`)
-                          .then((data) => data.json())
-                          .then((data) => {
-                            setNFTs(data);
-                            modalDisclosure.onOpen();
-                          })
-                          .catch((e) => {
-                            console.error(e.message);
-                          });
-                      }}
-                    >
-                      Select NFT
-                    </Button>
-                  )}
+                  {!nft && <SelectNFTButton setNFT={setNFT} />}
                   {nft && (
                     <HStack spacing="4">
-                      <Button
-                        w="full"
-                        variant="secondary"
-                        size={configJsonFile.style.size}
-                        fontSize="lg"
-                        rounded={configJsonFile.style.radius}
-                        fontWeight="bold"
-                        onClick={() => {
-                          fetch(`/api/nft?userAddress=${connectedAddress}&chainId=${connectedChainId}`)
-                            .then((data) => data.json())
-                            .then((data) => {
-                              setNFTs(data);
-                              modalDisclosure.onOpen();
-                            })
-                            .catch((e) => {
-                              console.error(e.message);
-                            });
-                        }}
-                      >
-                        Select NFT
-                      </Button>
+                      <SelectNFTButton w="full" variant={"secondary"} setNFT={setNFT} />
                       <Button
                         w="full"
                         size={configJsonFile.style.size}
@@ -211,11 +177,63 @@ const HomePage: NextPage = () => {
                         rounded={configJsonFile.style.radius}
                         fontWeight="bold"
                         onClick={() => {
-                          console.log("bridge");
+                          delay(5000).then(() => {
+                            setStatus("waitForApprovalTxSignature");
+                          });
+                          bridgeModalDisclosure.onOpen();
                         }}
                       >
                         Bridge
                       </Button>
+                      <Modal
+                        header={"Bridge"}
+                        isOpen={bridgeModalDisclosure.isOpen}
+                        onClose={() => {
+                          setStatus("checkStatus");
+                          bridgeModalDisclosure.onClose();
+                        }}
+                      >
+                        {status === "checkStatus" && <Box>Check Status</Box>}
+                        {status === "waitForApprovalTxSignature" && (
+                          <Box>
+                            <Button
+                              size={configJsonFile.style.size}
+                              fontSize="lg"
+                              rounded={configJsonFile.style.radius}
+                              fontWeight="bold"
+                              onClick={() => {
+                                setStatus("waitForApprovalTxConfirmation");
+                                delay(5000).then(() => {
+                                  setStatus("waitForBridgeTxSignature");
+                                });
+                              }}
+                            >
+                              Approve
+                            </Button>
+                          </Box>
+                        )}
+                        {status === "waitForApprovalTxConfirmation" && <Box>waitForApprovalTxConfirmation</Box>}
+                        {status === "waitForBridgeTxSignature" && (
+                          <Box>
+                            <Button
+                              size={configJsonFile.style.size}
+                              fontSize="lg"
+                              rounded={configJsonFile.style.radius}
+                              fontWeight="bold"
+                              onClick={() => {
+                                setStatus("waitForBridgeTxConfirmation");
+                                delay(5000).then(() => {
+                                  setStatus("confirmed");
+                                });
+                              }}
+                            >
+                              Bridge
+                            </Button>
+                          </Box>
+                        )}
+                        {status === "waitForBridgeTxConfirmation" && <Box>waitForBridgeTxConfirmation</Box>}
+                        {status === "confirmed" && <Box>confirmed</Box>}
+                      </Modal>
                     </HStack>
                   )}
                 </>
@@ -224,23 +242,6 @@ const HomePage: NextPage = () => {
           )}
         </Stack>
       </Unit>
-      <Modal header={"Select NFT"} onClose={modalDisclosure.onClose} isOpen={modalDisclosure.isOpen}>
-        <SimpleGrid columns={2} gap={4}>
-          {nfts.map((nft, i) => {
-            return (
-              <NFT
-                cursor="pointer"
-                key={`list_nft_${i}`}
-                nft={nft}
-                onClick={() => {
-                  setNFT(nft);
-                  modalDisclosure.onClose();
-                }}
-              />
-            );
-          })}
-        </SimpleGrid>
-      </Modal>
     </Layout>
   );
 };
