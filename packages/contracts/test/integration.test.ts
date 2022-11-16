@@ -25,38 +25,36 @@ onlyForIntegrationTest("Integration Test", function () {
     return { signer, owner, holder, WrappedHashi721, Hashi721Bridge };
   }
 
-  Object.entries(networkJsonFile)
-    .filter(([targetChainId]) => selfChainId !== targetChainId)
-    .forEach(([, targetNetwork]) => {
-      describe(`${selfNetwork.name} -> ${targetNetwork.name} `, function () {
-        it("should work", async function () {
-          const { owner, holder, WrappedHashi721, Hashi721Bridge } = await fixture();
-          const wrappedHashi721 = await WrappedHashi721.deploy();
-          await wrappedHashi721.connect(owner).initialize();
-          const connext = selfNetwork.deployments.connext;
-          const hashi721Bridge = await Hashi721Bridge.deploy();
-          await hashi721Bridge.connect(owner).initialize(connext, wrappedHashi721.address);
-          const mintedTokenId = 1;
-          const tokenURI = "";
-          await wrappedHashi721.connect(owner).mint(holder.address, mintedTokenId, tokenURI);
-          await wrappedHashi721.connect(holder).setApprovalForAll(hashi721Bridge.address, true);
-          const destination = targetNetwork.domainId;
-          const relayerFee = 0;
-          const slippage = 0;
-          const asset = wrappedHashi721.address;
-          const to = ADDRESS_2;
-          const tokenId = mintedTokenId;
-          const isTokenURIIgnored = true;
-          const bridge = ADDRESS_1;
-          await hashi721Bridge.connect(owner).setBridge(destination, bridge);
-          await expect(
-            hashi721Bridge
-              .connect(holder)
-              .xCall(destination, relayerFee, slippage, asset, to, tokenId, isTokenURIIgnored)
-          )
-            .to.emit(wrappedHashi721, "Transfer")
-            .withArgs(holder.address, hashi721Bridge.address, tokenId);
-        });
+  for (const [, targetNetwork] of Object.entries(networkJsonFile).filter(
+    ([targetChainId]) => selfChainId !== targetChainId
+  )) {
+    describe(`${selfNetwork.name} -> ${targetNetwork.name} `, function () {
+      it("should work", async function () {
+        const { owner, holder, WrappedHashi721, Hashi721Bridge } = await fixture();
+        const wrappedHashi721 = await WrappedHashi721.deploy();
+        await wrappedHashi721.connect(owner).initialize();
+        const connext = selfNetwork.deployments.connext;
+        const hashi721Bridge = await Hashi721Bridge.deploy();
+        await hashi721Bridge.connect(owner).initialize(connext, wrappedHashi721.address);
+        const mintedTokenId = 1;
+        const tokenURI = "";
+        await wrappedHashi721.connect(owner).mint(holder.address, mintedTokenId, tokenURI);
+        await wrappedHashi721.connect(holder).setApprovalForAll(hashi721Bridge.address, true);
+        const destination = targetNetwork.domainId;
+        const relayerFee = 0;
+        const slippage = 0;
+        const asset = wrappedHashi721.address;
+        const to = ADDRESS_2;
+        const tokenId = mintedTokenId;
+        const isTokenURIIgnored = true;
+        const bridge = ADDRESS_1;
+        await hashi721Bridge.connect(owner).setBridge(destination, bridge);
+        await expect(
+          hashi721Bridge.connect(holder).xCall(destination, relayerFee, slippage, asset, to, tokenId, isTokenURIIgnored)
+        )
+          .to.emit(wrappedHashi721, "Transfer")
+          .withArgs(holder.address, hashi721Bridge.address, tokenId);
       });
     });
+  }
 });
