@@ -1,5 +1,4 @@
 import "@nomicfoundation/hardhat-toolbox";
-import "hardhat-dependency-compiler";
 
 import * as dotenv from "dotenv";
 import { HardhatUserConfig } from "hardhat/config";
@@ -7,10 +6,9 @@ import { HardhatUserConfig } from "hardhat/config";
 import { getMnemonic } from "./lib/mnemonic";
 import { getNetworksUserConfigs } from "./lib/network";
 import networkJsonFile from "./network.json";
+import { ChainId } from "./types/ChainId";
 
 dotenv.config();
-
-const defaultChainId = "5";
 
 const mnemonic = getMnemonic();
 const networksUserConfigs = getNetworksUserConfigs(mnemonic);
@@ -30,15 +28,18 @@ const config: HardhatUserConfig = {
     },
   },
   networks: {
-    hardhat: {
-      chainId: Number(defaultChainId),
-      accounts: {
-        mnemonic,
-      },
-      forking: {
-        url: networkJsonFile[defaultChainId].rpc,
-      },
-    },
+    hardhat:
+      process.env.IS_INTEGRATION_TEST === "true"
+        ? {
+            chainId: Number(process.env.FORK_CHAIN_ID),
+            accounts: {
+              mnemonic,
+            },
+            forking: {
+              url: networkJsonFile[process.env.FORK_CHAIN_ID as ChainId].rpc,
+            },
+          }
+        : {},
     ...networksUserConfigs,
   },
 };

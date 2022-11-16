@@ -6,6 +6,12 @@
   "scripts": {
     "build": "hardhat compile",
     "test": "hardhat test",
+    "coverage": "hardhat coverage",
+    "integration-test": "run-p test:integration:*",
+    "test:integration:ethereum-georli": "IS_INTEGRATION_TEST=true FORK_CHAIN_ID=5 hardhat test",
+    "test:integration:optimism-georli": "IS_INTEGRATION_TEST=true FORK_CHAIN_ID=420 hardhat test",
+    "test:integration:polygon-mumbai": "IS_INTEGRATION_TEST=true FORK_CHAIN_ID=80001 hardhat test",
+    "e2e": "",
     "lint": "eslint '**/*.{js,ts}' --ignore-path .gitignore"
   },
   "devDependencies": {

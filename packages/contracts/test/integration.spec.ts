@@ -6,15 +6,19 @@ import networkJsonFile from "../network.json";
 import { isChainId } from "../types/ChainId";
 import { ADDRESS_1, ADDRESS_2 } from "./helper/constant";
 
-describe("integration", function () {
+const isIntegrationTest = process.env.IS_INTEGRATION_TEST === "true";
+
+const onlyForIntegrationTest = isIntegrationTest ? describe.only : describe.skip;
+
+onlyForIntegrationTest("integration", function () {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const config = network.config as any;
   const selfChainId = String(config.chainId);
-  if (!isChainId(selfChainId) || !config.forking.enabled) {
-    throw new Error("invalid environment");
+  if (!isIntegrationTest || !isChainId(selfChainId) || !config.forking.enabled) {
+    return;
   }
-  const selfNetwork = networkJsonFile[selfChainId];
 
+  const selfNetwork = networkJsonFile[selfChainId];
   async function fixture() {
     const [signer, owner, holder] = await ethers.getSigners();
     return { signer, owner, holder };
