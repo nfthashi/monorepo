@@ -2,12 +2,13 @@ import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 
-import { ADDRESS_1, BYTES_ZERO, BYTES32_1 } from "./helper/constant";
+import { ADDRESS_1, ADDRESS_9, BYTES_ZERO, BYTES32_1 } from "./helper/constant";
 
 describe("HashiConnextAdapter", function () {
   const selfDomainId = 1;
   const anotherDomainId = 2;
   const bridge = ADDRESS_1;
+  const malciousBridge = ADDRESS_9;
 
   async function fixture() {
     const [signer, owner, malicious] = await ethers.getSigners();
@@ -26,14 +27,14 @@ describe("HashiConnextAdapter", function () {
       expect(await hashiConnextAdapter.owner()).to.eq(owner.address);
     });
 
-    it("should not work when initialized more than one time", async function () {
+    it("should not work when contract is already initialized", async function () {
       const { owner, connext, hashiConnextAdapter } = await loadFixture(fixture);
       await expect(hashiConnextAdapter.connect(owner).initialize(connext.address)).to.revertedWith(
         "Initializable: contract is already initialized"
       );
     });
 
-    it("should not work when not initializing", async function () {
+    it("should not work when contract is not initializing", async function () {
       const { owner, connext, hashiConnextAdapter } = await loadFixture(fixture);
       await expect(hashiConnextAdapter.connect(owner).testHashiConnextAdapterInit(connext.address)).to.revertedWith(
         "Initializable: contract is not initializing"
@@ -52,7 +53,7 @@ describe("HashiConnextAdapter", function () {
         .withArgs(anotherDomainId, bridge);
     });
 
-    it("should not work when caller is not owner", async function () {
+    it("should not work when caller is not the owner", async function () {
       const { malicious, hashiConnextAdapter } = await loadFixture(fixture);
       await expect(hashiConnextAdapter.connect(malicious).setBridge(anotherDomainId, bridge)).to.revertedWith(
         "Ownable: caller is not the owner"
@@ -66,13 +67,14 @@ describe("HashiConnextAdapter", function () {
       await expect(hashiConnextAdapter.connect(owner).setBridge(anotherDomainId, bridge))
         .to.emit(hashiConnextAdapter, "BridgeSet")
         .withArgs(anotherDomainId, bridge);
+      const destination = anotherDomainId;
       const relayerFee = 0;
       const slippage = 0;
       const callData = BYTES_ZERO;
       const expectedAsset = ethers.constants.AddressZero;
       const expectedDelegate = signer.address;
       const expectedAmount = 0;
-      await expect(hashiConnextAdapter.connect(signer).testXCall(anotherDomainId, relayerFee, slippage, callData))
+      await expect(hashiConnextAdapter.connect(signer).testXCall(destination, relayerFee, slippage, callData))
         .to.emit(connext, "XCallCalled")
         .withArgs(
           relayerFee,
@@ -86,13 +88,14 @@ describe("HashiConnextAdapter", function () {
         );
     });
 
-    it("should not work when bridge contract not set", async function () {
+    it("should not work when bridge is invalid", async function () {
       const { hashiConnextAdapter } = await loadFixture(fixture);
+      const destination = anotherDomainId;
       const relayerFee = 0;
       const slippage = 0;
       const callData = BYTES_ZERO;
-      await expect(hashiConnextAdapter.testXCall(anotherDomainId, relayerFee, slippage, callData)).to.revertedWith(
-        "HashiConnextAdapter: invalid bridge"
+      await expect(hashiConnextAdapter.testXCall(destination, relayerFee, slippage, callData)).to.revertedWith(
+        "HashiConnextAdapter: bridge is invalid"
       );
     });
   });
@@ -126,7 +129,7 @@ describe("HashiConnextAdapter", function () {
       const callData = BYTES_ZERO;
       await expect(
         connext.testXReceive(hashiConnextAdapter.address, transferId, amount, asset, originSender, origin, callData)
-      ).to.revertedWith("HashiConnextAdapter: invalid asset");
+      ).to.revertedWith("HashiConnextAdapter: asset is invalid");
     });
 
     it("should not work when amount is invalid", async function () {
@@ -139,23 +142,26 @@ describe("HashiConnextAdapter", function () {
       const callData = BYTES_ZERO;
       await expect(
         connext.testXReceive(hashiConnextAdapter.address, transferId, amount, asset, originSender, origin, callData)
-      ).to.revertedWith("HashiConnextAdapter: invalid amount");
+      ).to.revertedWith("HashiConnextAdapter: amount is invalid");
     });
 
     it("should not work when bridge is invalid", async function () {
-      const { connext, hashiConnextAdapter } = await loadFixture(fixture);
+      const { owner, connext, hashiConnextAdapter } = await loadFixture(fixture);
+      await expect(hashiConnextAdapter.connect(owner).setBridge(anotherDomainId, bridge))
+        .to.emit(hashiConnextAdapter, "BridgeSet")
+        .withArgs(anotherDomainId, bridge);
       const transferId = BYTES32_1;
       const amount = 0;
       const asset = ethers.constants.AddressZero;
-      const originSender = bridge;
+      const originSender = malciousBridge;
       const origin = anotherDomainId;
       const callData = BYTES_ZERO;
       await expect(
         connext.testXReceive(hashiConnextAdapter.address, transferId, amount, asset, originSender, origin, callData)
-      ).to.revertedWith("HashiConnextAdapter: invalid bridge");
+      ).to.revertedWith("HashiConnextAdapter: bridge is invalid");
     });
 
-    it("should not work when sender is invalid", async function () {
+    it("should not work when msg sender is invalid", async function () {
       const { owner, maliciousConnext, hashiConnextAdapter } = await loadFixture(fixture);
       await expect(hashiConnextAdapter.connect(owner).setBridge(anotherDomainId, bridge))
         .to.emit(hashiConnextAdapter, "BridgeSet")
@@ -176,13 +182,15 @@ describe("HashiConnextAdapter", function () {
           origin,
           callData
         )
-      ).to.revertedWith("HashiConnextAdapter: invalid msg sender");
+      ).to.revertedWith("HashiConnextAdapter: msg sender is invalid ");
     });
 
-    it("should work when not overridden", async function () {
+    it("should work when method is not overridden", async function () {
       const { hashiConnextAdapter } = await loadFixture(fixture);
       const callData = BYTES_ZERO;
-      await expect(hashiConnextAdapter.testXReceive(callData)).to.revertedWith("HashiConnextAdapter: must override");
+      await expect(hashiConnextAdapter.testXReceive(callData)).to.revertedWith(
+        "HashiConnextAdapter: method is not overridden"
+      );
     });
   });
 });

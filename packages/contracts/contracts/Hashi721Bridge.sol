@@ -37,7 +37,7 @@ contract Hashi721Bridge is IHashi721Bridge, ERC721HolderUpgradeable, HashiConnex
       currentHolder == _msgSender() ||
         IERC721Upgradeable(asset).getApproved(tokenId) == _msgSender() ||
         IERC721Upgradeable(asset).isApprovedForAll(currentHolder, _msgSender()),
-      "Hashi721Bridge: invalid msg sender"
+      "Hashi721Bridge: msg sender is invalid "
     );
     string memory tokenURI;
     if (!isTokenURIIgnored) {

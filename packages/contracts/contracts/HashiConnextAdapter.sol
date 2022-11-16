@@ -38,11 +38,11 @@ abstract contract HashiConnextAdapter is IXReceiver, OwnableUpgradeable {
     uint32 origin,
     bytes memory callData
   ) external override returns (bytes memory) {
-    require(asset == CONNEXT_ASSET_FOR_NONE, "HashiConnextAdapter: invalid asset");
-    require(amount == CONNEXT_AMOUNT_FOR_NONE, "HashiConnextAdapter: invalid amount");
+    require(asset == CONNEXT_ASSET_FOR_NONE, "HashiConnextAdapter: asset is invalid");
+    require(amount == CONNEXT_AMOUNT_FOR_NONE, "HashiConnextAdapter: amount is invalid");
     address bridge = bridges[origin];
-    require(bridge == originSender, "HashiConnextAdapter: invalid bridge");
-    require(_msgSender() == connext, "HashiConnextAdapter: invalid msg sender");
+    require(bridge == originSender, "HashiConnextAdapter: bridge is invalid");
+    require(_msgSender() == connext, "HashiConnextAdapter: msg sender is invalid ");
     _xReceive(callData);
     return "";
   }
@@ -54,7 +54,7 @@ abstract contract HashiConnextAdapter is IXReceiver, OwnableUpgradeable {
     bytes memory callData
   ) internal returns (bytes32) {
     address bridge = bridges[destination];
-    require(bridge != address(0), "HashiConnextAdapter: invalid bridge");
+    require(bridge != address(0), "HashiConnextAdapter: bridge is invalid");
     return
       IConnext(connext).xcall{value: relayerFee}(
         destination,
@@ -68,6 +68,6 @@ abstract contract HashiConnextAdapter is IXReceiver, OwnableUpgradeable {
   }
 
   function _xReceive(bytes memory callData) internal virtual {
-    revert("HashiConnextAdapter: must override");
+    revert("HashiConnextAdapter: method is not overridden");
   }
 }

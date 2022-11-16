@@ -23,7 +23,7 @@ describe("WrappedHashi721", function () {
       expect(await wrappedHashi721.owner()).to.eq(owner.address);
     });
 
-    it("should not work when initialized more than one time", async function () {
+    it("should not work when contract is already initialized", async function () {
       const { owner, wrappedHashi721 } = await loadFixture(fixture);
       await expect(wrappedHashi721.connect(owner).initialize()).to.revertedWith(
         "Initializable: contract is already initialized"
@@ -42,7 +42,7 @@ describe("WrappedHashi721", function () {
         .withArgs(ethers.constants.AddressZero, to, tokenId);
     });
 
-    it("should not work when caller is not owner", async function () {
+    it("should not work when caller is not the owner", async function () {
       const { malicious, wrappedHashi721 } = await loadFixture(fixture);
       const tokenId = 0;
       const tokenURI = `${baseURI}${tokenId}`;
@@ -67,7 +67,7 @@ describe("WrappedHashi721", function () {
         .withArgs(to, ethers.constants.AddressZero, tokenId);
     });
 
-    it("should not work when caller is not owner", async function () {
+    it("should not work when caller is not the owner", async function () {
       const { owner, malicious, wrappedHashi721 } = await loadFixture(fixture);
       const tokenId = 0;
       const tokenURI = `${baseURI}${tokenId}`;

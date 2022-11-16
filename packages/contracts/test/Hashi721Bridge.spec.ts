@@ -24,7 +24,6 @@ describe("Hashi721Bridge", function () {
     const mintedTokenURI = `http://localhost:3000/${mintedTokenId}`;
     await wrappedHashi721.connect(owner).mint(holder.address, mintedTokenId, mintedTokenURI);
     await wrappedHashi721.connect(holder).setApprovalForAll(hashi721Bridge.address, true);
-
     const Clone = await ethers.getContractFactory("TestClone");
     const clone = await Clone.connect(signer).deploy();
     return {
@@ -50,7 +49,7 @@ describe("Hashi721Bridge", function () {
       expect(await wrappedHashi721.ownerOf(mintedTokenId)).to.eq(holder.address);
     });
 
-    it("should not work when initialized more than one time", async function () {
+    it("should not work when contract is already initialized", async function () {
       const { owner, connext, wrappedHashi721, hashi721Bridge } = await loadFixture(fixture);
       await expect(hashi721Bridge.connect(owner).initialize(connext.address, wrappedHashi721.address)).to.revertedWith(
         "Initializable: contract is already initialized"
@@ -58,98 +57,102 @@ describe("Hashi721Bridge", function () {
     });
   });
 
-  describe("call data encode and decode", function () {
+  describe("encode & decode data", function () {
     it("should work", async function () {
       const { hashi721Bridge } = await loadFixture(fixture);
-      const data = [0, ethers.constants.AddressZero, ethers.constants.AddressZero, 0, ""];
-      const encoded = await hashi721Bridge.testEncodeCallData(...data);
+      const originalDomainId = 0;
+      const originalAsset = ethers.constants.AddressZero;
+      const to = ethers.constants.AddressZero;
+      const tokenId = 0;
+      const tokenURI = "";
+      const encoded = await hashi721Bridge.testEncodeCallData(originalDomainId, originalAsset, to, tokenId, tokenURI);
       const decoded = await hashi721Bridge.testDecodeCallData(encoded);
-      data.forEach((_data, i) => {
+      [originalDomainId, originalAsset, to, tokenId, tokenURI].forEach((_data, i) => {
         expect(_data).to.eq(decoded[i]);
       });
     });
   });
 
   describe("xCall", function () {
-    it("should work when call by holder and not ignore token URI and bridge from original domain", async function () {
+    it("should work when called by holder, not ignore token URI, bridge: [original -> other]", async function () {
       const { holder, connext, hashi721Bridge, wrappedHashi721, mintedTokenId, mintedTokenURI } = await loadFixture(
         fixture
       );
+      const destination = anotherDomainId;
       const relayerFee = 0;
       const slippage = 0;
-      const to = ADDRESS_1;
+      const asset = wrappedHashi721.address;
       const isTokenURIIgnored = false;
-      const callData = await hashi721Bridge.testEncodeCallData(
-        selfDomainId,
-        wrappedHashi721.address,
-        bridge,
-        mintedTokenId,
-        mintedTokenURI
-      );
+      const originalDomainId = selfDomainId;
+      const originalAsset = asset;
+      const to = ADDRESS_1;
+      const tokenId = mintedTokenId;
+      const tokenURI = mintedTokenURI;
+      const callData = await hashi721Bridge.testEncodeCallData(originalDomainId, originalAsset, to, tokenId, tokenURI);
+      const delegate = holder;
       await expect(
         hashi721Bridge
-          .connect(holder)
-          .xCall(anotherDomainId, relayerFee, slippage, wrappedHashi721.address, to, mintedTokenId, isTokenURIIgnored)
+          .connect(delegate)
+          .xCall(destination, relayerFee, slippage, asset, bridge, tokenId, isTokenURIIgnored)
       )
         .to.emit(connext, "XCallCalled")
-        .withArgs(0, anotherDomainId, bridge, ethers.constants.AddressZero, holder.address, 0, slippage, callData);
+        .withArgs(0, destination, bridge, ethers.constants.AddressZero, delegate.address, 0, slippage, callData);
     });
 
-    it("should work when ignore token URI and bridge to original domain", async function () {
+    it("should work when called by sender with approved, ignore token URI, bridge: [other -> original]", async function () {
       const { owner, holder, another, connext, hashi721Bridge, wrappedHashi721, mintedTokenId } = await loadFixture(
         fixture
       );
-
-      const originalAsset = ADDRESS_1;
-      await hashi721Bridge.setOriginal(wrappedHashi721.address, anotherDomainId, originalAsset);
-      await wrappedHashi721.connect(owner).transferOwnership(hashi721Bridge.address);
-      await wrappedHashi721.connect(holder).approve(another.address, mintedTokenId);
-
+      const destination = anotherDomainId;
       const relayerFee = 0;
       const slippage = 0;
-      const to = ADDRESS_1;
+      const asset = wrappedHashi721.address;
       const isTokenURIIgnored = true;
-      const callData = await hashi721Bridge.testEncodeCallData(
-        anotherDomainId,
-        originalAsset,
-        bridge,
-        mintedTokenId,
-        ""
-      );
+      const originalDomainId = anotherDomainId;
+      const originalAsset = ADDRESS_1;
+      const to = ADDRESS_1;
+      const tokenId = mintedTokenId;
+      const tokenURI = "";
+      const callData = await hashi721Bridge.testEncodeCallData(originalDomainId, originalAsset, to, tokenId, tokenURI);
+      const delegate = another;
+      await hashi721Bridge.setOriginal(asset, originalDomainId, originalAsset);
+      await wrappedHashi721.connect(owner).transferOwnership(hashi721Bridge.address);
+      await wrappedHashi721.connect(holder).approve(delegate.address, mintedTokenId);
       await expect(
         hashi721Bridge
-          .connect(another)
-          .xCall(anotherDomainId, relayerFee, slippage, wrappedHashi721.address, to, mintedTokenId, isTokenURIIgnored)
+          .connect(delegate)
+          .xCall(destination, relayerFee, slippage, asset, to, mintedTokenId, isTokenURIIgnored)
       )
         .to.emit(connext, "XCallCalled")
-        .withArgs(0, anotherDomainId, bridge, ethers.constants.AddressZero, another.address, 0, slippage, callData);
+        .withArgs(0, destination, bridge, ethers.constants.AddressZero, delegate.address, 0, slippage, callData);
     });
 
-    it("should work when sender is approvalForAll = true", async function () {
+    it("should work when called by sender with approvalForAll,", async function () {
       const { holder, connext, another, hashi721Bridge, wrappedHashi721, mintedTokenId, mintedTokenURI } =
         await loadFixture(fixture);
-      await wrappedHashi721.connect(holder).setApprovalForAll(another.address, true);
+      const destination = anotherDomainId;
       const relayerFee = 0;
       const slippage = 0;
-      const to = ADDRESS_1;
+      const asset = wrappedHashi721.address;
       const isTokenURIIgnored = false;
-      const callData = await hashi721Bridge.testEncodeCallData(
-        selfDomainId,
-        wrappedHashi721.address,
-        bridge,
-        mintedTokenId,
-        mintedTokenURI
-      );
+      const originalDomainId = selfDomainId;
+      const originalAsset = asset;
+      const to = ADDRESS_1;
+      const tokenId = mintedTokenId;
+      const tokenURI = mintedTokenURI;
+      const delegate = another;
+      const callData = await hashi721Bridge.testEncodeCallData(originalDomainId, originalAsset, to, tokenId, tokenURI);
+      await wrappedHashi721.connect(holder).setApprovalForAll(delegate.address, true);
       await expect(
         hashi721Bridge
-          .connect(another)
-          .xCall(anotherDomainId, relayerFee, slippage, wrappedHashi721.address, to, mintedTokenId, isTokenURIIgnored)
+          .connect(delegate)
+          .xCall(destination, relayerFee, slippage, asset, bridge, tokenId, isTokenURIIgnored)
       )
         .to.emit(connext, "XCallCalled")
-        .withArgs(0, anotherDomainId, bridge, ethers.constants.AddressZero, another.address, 0, slippage, callData);
+        .withArgs(0, destination, bridge, ethers.constants.AddressZero, delegate.address, 0, slippage, callData);
     });
 
-    it("should not work when sender is invalid", async function () {
+    it("should not work when msg sender is invalid", async function () {
       const { malicious, hashi721Bridge, wrappedHashi721, mintedTokenId } = await loadFixture(fixture);
       const relayerFee = 0;
       const slippage = 0;
@@ -159,16 +162,17 @@ describe("Hashi721Bridge", function () {
         hashi721Bridge
           .connect(malicious)
           .xCall(anotherDomainId, relayerFee, slippage, wrappedHashi721.address, to, mintedTokenId, isTokenURIIgnored)
-      ).to.revertedWith("Hashi721Bridge: invalid msg sender");
+      ).to.revertedWith("Hashi721Bridge: msg sender is invalid ");
     });
   });
 
-  describe("xCall", function () {
-    it("should work when bridge from another domain (try 2 times)", async function () {
+  describe("xReceive", function () {
+    it("should work when bridge: [original -> other], * 2", async function () {
       const { WrappedHashi721, wrappedHashi721, hashi721Bridge, clone } = await loadFixture(fixture);
       const originalDomainId = anotherDomainId;
       const originalAsset = ADDRESS_1;
       const to = ADDRESS_1;
+      const tokenURI = "";
       const salt = ethers.utils.solidityKeccak256(["uint32", "address"], [originalDomainId, ADDRESS_1]);
       const deployedAssetAddress = await clone.predictDeterministicAddress(
         wrappedHashi721.address,
@@ -182,32 +186,34 @@ describe("Hashi721Bridge", function () {
         originalAsset,
         to,
         firstTokenId,
-        ""
+        tokenURI
       );
       await expect(hashi721Bridge.testXReceive(firstCallData))
         .to.emit(deployedAsset, "Transfer")
         .withArgs(ethers.constants.AddressZero, to, firstTokenId);
+
       const secondTokenId = 1;
       const secondCallData = await hashi721Bridge.testEncodeCallData(
         originalDomainId,
         originalAsset,
         to,
         secondTokenId,
-        ""
+        tokenURI
       );
       await expect(hashi721Bridge.testXReceive(secondCallData))
         .to.emit(deployedAsset, "Transfer")
         .withArgs(ethers.constants.AddressZero, to, secondTokenId);
     });
 
-    it("should work when bridge to original domain", async function () {
+    it("should work when bridge: [other -> original]", async function () {
       const { holder, wrappedHashi721, hashi721Bridge, mintedTokenId } = await loadFixture(fixture);
       await wrappedHashi721.connect(holder).transferFrom(holder.address, hashi721Bridge.address, mintedTokenId);
       const originalDomainId = selfDomainId;
       const originalAsset = wrappedHashi721.address;
       const to = ADDRESS_1;
       const tokenId = mintedTokenId;
-      const callData = await hashi721Bridge.testEncodeCallData(originalDomainId, originalAsset, to, tokenId, "");
+      const tokenURI = "";
+      const callData = await hashi721Bridge.testEncodeCallData(originalDomainId, originalAsset, to, tokenId, tokenURI);
       await expect(hashi721Bridge.testXReceive(callData))
         .to.emit(wrappedHashi721, "Transfer")
         .withArgs(hashi721Bridge.address, to, tokenId);
