@@ -11,11 +11,12 @@
     "integration-test:ethereum-georli": "IS_INTEGRATION_TEST=true FORK_CHAIN_ID=5 hardhat test",
     "integration-test:optimism-georli": "IS_INTEGRATION_TEST=true FORK_CHAIN_ID=420 hardhat test",
     "integration-test:polygon-mumbai": "IS_INTEGRATION_TEST=true FORK_CHAIN_ID=80001 hardhat test",
-    "e2e-test": "run-p e2e-test:*",
-    "e2e-test:ethereum-georli": "IS_E2E_TEST=true hardhat test --network ethereum-georli",
-    "e2e-test:optimism-georli": "IS_E2E_TEST=true hardhat test --network optimism-georli",
-    "e2e-test:polygon-mumbai": "IS_E2E_TEST=true hardhat test --network polygon-mumbai",
-    "lint": "eslint '**/*.{js,ts}' --ignore-path .gitignore"
+    "lint": "eslint '**/*.{js,ts}' --ignore-path .gitignore",
+    "deploy-wrapped-hashi-721": "hardhat run scripts/deploy-wrapped-hashi-721.ts",
+    "deploy-hashi-721-bridge": "hardhat run scripts/deploy-hashi-721-bridge.ts",
+    "set-brige": " hardhat run scripts/set-brige.ts",
+    "verify-contracts": " hardhat run scripts/verify-contracts.ts",
+    "e2e": "hardhat run scripts/e2e.ts"
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.7.0",

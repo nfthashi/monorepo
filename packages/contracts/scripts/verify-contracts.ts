@@ -1,4 +1,4 @@
-import { ethers, network, run } from "hardhat";
+import { network, run } from "hardhat";
 
 import networkJsonFile from "../network.json";
 import { isChainId } from "../types/ChainId";
@@ -10,14 +10,12 @@ async function main() {
   }
 
   console.log("network", networkJsonFile[chainId].name);
-  const [signer] = await ethers.getSigners();
-  console.log("signer", signer.address);
 
   for (const [name, address] of Object.entries(networkJsonFile[chainId].deployments)) {
     if (name === "wrappedHashi721" || name === "hashi721Bridge") {
       await run("verify:verify", {
         address,
-      });
+      }).catch((e) => console.log(e.message));
     }
   }
 }

@@ -4,6 +4,7 @@ import "@openzeppelin/hardhat-upgrades";
 import * as dotenv from "dotenv";
 import { HardhatUserConfig } from "hardhat/config";
 
+import { TIMEOUT } from "./config";
 import { getMnemonic } from "./lib/mnemonic";
 import { getNetworksUserConfigs } from "./lib/network";
 import networkJsonFile from "./network.json";
