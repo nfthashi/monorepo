@@ -12,13 +12,13 @@ describe("Hashi721Bridge", function () {
   async function fixture() {
     const [signer, owner, holder, another, malicious] = await ethers.getSigners();
     const Connext = await ethers.getContractFactory("TestConnext");
-    const connext = await Connext.connect(signer).deploy();
+    const connext = await Connext.connect(signer).deploy(selfDomainId);
     const WrappedHashi721 = await ethers.getContractFactory("TestWrappedHashi721");
     const wrappedHashi721 = await WrappedHashi721.connect(signer).deploy();
     await wrappedHashi721.connect(owner).initialize();
     const Hashi721Bridge = await ethers.getContractFactory("TestHashi721Bridge");
     const hashi721Bridge = await Hashi721Bridge.connect(signer).deploy();
-    await hashi721Bridge.connect(owner).initialize(connext.address, selfDomainId, wrappedHashi721.address);
+    await hashi721Bridge.connect(owner).initialize(connext.address, wrappedHashi721.address);
     await hashi721Bridge.connect(owner).setBridge(anotherDomainId, bridge);
     const mintedTokenId = 0;
     const mintedTokenURI = `http://localhost:3000/${mintedTokenId}`;
@@ -52,9 +52,9 @@ describe("Hashi721Bridge", function () {
 
     it("should not work when initialized more than one time", async function () {
       const { owner, connext, wrappedHashi721, hashi721Bridge } = await loadFixture(fixture);
-      await expect(
-        hashi721Bridge.connect(owner).initialize(connext.address, selfDomainId, wrappedHashi721.address)
-      ).to.revertedWith("Initializable: contract is already initialized");
+      await expect(hashi721Bridge.connect(owner).initialize(connext.address, wrappedHashi721.address)).to.revertedWith(
+        "Initializable: contract is already initialized"
+      );
     });
   });
 

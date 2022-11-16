@@ -12,11 +12,11 @@ describe("HashiConnextAdapter", function () {
   async function fixture() {
     const [signer, owner, malicious] = await ethers.getSigners();
     const Connext = await ethers.getContractFactory("TestConnext");
-    const connext = await Connext.connect(signer).deploy();
-    const maliciousConnext = await Connext.connect(signer).deploy();
+    const connext = await Connext.connect(signer).deploy(selfDomainId);
+    const maliciousConnext = await Connext.connect(signer).deploy(selfDomainId);
     const HashiConnextAdapter = await ethers.getContractFactory("TestHashiConnextAdapter");
     const hashiConnextAdapter = await HashiConnextAdapter.connect(signer).deploy();
-    await hashiConnextAdapter.connect(owner).initialize(connext.address, selfDomainId);
+    await hashiConnextAdapter.connect(owner).initialize(connext.address);
     return { signer, owner, malicious, connext, maliciousConnext, hashiConnextAdapter };
   }
 
@@ -28,18 +28,18 @@ describe("HashiConnextAdapter", function () {
 
     it("should not work when initialized more than one time", async function () {
       const { owner, connext, hashiConnextAdapter } = await loadFixture(fixture);
-      await expect(hashiConnextAdapter.connect(owner).initialize(connext.address, selfDomainId)).to.revertedWith(
+      await expect(hashiConnextAdapter.connect(owner).initialize(connext.address)).to.revertedWith(
         "Initializable: contract is already initialized"
       );
     });
 
     it("should not work when not initializing", async function () {
       const { owner, connext, hashiConnextAdapter } = await loadFixture(fixture);
+      await expect(hashiConnextAdapter.connect(owner).testHashiConnextAdapterInit(connext.address)).to.revertedWith(
+        "Initializable: contract is not initializing"
+      );
       await expect(
-        hashiConnextAdapter.connect(owner).testHashiConnextAdapterInit(connext.address, selfDomainId)
-      ).to.revertedWith("Initializable: contract is not initializing");
-      await expect(
-        hashiConnextAdapter.connect(owner).testHashiConnextAdapterInitUnchained(connext.address, selfDomainId)
+        hashiConnextAdapter.connect(owner).testHashiConnextAdapterInitUnchained(connext.address)
       ).to.revertedWith("Initializable: contract is not initializing");
     });
   });
@@ -114,6 +114,32 @@ describe("HashiConnextAdapter", function () {
       )
         .to.emit(hashiConnextAdapter, "XReceiveCalled")
         .withArgs(callData);
+    });
+
+    it("should not work when asset is invalid", async function () {
+      const { connext, hashiConnextAdapter } = await loadFixture(fixture);
+      const transferId = BYTES32_1;
+      const amount = 0;
+      const asset = ADDRESS_1;
+      const originSender = bridge;
+      const origin = anotherDomainId;
+      const callData = BYTES_ZERO;
+      await expect(
+        connext.testXReceive(hashiConnextAdapter.address, transferId, amount, asset, originSender, origin, callData)
+      ).to.revertedWith("HashiConnextAdapter: invalid asset");
+    });
+
+    it("should not work when amount is invalid", async function () {
+      const { connext, hashiConnextAdapter } = await loadFixture(fixture);
+      const transferId = BYTES32_1;
+      const amount = 1;
+      const asset = ethers.constants.AddressZero;
+      const originSender = bridge;
+      const origin = anotherDomainId;
+      const callData = BYTES_ZERO;
+      await expect(
+        connext.testXReceive(hashiConnextAdapter.address, transferId, amount, asset, originSender, origin, callData)
+      ).to.revertedWith("HashiConnextAdapter: invalid amount");
     });
 
     it("should not work when bridge is invalid", async function () {

@@ -7,21 +7,19 @@ import "@openzeppelin/contracts-upgradeable/interfaces/IERC721MetadataUpgradeabl
 import "@openzeppelin/contracts-upgradeable/proxy/ClonesUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
 
+import "./interfaces/IHashi721Bridge.sol";
 import "./interfaces/IWrappedHashi721.sol";
 import "./HashiConnextAdapter.sol";
 
-contract Hashi721Bridge is ERC721HolderUpgradeable, HashiConnextAdapter {
+contract Hashi721Bridge is IHashi721Bridge, ERC721HolderUpgradeable, HashiConnextAdapter {
   mapping(address => uint32) public originalDomainIds;
   mapping(address => address) public originalAssets;
 
   address public wrappedHashi721Implementation;
 
-  function initialize(
-    address connext_,
-    uint32 domainId_,
-    address wrappedHashi721Implementation_
-  ) external virtual initializer {
-    __HashiConnextAdapter_init(connext_, domainId_);
+  function initialize(address connext_, address wrappedHashi721Implementation_) external virtual initializer {
+    __ERC721Holder_init();
+    __HashiConnextAdapter_init(connext_);
     wrappedHashi721Implementation = wrappedHashi721Implementation_;
   }
 
@@ -49,7 +47,7 @@ contract Hashi721Bridge is ERC721HolderUpgradeable, HashiConnextAdapter {
     address originalAsset;
     if (originalAssets[asset] == address(0x0) && originalDomainIds[asset] == 0) {
       IERC721Upgradeable(asset).transferFrom(currentHolder, address(this), tokenId);
-      originalDomainId = domainId;
+      originalDomainId = uint32(IConnext(connext).domain());
       originalAsset = asset;
     } else {
       IWrappedHashi721(asset).burn(tokenId);
@@ -68,7 +66,7 @@ contract Hashi721Bridge is ERC721HolderUpgradeable, HashiConnextAdapter {
       uint256 tokenId,
       string memory tokenURI
     ) = _decodeCallData(callData);
-    if (originalDomainId != domainId) {
+    if (originalDomainId != uint32(IConnext(connext).domain())) {
       bytes32 salt = keccak256(abi.encodePacked(originalDomainId, originalAsset));
       address asset = ClonesUpgradeable.predictDeterministicAddress(wrappedHashi721Implementation, salt);
       if (!AddressUpgradeable.isContract(asset)) {

@@ -15,6 +15,12 @@ contract TestConnext {
     bytes callData
   );
 
+  uint256 public domain;
+
+  constructor(uint256 domain_) {
+    domain = domain_;
+  }
+
   function xcall(
     uint32 destination,
     address to,

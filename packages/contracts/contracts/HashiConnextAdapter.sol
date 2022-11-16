@@ -7,21 +7,22 @@ import "@connext/nxtp-contracts/contracts/core/connext/interfaces/IConnext.sol";
 import "@connext/nxtp-contracts/contracts/core/connext/interfaces/IXReceiver.sol";
 
 abstract contract HashiConnextAdapter is IXReceiver, OwnableUpgradeable {
-  mapping(uint32 => address) public bridges;
-
-  address public connext;
-  uint32 public domainId;
-
   event BridgeSet(uint32 indexed domainId, address indexed bridge);
 
-  function __HashiConnextAdapter_init(address connext_, uint32 domainId_) internal onlyInitializing {
+  mapping(uint32 => address) public bridges;
+
+  address public constant CONNEXT_ASSET_FOR_NONE = address(0x0);
+  uint256 public constant CONNEXT_AMOUNT_FOR_NONE = 0;
+
+  address public connext;
+
+  function __HashiConnextAdapter_init(address connext_) internal onlyInitializing {
     __Ownable_init_unchained();
-    __HashiConnextAdapter_init_unchained(connext_, domainId_);
+    __HashiConnextAdapter_init_unchained(connext_);
   }
 
-  function __HashiConnextAdapter_init_unchained(address connext_, uint32 domainId_) internal onlyInitializing {
+  function __HashiConnextAdapter_init_unchained(address connext_) internal onlyInitializing {
     connext = connext_;
-    domainId = domainId_;
   }
 
   function setBridge(uint32 domainId_, address bridge) external onlyOwner {
@@ -37,6 +38,8 @@ abstract contract HashiConnextAdapter is IXReceiver, OwnableUpgradeable {
     uint32 origin,
     bytes memory callData
   ) external override returns (bytes memory) {
+    require(asset == CONNEXT_ASSET_FOR_NONE, "HashiConnextAdapter: invalid asset");
+    require(amount == CONNEXT_AMOUNT_FOR_NONE, "HashiConnextAdapter: invalid amount");
     address bridge = bridges[origin];
     require(bridge == originSender, "HashiConnextAdapter: invalid bridge");
     require(_msgSender() == connext, "HashiConnextAdapter: invalid msg sender");
@@ -53,7 +56,15 @@ abstract contract HashiConnextAdapter is IXReceiver, OwnableUpgradeable {
     address bridge = bridges[destination];
     require(bridge != address(0), "HashiConnextAdapter: invalid bridge");
     return
-      IConnext(connext).xcall{value: relayerFee}(destination, bridge, address(0), _msgSender(), 0, slippage, callData);
+      IConnext(connext).xcall{value: relayerFee}(
+        destination,
+        bridge,
+        CONNEXT_ASSET_FOR_NONE,
+        _msgSender(),
+        CONNEXT_AMOUNT_FOR_NONE,
+        slippage,
+        callData
+      );
   }
 
   function _xReceive(bytes memory callData) internal virtual {

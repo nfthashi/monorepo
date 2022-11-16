@@ -10,16 +10,16 @@ contract TestHashiConnextAdapter is HashiConnextAdapter {
     emit XReceiveCalled(callData);
   }
 
-  function initialize(address connext_, uint32 domainId_) external initializer {
-    __HashiConnextAdapter_init(connext_, domainId_);
+  function initialize(address connext_) external initializer {
+    __HashiConnextAdapter_init(connext_);
   }
 
-  function testHashiConnextAdapterInit(address connext_, uint32 domainId_) external {
-    __HashiConnextAdapter_init(connext_, domainId_);
+  function testHashiConnextAdapterInit(address connext_) external {
+    __HashiConnextAdapter_init(connext_);
   }
 
-  function testHashiConnextAdapterInitUnchained(address connext_, uint32 domainId_) external {
-    __HashiConnextAdapter_init_unchained(connext_, domainId_);
+  function testHashiConnextAdapterInitUnchained(address connext_) external {
+    __HashiConnextAdapter_init_unchained(connext_);
   }
 
   function testXCall(uint32 destination, uint256 relayerFee, uint256 slippage, bytes memory callData) external {
