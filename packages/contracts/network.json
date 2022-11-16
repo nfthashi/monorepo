@@ -7,7 +7,9 @@
     "rpc": "https://rpc.ankr.com/eth_goerli",
     "explorer": { "name": "Etherscan", "url": "https://goerli.etherscan.io" },
     "deployments": {
-      "connext": "0x99A784d082476E551E5fc918ce3d849f2b8e89B6"
+      "connext": "0x99A784d082476E551E5fc918ce3d849f2b8e89B6",
+      "wrappedHashi721": "0xA2Fb5dC07634778EeA9afd9f21b206efD9f076DF",
+      "hashi721Bridge": "0x8A03652eD143db771A9473Ca5796135db1f3c544"
     }
   },
   "420": {
@@ -18,7 +20,9 @@
     "rpc": "https://rpc.ankr.com/optimism_testnet",
     "explorer": { "name": "Optimism Etherescan", "url": "https://goerli-optimism.etherscan.io" },
     "deployments": {
-      "connext": "0x705791AD27229dd4CCf41b6720528AfE1bcC2910"
+      "connext": "0x705791AD27229dd4CCf41b6720528AfE1bcC2910",
+      "wrappedHashi721": "0x5760527bFa552569d971c8c900A2ef877317E9b5",
+      "hashi721Bridge": "0xEEeB47597825661a2077c6280a705b90F8749078"
     }
   },
   "80001": {
@@ -29,7 +33,9 @@
     "rpc": "https://rpc.ankr.com/polygon_mumbai",
     "explorer": { "name": "Plygonscan", "url": "https://mumbai.polygonscan.com" },
     "deployments": {
-      "connext": "0xfeBBcfe9a88aadefA6e305945F2d2011493B15b4"
+      "connext": "0xfeBBcfe9a88aadefA6e305945F2d2011493B15b4",
+      "wrappedHashi721": "0x322c896c20a90b240D9D9f02f448D4a7B5Cb9c25",
+      "hashi721Bridge": "0xBbAA4a0D7E1915C8bb3C9aa743f67156aF5E7418"
     }
   }
 }

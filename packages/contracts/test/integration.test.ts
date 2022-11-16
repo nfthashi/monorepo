@@ -20,7 +20,9 @@ onlyForIntegrationTest("Integration Test", function () {
   const selfNetwork = networkJsonFile[selfChainId];
   async function fixture() {
     const [signer, owner, holder] = await ethers.getSigners();
-    return { signer, owner, holder };
+    const WrappedHashi721 = await ethers.getContractFactory("WrappedHashi721");
+    const Hashi721Bridge = await ethers.getContractFactory("Hashi721Bridge");
+    return { signer, owner, holder, WrappedHashi721, Hashi721Bridge };
   }
 
   Object.entries(networkJsonFile)
@@ -28,12 +30,10 @@ onlyForIntegrationTest("Integration Test", function () {
     .forEach(([, targetNetwork]) => {
       describe(`${selfNetwork.name} -> ${targetNetwork.name} `, function () {
         it("should work", async function () {
-          const { owner, holder } = await fixture();
-          const WrappedHashi721 = await ethers.getContractFactory("WrappedHashi721");
+          const { owner, holder, WrappedHashi721, Hashi721Bridge } = await fixture();
           const wrappedHashi721 = await WrappedHashi721.deploy();
           await wrappedHashi721.connect(owner).initialize();
           const connext = selfNetwork.deployments.connext;
-          const Hashi721Bridge = await ethers.getContractFactory("Hashi721Bridge");
           const hashi721Bridge = await Hashi721Bridge.deploy();
           await hashi721Bridge.connect(owner).initialize(connext, wrappedHashi721.address);
           const mintedTokenId = 1;
