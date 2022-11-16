@@ -20,14 +20,14 @@ export interface ModalProps {
 
 export const Modal: React.FC<ModalProps> = ({ header, children, isOpen, onClose }) => {
   return (
-    <_Modal isOpen={isOpen} onClose={onClose} isCentered>
+    <_Modal isOpen={isOpen} onClose={onClose} isCentered scrollBehavior={"inside"}>
       <ModalOverlay />
       <ModalContent m="2" borderRadius={configJsonFile.style.radius} bg={configJsonFile.style.color.white.bg}>
         <ModalHeader>
           <Text fontSize="md" color={configJsonFile.style.color.black.text.primary} fontWeight="bold">
             {header}
           </Text>
-          <ModalCloseButton color={configJsonFile.style.color.black.text.secondary} />
+          <ModalCloseButton color={configJsonFile.style.color.black.text.primary} />
         </ModalHeader>
         <ModalBody px="6" pb="8">
           {children}

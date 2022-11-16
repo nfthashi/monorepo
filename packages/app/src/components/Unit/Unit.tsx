@@ -18,11 +18,11 @@ export const Unit: React.FC<UnitProps> = ({ children, header, description }) => 
       bgColor={configJsonFile.style.color.white.bg}
     >
       <Stack spacing="2">
-        <Stack spacing="0">
+        <Stack spacing="1">
           <Text fontWeight={"bold"} fontSize="md" color={configJsonFile.style.color.black.text.primary}>
             {header}
           </Text>
-          <Text fontSize="xs" color={configJsonFile.style.color.black.text.secondary}>
+          <Text fontSize="sm" color={configJsonFile.style.color.black.text.secondary}>
             {description}
           </Text>
         </Stack>

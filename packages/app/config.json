@@ -1,6 +1,6 @@
 {
   "name": "NFTHashi",
-  "description": "Trust minimized cross-chain NFT Bridge powered by Connext Amarok AMB",
+  "description": "Trust-minimized Crosschain NFT Bridge",
   "url": {
     "app": "https://nfthashi.com",
     "docs": "https://docs.nfthashi.com",
@@ -40,7 +40,8 @@
         "900": "#2E0E05"
       }
     },
-    "shadow": "xl",
-    "radius": "xl"
+    "size": "lg",
+    "radius": "xl",
+    "shadow": "md"
   }
 }

@@ -2,6 +2,7 @@ import { Box, Container, Flex, HStack, Icon, Image, Link, Text } from "@chakra-u
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import React from "react";
 import { FaDiscord, FaGithub } from "react-icons/fa";
+import { MdArticle } from "react-icons/md";
 
 import { Head } from "@/components/Head";
 
@@ -17,24 +18,17 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       <Head />
       <Container as="section" maxW="8xl">
         <Box as="nav" py="4">
-          <Flex justify="space-between" alignItems={"center"} h="12">
+          <HStack justify="space-between" alignItems={"center"} h="12">
             <Link href="/">
               <Image src={"/assets/logo.png"} alt="logo" h="12" />
             </Link>
-            <HStack spacing="4">
-              <Text color={configJsonFile.style.color.white.text.primary} fontWeight="bold">
-                <Link href={configJsonFile.url.docs} target={"_blank"}>
-                  Docs
-                </Link>
-              </Text>
-              <Box>
-                <ConnectButton accountStatus={"address"} showBalance={false} chainStatus={"name"} />
-              </Box>
-            </HStack>
-          </Flex>
+            <Box>
+              <ConnectButton accountStatus={"address"} showBalance={false} chainStatus={"icon"} />
+            </Box>
+          </HStack>
         </Box>
       </Container>
-      <Container maxW="2xl" py="4" flex={1}>
+      <Container maxW="lg" py="4" flex={1}>
         {children}
       </Container>
       <Container maxW="8xl">
@@ -50,6 +44,15 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
               </Link>
             </Text>
             <HStack spacing={"4"}>
+              <Link href={configJsonFile.url.docs} target={"_blank"}>
+                <Icon
+                  as={MdArticle}
+                  aria-label="article"
+                  color={configJsonFile.style.color.white.text.tertiary}
+                  w={6}
+                  h={6}
+                />
+              </Link>
               <Link href={configJsonFile.url.github} target={"_blank"}>
                 <Icon
                   as={FaDiscord}

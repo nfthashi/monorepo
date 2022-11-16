@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 
-import { Button, Center, Flex, HStack, Image, Stack, Text } from "@chakra-ui/react";
+import { Button, Flex, HStack, Image, Stack, Text } from "@chakra-ui/react";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 
@@ -22,20 +22,30 @@ const HomePage: NextPage = () => {
             fontWeight={"medium"}
             color={configJsonFile.style.color.white.text.primary}
           >
-            Trust Minimized Crosschain NFT Bridge
+            {configJsonFile.description}
           </Text>
         </Stack>
         <Flex justify={"center"}>
           <HStack px="12" w="xs" spacing="4">
             <Button
               w="full"
-              fontWeight={"bold"}
-              onClick={() => router.push(configJsonFile.url.docs)}
               variant="secondary"
+              fontWeight={"bold"}
+              rounded={configJsonFile.style.radius}
+              size={configJsonFile.style.size}
+              fontSize="lg"
+              onClick={() => router.push(configJsonFile.url.docs)}
             >
               Docs
             </Button>
-            <Button w="full" fontWeight={"bold"} onClick={() => router.push("/bridge")}>
+            <Button
+              w="full"
+              fontWeight={"bold"}
+              rounded={configJsonFile.style.radius}
+              size={configJsonFile.style.size}
+              fontSize="lg"
+              onClick={() => router.push("/bridge")}
+            >
               App
             </Button>
           </HStack>

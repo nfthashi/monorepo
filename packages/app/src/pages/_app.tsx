@@ -13,7 +13,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
   return (
     <ChakraProvider resetCSS theme={myChakraUITheme}>
       <WagmiConfig client={wagmiClient}>
-        <RainbowKitProvider chains={chains} showRecentTransactions={true} theme={myRainbowKitTheme}>
+        <RainbowKitProvider coolMode chains={chains} showRecentTransactions={true} theme={myRainbowKitTheme}>
           <Component {...pageProps} />
         </RainbowKitProvider>
       </WagmiConfig>
