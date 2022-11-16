@@ -1,8 +1,7 @@
-import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 
-import { ADDRESS_1 } from "../helper/constant";
+import { ADDRESS_1 } from "./helper/constant";
 
 describe("Hashi721Bridge", function () {
   const selfDomainId = 1;
@@ -44,13 +43,13 @@ describe("Hashi721Bridge", function () {
 
   describe("deployments", function () {
     it("should work", async function () {
-      const { owner, holder, hashi721Bridge, wrappedHashi721, mintedTokenId } = await loadFixture(fixture);
+      const { owner, holder, hashi721Bridge, wrappedHashi721, mintedTokenId } = await fixture();
       expect(await hashi721Bridge.owner()).to.eq(owner.address);
       expect(await wrappedHashi721.ownerOf(mintedTokenId)).to.eq(holder.address);
     });
 
     it("should not work when contract is already initialized", async function () {
-      const { owner, connext, wrappedHashi721, hashi721Bridge } = await loadFixture(fixture);
+      const { owner, connext, wrappedHashi721, hashi721Bridge } = await fixture();
       await expect(hashi721Bridge.connect(owner).initialize(connext.address, wrappedHashi721.address)).to.revertedWith(
         "Initializable: contract is already initialized"
       );
@@ -59,7 +58,7 @@ describe("Hashi721Bridge", function () {
 
   describe("encode & decode data", function () {
     it("should work", async function () {
-      const { hashi721Bridge } = await loadFixture(fixture);
+      const { hashi721Bridge } = await fixture();
       const originalDomainId = 0;
       const originalAsset = ethers.constants.AddressZero;
       const to = ethers.constants.AddressZero;
@@ -75,9 +74,7 @@ describe("Hashi721Bridge", function () {
 
   describe("xCall", function () {
     it("should work when called by holder, not ignore token URI, bridge: [original -> other]", async function () {
-      const { holder, connext, hashi721Bridge, wrappedHashi721, mintedTokenId, mintedTokenURI } = await loadFixture(
-        fixture
-      );
+      const { holder, connext, hashi721Bridge, wrappedHashi721, mintedTokenId, mintedTokenURI } = await fixture();
       const destination = anotherDomainId;
       const relayerFee = 0;
       const slippage = 0;
@@ -100,9 +97,7 @@ describe("Hashi721Bridge", function () {
     });
 
     it("should work when called by sender with approved, ignore token URI, bridge: [other -> original]", async function () {
-      const { owner, holder, another, connext, hashi721Bridge, wrappedHashi721, mintedTokenId } = await loadFixture(
-        fixture
-      );
+      const { owner, holder, another, connext, hashi721Bridge, wrappedHashi721, mintedTokenId } = await fixture();
       const destination = anotherDomainId;
       const relayerFee = 0;
       const slippage = 0;
@@ -129,7 +124,7 @@ describe("Hashi721Bridge", function () {
 
     it("should work when called by sender with approvalForAll,", async function () {
       const { holder, connext, another, hashi721Bridge, wrappedHashi721, mintedTokenId, mintedTokenURI } =
-        await loadFixture(fixture);
+        await fixture();
       const destination = anotherDomainId;
       const relayerFee = 0;
       const slippage = 0;
@@ -153,7 +148,7 @@ describe("Hashi721Bridge", function () {
     });
 
     it("should not work when msg sender is invalid", async function () {
-      const { malicious, hashi721Bridge, wrappedHashi721, mintedTokenId } = await loadFixture(fixture);
+      const { malicious, hashi721Bridge, wrappedHashi721, mintedTokenId } = await fixture();
       const relayerFee = 0;
       const slippage = 0;
       const to = ADDRESS_1;
@@ -168,7 +163,7 @@ describe("Hashi721Bridge", function () {
 
   describe("xReceive", function () {
     it("should work when bridge: [original -> other], * 2", async function () {
-      const { WrappedHashi721, wrappedHashi721, hashi721Bridge, clone } = await loadFixture(fixture);
+      const { WrappedHashi721, wrappedHashi721, hashi721Bridge, clone } = await fixture();
       const originalDomainId = anotherDomainId;
       const originalAsset = ADDRESS_1;
       const to = ADDRESS_1;
@@ -206,7 +201,7 @@ describe("Hashi721Bridge", function () {
     });
 
     it("should work when bridge: [other -> original]", async function () {
-      const { holder, wrappedHashi721, hashi721Bridge, mintedTokenId } = await loadFixture(fixture);
+      const { holder, wrappedHashi721, hashi721Bridge, mintedTokenId } = await fixture();
       await wrappedHashi721.connect(holder).transferFrom(holder.address, hashi721Bridge.address, mintedTokenId);
       const originalDomainId = selfDomainId;
       const originalAsset = wrappedHashi721.address;

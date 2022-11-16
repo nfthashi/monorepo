@@ -1,8 +1,7 @@
-import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 
-import { ADDRESS_1, ADDRESS_9, BYTES_ZERO, BYTES32_1 } from "../helper/constant";
+import { ADDRESS_1, ADDRESS_9, BYTES_ZERO, BYTES32_1 } from "./helper/constant";
 
 describe("HashiConnextAdapter", function () {
   const selfDomainId = 1;
@@ -23,19 +22,19 @@ describe("HashiConnextAdapter", function () {
 
   describe("deployments", function () {
     it("should work", async function () {
-      const { owner, hashiConnextAdapter } = await loadFixture(fixture);
+      const { owner, hashiConnextAdapter } = await fixture();
       expect(await hashiConnextAdapter.owner()).to.eq(owner.address);
     });
 
     it("should not work when contract is already initialized", async function () {
-      const { owner, connext, hashiConnextAdapter } = await loadFixture(fixture);
+      const { owner, connext, hashiConnextAdapter } = await fixture();
       await expect(hashiConnextAdapter.connect(owner).initialize(connext.address)).to.revertedWith(
         "Initializable: contract is already initialized"
       );
     });
 
     it("should not work when contract is not initializing", async function () {
-      const { owner, connext, hashiConnextAdapter } = await loadFixture(fixture);
+      const { owner, connext, hashiConnextAdapter } = await fixture();
       await expect(hashiConnextAdapter.connect(owner).testHashiConnextAdapterInit(connext.address)).to.revertedWith(
         "Initializable: contract is not initializing"
       );
@@ -47,14 +46,14 @@ describe("HashiConnextAdapter", function () {
 
   describe("set bridge", function () {
     it("should work", async function () {
-      const { owner, hashiConnextAdapter } = await loadFixture(fixture);
+      const { owner, hashiConnextAdapter } = await fixture();
       await expect(hashiConnextAdapter.connect(owner).setBridge(anotherDomainId, bridge))
         .to.emit(hashiConnextAdapter, "BridgeSet")
         .withArgs(anotherDomainId, bridge);
     });
 
     it("should not work when caller is not the owner", async function () {
-      const { malicious, hashiConnextAdapter } = await loadFixture(fixture);
+      const { malicious, hashiConnextAdapter } = await fixture();
       await expect(hashiConnextAdapter.connect(malicious).setBridge(anotherDomainId, bridge)).to.revertedWith(
         "Ownable: caller is not the owner"
       );
@@ -63,7 +62,7 @@ describe("HashiConnextAdapter", function () {
 
   describe("xCall", function () {
     it("should work", async function () {
-      const { signer, owner, connext, hashiConnextAdapter } = await loadFixture(fixture);
+      const { signer, owner, connext, hashiConnextAdapter } = await fixture();
       await expect(hashiConnextAdapter.connect(owner).setBridge(anotherDomainId, bridge))
         .to.emit(hashiConnextAdapter, "BridgeSet")
         .withArgs(anotherDomainId, bridge);
@@ -89,7 +88,7 @@ describe("HashiConnextAdapter", function () {
     });
 
     it("should not work when bridge is invalid", async function () {
-      const { hashiConnextAdapter } = await loadFixture(fixture);
+      const { hashiConnextAdapter } = await fixture();
       const destination = anotherDomainId;
       const relayerFee = 0;
       const slippage = 0;
@@ -102,7 +101,7 @@ describe("HashiConnextAdapter", function () {
 
   describe("xReceive", function () {
     it("should work", async function () {
-      const { owner, connext, hashiConnextAdapter } = await loadFixture(fixture);
+      const { owner, connext, hashiConnextAdapter } = await fixture();
       await expect(hashiConnextAdapter.connect(owner).setBridge(anotherDomainId, bridge))
         .to.emit(hashiConnextAdapter, "BridgeSet")
         .withArgs(anotherDomainId, bridge);
@@ -120,7 +119,7 @@ describe("HashiConnextAdapter", function () {
     });
 
     it("should not work when asset is invalid", async function () {
-      const { connext, hashiConnextAdapter } = await loadFixture(fixture);
+      const { connext, hashiConnextAdapter } = await fixture();
       const transferId = BYTES32_1;
       const amount = 0;
       const asset = ADDRESS_1;
@@ -133,7 +132,7 @@ describe("HashiConnextAdapter", function () {
     });
 
     it("should not work when amount is invalid", async function () {
-      const { connext, hashiConnextAdapter } = await loadFixture(fixture);
+      const { connext, hashiConnextAdapter } = await fixture();
       const transferId = BYTES32_1;
       const amount = 1;
       const asset = ethers.constants.AddressZero;
@@ -146,7 +145,7 @@ describe("HashiConnextAdapter", function () {
     });
 
     it("should not work when bridge is invalid", async function () {
-      const { owner, connext, hashiConnextAdapter } = await loadFixture(fixture);
+      const { owner, connext, hashiConnextAdapter } = await fixture();
       await expect(hashiConnextAdapter.connect(owner).setBridge(anotherDomainId, bridge))
         .to.emit(hashiConnextAdapter, "BridgeSet")
         .withArgs(anotherDomainId, bridge);
@@ -162,7 +161,7 @@ describe("HashiConnextAdapter", function () {
     });
 
     it("should not work when msg sender is invalid", async function () {
-      const { owner, maliciousConnext, hashiConnextAdapter } = await loadFixture(fixture);
+      const { owner, maliciousConnext, hashiConnextAdapter } = await fixture();
       await expect(hashiConnextAdapter.connect(owner).setBridge(anotherDomainId, bridge))
         .to.emit(hashiConnextAdapter, "BridgeSet")
         .withArgs(anotherDomainId, bridge);
@@ -186,7 +185,7 @@ describe("HashiConnextAdapter", function () {
     });
 
     it("should work when method is not overridden", async function () {
-      const { hashiConnextAdapter } = await loadFixture(fixture);
+      const { hashiConnextAdapter } = await fixture();
       const callData = BYTES_ZERO;
       await expect(hashiConnextAdapter.testXReceive(callData)).to.revertedWith(
         "HashiConnextAdapter: method is not overridden"

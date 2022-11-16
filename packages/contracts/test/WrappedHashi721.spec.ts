@@ -1,8 +1,7 @@
-import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 
-import { ADDRESS_1 } from "../helper/constant";
+import { ADDRESS_1 } from "./helper/constant";
 
 describe("WrappedHashi721", function () {
   const baseURI = "http://localhost:3000/";
@@ -17,14 +16,14 @@ describe("WrappedHashi721", function () {
 
   describe("deployments", function () {
     it("should work", async function () {
-      const { owner, wrappedHashi721 } = await loadFixture(fixture);
+      const { owner, wrappedHashi721 } = await fixture();
       expect(await wrappedHashi721.name()).to.eq("WrappedHashi721");
       expect(await wrappedHashi721.symbol()).to.eq("WHASHI721");
       expect(await wrappedHashi721.owner()).to.eq(owner.address);
     });
 
     it("should not work when contract is already initialized", async function () {
-      const { owner, wrappedHashi721 } = await loadFixture(fixture);
+      const { owner, wrappedHashi721 } = await fixture();
       await expect(wrappedHashi721.connect(owner).initialize()).to.revertedWith(
         "Initializable: contract is already initialized"
       );
@@ -33,7 +32,7 @@ describe("WrappedHashi721", function () {
 
   describe("mint", function () {
     it("should work", async function () {
-      const { owner, wrappedHashi721 } = await loadFixture(fixture);
+      const { owner, wrappedHashi721 } = await fixture();
       const tokenId = 0;
       const tokenURI = `${baseURI}${tokenId}`;
       const to = ADDRESS_1;
@@ -43,7 +42,7 @@ describe("WrappedHashi721", function () {
     });
 
     it("should not work when caller is not the owner", async function () {
-      const { malicious, wrappedHashi721 } = await loadFixture(fixture);
+      const { malicious, wrappedHashi721 } = await fixture();
       const tokenId = 0;
       const tokenURI = `${baseURI}${tokenId}`;
       const to = ADDRESS_1;
@@ -55,7 +54,7 @@ describe("WrappedHashi721", function () {
 
   describe("burn", function () {
     it("should work", async function () {
-      const { owner, wrappedHashi721 } = await loadFixture(fixture);
+      const { owner, wrappedHashi721 } = await fixture();
       const tokenId = 0;
       const tokenURI = `${baseURI}${tokenId}`;
       const to = ADDRESS_1;
@@ -68,7 +67,7 @@ describe("WrappedHashi721", function () {
     });
 
     it("should not work when caller is not the owner", async function () {
-      const { owner, malicious, wrappedHashi721 } = await loadFixture(fixture);
+      const { owner, malicious, wrappedHashi721 } = await fixture();
       const tokenId = 0;
       const tokenURI = `${baseURI}${tokenId}`;
       const to = ADDRESS_1;

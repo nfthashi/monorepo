@@ -1,4 +1,3 @@
-import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
 import { ethers, network } from "hardhat";
 
@@ -10,7 +9,7 @@ const isIntegrationTest = process.env.IS_INTEGRATION_TEST === "true";
 
 const onlyForIntegrationTest = isIntegrationTest ? describe.only : describe.skip;
 
-onlyForIntegrationTest("integration", function () {
+onlyForIntegrationTest("Integration Test", function () {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const config = network.config as any;
   const selfChainId = String(config.chainId);
@@ -29,7 +28,7 @@ onlyForIntegrationTest("integration", function () {
     .forEach(([, targetNetwork]) => {
       describe(`${selfNetwork.name} -> ${targetNetwork.name} `, function () {
         it("should work", async function () {
-          const { owner, holder } = await loadFixture(fixture);
+          const { owner, holder } = await fixture();
           const WrappedHashi721 = await ethers.getContractFactory("WrappedHashi721");
           const wrappedHashi721 = await WrappedHashi721.deploy();
           await wrappedHashi721.connect(owner).initialize();
