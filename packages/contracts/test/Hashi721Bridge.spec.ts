@@ -12,7 +12,7 @@ describe("Hashi721Bridge", function () {
     const [signer, owner, holder, another, malicious] = await ethers.getSigners();
     const Connext = await ethers.getContractFactory("TestConnext");
     const connext = await Connext.connect(signer).deploy(selfDomainId);
-    const WrappedHashi721 = await ethers.getContractFactory("TestWrappedHashi721");
+    const WrappedHashi721 = await ethers.getContractFactory("WrappedHashi721");
     const wrappedHashi721 = await WrappedHashi721.connect(signer).deploy();
     await wrappedHashi721.connect(owner).initialize();
     const Hashi721Bridge = await ethers.getContractFactory("TestHashi721Bridge");

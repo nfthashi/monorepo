@@ -8,7 +8,7 @@ describe("WrappedHashi721", function () {
 
   async function fixture() {
     const [signer, owner, malicious] = await ethers.getSigners();
-    const WrappedHashi721 = await ethers.getContractFactory("TestWrappedHashi721");
+    const WrappedHashi721 = await ethers.getContractFactory("WrappedHashi721");
     const wrappedHashi721 = await WrappedHashi721.connect(signer).deploy();
     await wrappedHashi721.connect(owner).initialize();
     return { signer, owner, malicious, wrappedHashi721 };

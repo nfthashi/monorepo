@@ -43,6 +43,13 @@ const config: HardhatUserConfig = {
         : {},
     ...networksUserConfigs,
   },
+  etherscan: {
+    apiKey: {
+      goerli: process.env.ETHERSCAN_API || "",
+      optimisticGoerli: process.env.ETHERSCAN_OPTIMISM_API || "",
+      polygonMumbai: process.env.POLYGONSCAN_API || "",
+    },
+  },
 };
 
 export default config;

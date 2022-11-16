@@ -18,7 +18,7 @@
     "domainId": 1735356532,
     "currency": "ETH",
     "rpc": "https://rpc.ankr.com/optimism_testnet",
-    "explorer": { "name": "Optimism Etherescan", "url": "https://goerli-optimism.etherscan.io" },
+    "explorer": { "name": "Etherescan Optimism", "url": "https://goerli-optimism.etherscan.io" },
     "deployments": {
       "connext": "0x705791AD27229dd4CCf41b6720528AfE1bcC2910",
       "wrappedHashi721": "0x5760527bFa552569d971c8c900A2ef877317E9b5",

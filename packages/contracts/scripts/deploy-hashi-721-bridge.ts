@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 import fs from "fs";
 import { ethers, network, upgrades } from "hardhat";
 import path from "path";
