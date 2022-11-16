@@ -1,10 +1,35 @@
 {
   "5": {
-    "key": "ethereum-testnet",
+    "key": "ethereum-georli",
     "name": "Ethereum Georli",
+    "domainId": 1735353714,
     "currency": "ETH",
     "rpc": "https://rpc.ankr.com/eth_goerli",
-    "explorer": { "name": "Etherscan", "url": "https://goerli.etherscan.io/" },
-    "deployments": { "test": "0x3421FEcd5d645AeE11d6b7d933B195B75598E1D8" }
+    "explorer": { "name": "Etherscan", "url": "https://goerli.etherscan.io" },
+    "deployments": {
+      "connext": "0x99A784d082476E551E5fc918ce3d849f2b8e89B6"
+    }
+  },
+  "420": {
+    "key": "optimism-georli",
+    "name": "Optimism Georli",
+    "domainId": 1735356532,
+    "currency": "ETH",
+    "rpc": "https://rpc.ankr.com/optimism_testnet",
+    "explorer": { "name": "Optimism Etherescan", "url": "https://goerli-optimism.etherscan.io" },
+    "deployments": {
+      "connext": "0x705791AD27229dd4CCf41b6720528AfE1bcC2910"
+    }
+  },
+  "80001": {
+    "key": "polygon-mumbai",
+    "name": "Polygon Mumbais",
+    "domainId": 9991,
+    "currency": "MATIC",
+    "rpc": "https://rpc.ankr.com/polygon_mumbai",
+    "explorer": { "name": "Plygonscan", "url": "https://mumbai.polygonscan.com" },
+    "deployments": {
+      "connext": "0xfeBBcfe9a88aadefA6e305945F2d2011493B15b4"
+    }
   }
 }

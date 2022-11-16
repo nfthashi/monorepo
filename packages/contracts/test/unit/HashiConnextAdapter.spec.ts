@@ -2,7 +2,7 @@ import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 
-import { ADDRESS_1, ADDRESS_9, BYTES_ZERO, BYTES32_1 } from "./helper/constant";
+import { ADDRESS_1, ADDRESS_9, BYTES_ZERO, BYTES32_1 } from "../helper/constant";
 
 describe("HashiConnextAdapter", function () {
   const selfDomainId = 1;

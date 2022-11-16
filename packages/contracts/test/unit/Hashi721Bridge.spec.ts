@@ -2,7 +2,7 @@ import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 
-import { ADDRESS_1 } from "./helper/constant";
+import { ADDRESS_1 } from "../helper/constant";
 
 describe("Hashi721Bridge", function () {
   const selfDomainId = 1;
