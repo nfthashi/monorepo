@@ -1,7 +1,7 @@
 import { Box, Container, Flex, HStack, Icon, Image, Link, Text } from "@chakra-ui/react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import React from "react";
-import { FaGithub } from "react-icons/fa";
+import { FaDiscord, FaGithub } from "react-icons/fa";
 
 import { Head } from "@/components/Head";
 
@@ -17,9 +17,9 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       <Head />
       <Container as="section" maxW="8xl">
         <Box as="nav" py="4">
-          <Flex justify="space-between" alignItems={"center"} h="16">
+          <Flex justify="space-between" alignItems={"center"} h="12">
             <Link href="/">
-              <Image src={"/assets/logo.png"} alt="logo" h="16" />
+              <Image src={"/assets/logo.png"} alt="logo" h="12" />
             </Link>
             <HStack spacing="4">
               <Text color={configJsonFile.style.color.white.text.primary} fontWeight="bold">
@@ -38,19 +38,39 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         {children}
       </Container>
       <Container maxW="8xl">
-        <HStack justify={"space-between"}>
-          <Text fontSize={"xs"} color={configJsonFile.style.color.white.text.secondary} fontWeight={"medium"} py="4">
-            <Text as="span" mr="2">
-              🌉
+        <Box as="nav" py="4">
+          <HStack justify={"space-between"}>
+            <Text fontSize={"xs"} color={configJsonFile.style.color.white.text.secondary} fontWeight={"medium"}>
+              <Text as="span" mr="2">
+                😘
+              </Text>
+              Built with{" "}
+              <Link href={configJsonFile.url.connext} target={"_blank"}>
+                Connext Network
+              </Link>
             </Text>
-            <Link href={configJsonFile.url.connext} target={"_blank"}>
-              Build with Connext Amarok AMB
-            </Link>
-          </Text>
-          <Link href={configJsonFile.url.github} target={"_blank"}>
-            <Icon as={FaGithub} aria-label="github" color={configJsonFile.style.color.white.text.secondary} />
-          </Link>
-        </HStack>
+            <HStack spacing={"4"}>
+              <Link href={configJsonFile.url.github} target={"_blank"}>
+                <Icon
+                  as={FaDiscord}
+                  aria-label="discord"
+                  color={configJsonFile.style.color.white.text.tertiary}
+                  w={6}
+                  h={6}
+                />
+              </Link>
+              <Link href={configJsonFile.url.github} target={"_blank"}>
+                <Icon
+                  as={FaGithub}
+                  aria-label="github"
+                  color={configJsonFile.style.color.white.text.tertiary}
+                  w={6}
+                  h={6}
+                />
+              </Link>
+            </HStack>
+          </HStack>
+        </Box>
       </Container>
     </Flex>
   );

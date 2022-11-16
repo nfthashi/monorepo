@@ -1,24 +1,46 @@
 /* eslint-disable camelcase */
-import { Button, useDisclosure } from "@chakra-ui/react";
+
+import { Button, Center, Flex, HStack, Image, Stack, Text } from "@chakra-ui/react";
 import { NextPage } from "next";
+import { useRouter } from "next/router";
 
 import { Layout } from "@/components/Layout";
-import { Modal } from "@/components/Modal";
-import { Unit } from "@/components/Unit";
 
 import configJsonFile from "../../config.json";
 
 const HomePage: NextPage = () => {
-  const modalDisclosure = useDisclosure();
+  const router = useRouter();
 
   return (
     <Layout>
-      <Unit header={configJsonFile.name} description={configJsonFile.description}>
-        <Button onClick={modalDisclosure.onOpen}>Open Modal</Button>
-        <Modal header={"modal header goes here"} onClose={modalDisclosure.onClose} isOpen={modalDisclosure.isOpen}>
-          modal content goes here
-        </Modal>
-      </Unit>
+      <Stack spacing="6" py="24">
+        <Stack spacing="6">
+          <Image src="/assets/logo.png" w="xs" mx="auto" alt="logo" px="12" />
+          <Text
+            textAlign={"center"}
+            fontSize={{ base: "md", md: "xl" }}
+            fontWeight={"medium"}
+            color={configJsonFile.style.color.white.text.primary}
+          >
+            Trust Minimized Crosschain NFT Bridge
+          </Text>
+        </Stack>
+        <Flex justify={"center"}>
+          <HStack px="12" w="xs" spacing="4">
+            <Button
+              w="full"
+              fontWeight={"bold"}
+              onClick={() => router.push(configJsonFile.url.docs)}
+              variant="secondary"
+            >
+              Docs
+            </Button>
+            <Button w="full" fontWeight={"bold"} onClick={() => router.push("/bridge")}>
+              App
+            </Button>
+          </HStack>
+        </Flex>
+      </Stack>
     </Layout>
   );
 };
