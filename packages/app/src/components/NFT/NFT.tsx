@@ -1,4 +1,4 @@
-import { Box, HStack, Icon, Image, Text } from "@chakra-ui/react";
+import { Box, BoxProps, HStack, Icon, Image, Text } from "@chakra-ui/react";
 import { MouseEventHandler } from "react";
 import { FaExternalLinkAlt } from "react-icons/fa";
 
@@ -8,29 +8,27 @@ import { NFT as NFTType } from "@/types/NFT";
 import networkJsonFile from "../../../../contracts/network.json";
 import configJsonFile from "../../../config.json";
 
-export interface NFTProps {
+export interface NFTProps extends BoxProps {
   nft: NFTType;
   onClick?: MouseEventHandler<HTMLDivElement>;
-  width?: number | string;
-  height?: number | string;
 }
 
-export const NFT: React.FC<NFTProps> = ({ nft, onClick, width, height }) => {
+export const NFT: React.FC<NFTProps> = ({ nft, onClick, ...props }) => {
   return (
-    <Box cursor={onClick ? "pointer" : ""} position="relative" width={width} height={height}>
+    <Box cursor={onClick ? "pointer" : ""} position="relative" {...props}>
       <Image
         src={nft.metadata.image}
-        fallbackSrc={"/assets/image-placeholder.png"}
+        fallbackSrc={"/assets/utils/image-placeholder.png"}
         alt="nft"
         rounded={configJsonFile.style.radius}
         shadow={configJsonFile.style.shadow}
         fit="cover"
-        width={width}
-        height={height}
+        width={"full"}
+        height={"full"}
         onClick={onClick}
       />
       <Box position="absolute" bottom="1" left="1">
-        <Image src={`/assets/chains/${networkJsonFile[nft.chainId].icon}`} w="4" h="4" alt="chain" />
+        <Image src={`/assets/chains/${networkJsonFile[nft.chainId].icon}`} w="5" h="5" alt="chain" />
       </Box>
       <Box
         position="absolute"

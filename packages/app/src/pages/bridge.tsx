@@ -2,9 +2,11 @@ import {
   Box,
   Button,
   Center,
+  Flex,
   HStack,
   Icon,
   IconButton,
+  Link,
   SimpleGrid,
   Spinner,
   Stack,
@@ -12,7 +14,7 @@ import {
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import { useChainModal, useConnectModal } from "@rainbow-me/rainbowkit";
+import { useAddRecentTransaction, useChainModal, useConnectModal } from "@rainbow-me/rainbowkit";
 import { NextPage } from "next";
 import { useEffect, useState } from "react";
 import { MdSwapVerticalCircle } from "react-icons/md";
@@ -24,7 +26,7 @@ import { Modal } from "@/components/Modal";
 import { NFT } from "@/components/NFT";
 import { SelectChain } from "@/components/SelectChain";
 import { Unit } from "@/components/Unit";
-import { MAINNET_CONNEXTSCAN_URL, RELAYER_FEE, SLIPPAGE, TESTNET_CONNEXTSCAN_URL } from "@/config";
+import { RELAYER_FEE, SLIPPAGE } from "@/config";
 import { useConnectedChainConfig } from "@/hooks/useConnectedChainConfig";
 import { useConnectedChainDeployedHashi721BridgeContract } from "@/hooks/useConnectedChainDeployedHashi721BridgeContract";
 import { useConnectedChainId } from "@/hooks/useConnectedChainId";
@@ -33,6 +35,7 @@ import { useDestinationNFT } from "@/hooks/useDestinationNFT";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { useIsWalletConnected } from "@/hooks/useIsWalletConnected";
 import { useSelectedChainConfig } from "@/hooks/useSelectedChainConfig";
+import { useSuccessHandler } from "@/hooks/useSuccessHandler";
 import { compareInLowerCase } from "@/lib/utils";
 import { NFT as NFTType } from "@/types/NFT";
 
@@ -53,32 +56,31 @@ const HomePage: NextPage = () => {
 
   const { selectedChainConfig: destinationChainConfig } = useSelectedChainConfig(destinationChainId);
 
-  const [nft, setNFT] = useState<NFTType>();
-  const { destinationNFT } = useDestinationNFT(nft, destinationChainId);
+  const [selectedNFT, setSelectedNFT] = useState<NFTType>();
+  const { destinationNFT } = useDestinationNFT(selectedNFT, destinationChainId);
 
-  const { connectedChainSelectedNFTContract } = useConnectedChainSelectedNFTContract(nft?.contractAddress);
+  const { connectedChainSelectedNFTContract } = useConnectedChainSelectedNFTContract(selectedNFT?.contractAddress);
 
-  const [nfts, setNFTs] = useState<NFTType[]>([]);
+  const [nfts, setSelectedNFTs] = useState<NFTType[]>([]);
   const [isNFTLoading, setIsNFTLoading] = useState(false);
 
   const [status, setStatus] = useState<
-    | "preview"
+    | "initial"
     | "checkApprovalStatus"
     | "waitForApprovalTxSignature"
     | "waitForApprovalTxConfirmation"
     | "waitForBridgeTxSignature"
     | "waitForBridgeTxConfirmation"
     | "confirmed"
-  >("preview");
+  >("initial");
 
-  const [transferId, setTransferId] = useState("0x3fbcb1cce1b00bd9f8b5a28014fed17e3fbc9e0cc1638fbca485b7b6e0596996");
-
+  const addRecentTransaction = useAddRecentTransaction();
   const { openConnectModal } = useConnectModal();
   const { openChainModal } = useChainModal();
   const selectNFTModalDisclosure = useDisclosure();
-  const bridgeModalDisclosure = useDisclosure();
 
-  const errorHandler = useErrorHandler();
+  const { handleError } = useErrorHandler();
+  const { handleSuccess } = useSuccessHandler();
 
   const swap = () => {
     setDestinationChainId(originChainId);
@@ -87,19 +89,26 @@ const HomePage: NextPage = () => {
 
   useEffect(() => {
     if (!isWalletConnected) {
-      setNFT(undefined);
+      setSelectedNFT(undefined);
     }
   }, [isWalletConnected]);
 
   return (
     <Layout>
-      <Unit header={configJsonFile.name} description={configJsonFile.description}>
+      <Unit header={configJsonFile.name} description={configJsonFile.description} position="relative">
+        <Flex position="absolute" top="0" right="0" p="4">
+          <Text fontSize="xs" fontWeight={"bold"}>
+            <Link href="https://faucet.paradigm.xyz/" target={"_blank"} color={configJsonFile.style.color.accent}>
+              Faucet
+            </Link>
+          </Text>
+        </Flex>
         <Stack spacing="8">
           <Box>
             <SelectChain
               type="origin"
               value={originChainId}
-              disabled={!!nft}
+              disabled={!!selectedNFT}
               onChange={(e) => {
                 if (e.target.value === destinationChainId) {
                   swap();
@@ -115,14 +124,14 @@ const HomePage: NextPage = () => {
                 aria-label="swap"
                 rounded="full"
                 size="xs"
-                isDisabled={!!nft}
+                isDisabled={!!selectedNFT}
                 onClick={swap}
               />
             </VStack>
             <SelectChain
               type="destination"
               value={destinationChainId}
-              disabled={!!nft}
+              disabled={!!selectedNFT}
               onChange={(e) => {
                 if (e.target.value === originChainId) {
                   swap();
@@ -132,19 +141,19 @@ const HomePage: NextPage = () => {
               }}
             />
           </Box>
-          {nft && (
-            <Stack spacing="4">
-              <HStack justify={"space-around"}>
-                <NFT height="36" width="36" nft={nft} />
+          {selectedNFT && (
+            <HStack justify={"space-around"}>
+              <NFT height="36" width="36" nft={selectedNFT} />
+              <VStack>
                 <ReactLoading type={"bars"} color={configJsonFile.style.color.accent} width={24} height={24} />
-                {destinationNFT && <NFT height="36" width="36" nft={destinationNFT} />}
-                {!destinationNFT && (
-                  <Center height="36" width="36">
-                    <Spinner color={configJsonFile.style.color.accent} />
-                  </Center>
-                )}
-              </HStack>
-            </Stack>
+              </VStack>
+              {destinationNFT && <NFT height="36" width="36" nft={destinationNFT} />}
+              {!destinationNFT && (
+                <Center height="36" width="36">
+                  <Spinner color={configJsonFile.style.color.accent} />
+                </Center>
+              )}
+            </HStack>
           )}
           {!isWalletConnected && <Button onClick={openConnectModal}>Connect Wallet</Button>}
           {isWalletConnected &&
@@ -166,7 +175,7 @@ const HomePage: NextPage = () => {
                 )}
                 {connectedChainId === originChainId && (
                   <>
-                    {!nft && (
+                    {!selectedNFT && (
                       <>
                         <Button
                           isLoading={isNFTLoading}
@@ -175,7 +184,7 @@ const HomePage: NextPage = () => {
                             fetch(`/api/nft?userAddress=${connectedAddress}&chainId=${connectedChainId}`)
                               .then((data) => data.json())
                               .then((data) => {
-                                setNFTs(data);
+                                setSelectedNFTs(data);
                                 selectNFTModalDisclosure.onOpen();
                               })
                               .catch((e) => {
@@ -200,7 +209,7 @@ const HomePage: NextPage = () => {
                                   key={`list_nft_${i}`}
                                   nft={nft}
                                   onClick={() => {
-                                    setNFT(nft);
+                                    setSelectedNFT(nft);
                                     selectNFTModalDisclosure.onClose();
                                   }}
                                 />
@@ -210,7 +219,7 @@ const HomePage: NextPage = () => {
                         </Modal>
                       </>
                     )}
-                    {nft && connectedChainSelectedNFTContract && (
+                    {selectedNFT && connectedChainSelectedNFTContract && (
                       <VStack>
                         <Button
                           w="full"
@@ -218,9 +227,64 @@ const HomePage: NextPage = () => {
                           rounded={configJsonFile.style.radius}
                           shadow={configJsonFile.style.shadow}
                           fontWeight="bold"
+                          spinnerPlacement="end"
+                          isLoading={status !== "initial"}
+                          loadingText={
+                            status === "checkApprovalStatus"
+                              ? "Check Approval Status..."
+                              : status === "waitForApprovalTxSignature"
+                              ? "Approve NFTHashi Bridge"
+                              : status === "waitForApprovalTxConfirmation"
+                              ? "Waiting Tx Confirmation..."
+                              : status === "waitForBridgeTxSignature"
+                              ? "Confirm Bridge Tx"
+                              : "Waiting Tx Confirmation..."
+                          }
                           onClick={async () => {
-                            setStatus("preview");
-                            bridgeModalDisclosure.onOpen();
+                            try {
+                              const resolved = await Promise.all([
+                                connectedChainSelectedNFTContract
+                                  .getApproved(selectedNFT.tokenId)
+                                  .then((approved) => compareInLowerCase(connectedAddress, approved)),
+                                connectedChainSelectedNFTContract.isApprovedForAll(
+                                  connectedAddress,
+                                  connectedChainDeployedHashi721BridgeContract.address
+                                ),
+                              ]);
+                              const approved = resolved.some((v) => v);
+                              if (!approved) {
+                                setStatus("waitForApprovalTxSignature");
+                                const approveTx = await connectedChainSelectedNFTContract.setApprovalForAll(
+                                  connectedChainDeployedHashi721BridgeContract.address,
+                                  true
+                                );
+                                console.log("setApprovalForAll tx sent", approveTx.hash);
+                                addRecentTransaction({ hash: approveTx.hash, description: "setApprovalForAll" });
+                                setStatus("waitForApprovalTxConfirmation");
+                                await approveTx.wait();
+                              }
+                              setStatus("waitForBridgeTxSignature");
+                              const xCallTx = await connectedChainDeployedHashi721BridgeContract.xCall(
+                                destinationChainConfig.domainId,
+                                RELAYER_FEE,
+                                SLIPPAGE,
+                                connectedChainSelectedNFTContract.address,
+                                destinationChainConfig.deployments.hashi721Bridge,
+                                selectedNFT.tokenId,
+                                false
+                              );
+                              console.log("xCall tx sent", xCallTx.hash);
+                              addRecentTransaction({ hash: xCallTx.hash, description: "xCall" });
+                              setStatus("waitForBridgeTxConfirmation");
+                              const xCallTxReciept = await xCallTx.wait();
+                              const transferId = getTransferIdFromLogs(xCallTxReciept.logs);
+                              setSelectedNFT(undefined);
+                              handleSuccess(`TransferId: ${transferId}`);
+                            } catch (e) {
+                              handleError(e);
+                            } finally {
+                              setStatus("initial");
+                            }
                           }}
                         >
                           Bridge
@@ -232,92 +296,13 @@ const HomePage: NextPage = () => {
                           shadow={configJsonFile.style.shadow}
                           fontWeight="bold"
                           variant={"secondary"}
+                          disabled={status !== "initial"}
                           onClick={() => {
-                            setNFT(undefined);
+                            setSelectedNFT(undefined);
                           }}
                         >
                           Cancel
                         </Button>
-                        <Modal
-                          header={"Bridge"}
-                          isOpen={bridgeModalDisclosure.isOpen}
-                          onClose={() => {
-                            setStatus("preview");
-                            bridgeModalDisclosure.onClose();
-                          }}
-                        >
-                          <Stack spacing="6">
-                            <Text
-                              textAlign={"center"}
-                              fontWeight={"bold"}
-                              color={configJsonFile.style.color.black.text.secondary}
-                            >
-                              {status === "preview"
-                                ? "Preview"
-                                : status === "checkApprovalStatus"
-                                ? "Check Approval Status..."
-                                : status === "waitForApprovalTxSignature"
-                                ? "Please Approve NFTHashi Bridge"
-                                : status === "waitForApprovalTxConfirmation"
-                                ? "Waiting the Approval Tx Confirmation..."
-                                : status === "waitForBridgeTxSignature"
-                                ? "Please Confirm Bridge Tx"
-                                : status === "waitForBridgeTxConfirmation"
-                                ? "Waiting the Bridge Tx Confirmation..."
-                                : "Congratulation!"}
-                            </Text>
-
-                            <Button
-                              onClick={async () => {
-                                try {
-                                  const resolved = await Promise.all([
-                                    connectedChainSelectedNFTContract
-                                      .getApproved(nft.tokenId)
-                                      .then((approved) => compareInLowerCase(connectedAddress, approved)),
-                                    connectedChainSelectedNFTContract.isApprovedForAll(
-                                      connectedAddress,
-                                      connectedChainDeployedHashi721BridgeContract.address
-                                    ),
-                                  ]);
-                                  const approved = resolved.some((v) => v);
-                                  if (!approved) {
-                                    setStatus("waitForApprovalTxSignature");
-                                    const approveTx = await connectedChainSelectedNFTContract.setApprovalForAll(
-                                      connectedChainDeployedHashi721BridgeContract.address,
-                                      true
-                                    );
-                                    console.log("setApprovalForAll tx sent", approveTx.hash);
-                                    setStatus("waitForApprovalTxConfirmation");
-                                    await approveTx.wait();
-                                  }
-                                  setStatus("waitForBridgeTxSignature");
-                                  const xCallTx = await connectedChainDeployedHashi721BridgeContract.xCall(
-                                    destinationChainConfig.domainId,
-                                    RELAYER_FEE,
-                                    SLIPPAGE,
-                                    connectedChainSelectedNFTContract.address,
-                                    destinationChainConfig.deployments.hashi721Bridge,
-                                    nft.tokenId,
-                                    false
-                                  );
-                                  console.log("xCall tx sent", xCallTx.hash);
-                                  setStatus("waitForBridgeTxConfirmation");
-                                  const xCallTxReciept = await xCallTx.wait();
-                                  const transferId = getTransferIdFromLogs(xCallTxReciept.logs);
-                                  setNFT(undefined);
-                                  setTransferId(transferId);
-                                  setStatus("confirmed");
-                                } catch (e) {
-                                  errorHandler.handle(e);
-                                  bridgeModalDisclosure.onClose();
-                                  setStatus("preview");
-                                }
-                              }}
-                            >
-                              Confirm
-                            </Button>
-                          </Stack>
-                        </Modal>
                       </VStack>
                     )}
                   </>

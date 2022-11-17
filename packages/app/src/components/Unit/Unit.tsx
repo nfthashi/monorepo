@@ -7,7 +7,7 @@ export interface UnitProps extends BoxProps {
   description: string;
 }
 
-export const Unit: React.FC<UnitProps> = ({ children, header, description }) => {
+export const Unit: React.FC<UnitProps> = ({ children, header, description, ...props }) => {
   return (
     <Box
       mx="auto"
@@ -16,6 +16,7 @@ export const Unit: React.FC<UnitProps> = ({ children, header, description }) => 
       boxShadow={configJsonFile.style.shadow}
       borderRadius={configJsonFile.style.radius}
       bgColor={configJsonFile.style.color.white.bg}
+      {...props}
     >
       <Stack spacing="2">
         <Stack spacing="1">
