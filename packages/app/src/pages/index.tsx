@@ -30,8 +30,6 @@ const HomePage: NextPage = () => {
               variant="secondary"
               fontWeight={"bold"}
               rounded={configJsonFile.style.radius}
-              size={configJsonFile.style.size}
-              fontSize="lg"
               onClick={() => router.push(configJsonFile.url.docs)}
             >
               Docs
@@ -40,8 +38,6 @@ const HomePage: NextPage = () => {
               w="full"
               fontWeight={"bold"}
               rounded={configJsonFile.style.radius}
-              size={configJsonFile.style.size}
-              fontSize="lg"
               onClick={() => router.push("/bridge")}
             >
               App

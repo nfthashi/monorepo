@@ -11,3 +11,7 @@ export const truncate = (str: string | undefined, pre: number, post?: number) =>
 };
 
 export const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+export const compareInLowerCase = (str1: string, str2: string) => {
+  return str1.toLowerCase() === str2.toLowerCase();
+};

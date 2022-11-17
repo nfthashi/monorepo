@@ -17,7 +17,7 @@ export const NFT: React.FC<NFTProps> = ({ nft, ...boxProps }) => {
         src={nft.metadata.image}
         alt="nft"
         rounded={configJsonFile.style.radius}
-        fallback={<Skeleton />}
+        fallbackSrc={"/assets/image-placeholder.png"}
         fit="cover"
       />
       <Box

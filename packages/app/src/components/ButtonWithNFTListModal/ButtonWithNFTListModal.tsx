@@ -9,11 +9,12 @@ import { NFT as NFTType } from "@/types/NFT";
 
 import configJsonFile from "../../../config.json";
 
-export interface SelectNFTButtonProps extends ButtonProps {
+export interface ButtonWithNFTListModalProps extends ButtonProps {
   setNFT: (nft: NFTType) => void;
+  text?: string;
 }
 
-export const SelectNFTButton: React.FC<SelectNFTButtonProps> = ({ setNFT, ...buttonProps }) => {
+export const ButtonWithNFTListModal: React.FC<ButtonWithNFTListModalProps> = ({ setNFT, children, ...buttonProps }) => {
   const { address: connectedAddress } = useAccount();
   const { connectedChainId } = useConnectedChainId();
   const modalDisclosure = useDisclosure();
@@ -25,7 +26,6 @@ export const SelectNFTButton: React.FC<SelectNFTButtonProps> = ({ setNFT, ...but
     <>
       <Button
         size={configJsonFile.style.size}
-        fontSize="lg"
         rounded={configJsonFile.style.radius}
         fontWeight="bold"
         isLoading={isNFTLoading}
@@ -46,7 +46,7 @@ export const SelectNFTButton: React.FC<SelectNFTButtonProps> = ({ setNFT, ...but
         }}
         {...buttonProps}
       >
-        Select NFT
+        {children}
       </Button>
       <Modal header={"Select NFT"} onClose={modalDisclosure.onClose} isOpen={modalDisclosure.isOpen}>
         <SimpleGrid columns={2} gap={4}>
