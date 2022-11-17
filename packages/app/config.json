@@ -42,6 +42,6 @@
     },
     "size": "lg",
     "radius": "xl",
-    "shadow": "md"
+    "shadow": "sm"
   }
 }

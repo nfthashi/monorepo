@@ -1,5 +1,5 @@
 import { getDefaultWallets } from "@rainbow-me/rainbowkit";
-import { Chain, chain, configureChains, createClient } from "wagmi";
+import { Chain, configureChains, createClient } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
 
 import networkJsonFile from "../../../../contracts/network.json";
@@ -18,7 +18,7 @@ const supportedChains: Chain[] = Object.entries(networkJsonFile).map(([chainId, 
       default: network.rpc,
     },
     blockExplorers: {
-      default: { name: network.explorer.name, url: network.explorer.url },
+      default: { name: network.explorer.tx.name, url: network.explorer.tx.url },
     },
     testnet: true,
   };
@@ -31,7 +31,7 @@ export interface RainbowWeb3AuthConnectorProps {
 }
 
 const { connectors } = getDefaultWallets({
-  appName: "NFTBeats",
+  appName: "NFTHashi",
   chains,
 });
 

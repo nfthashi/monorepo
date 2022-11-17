@@ -6,7 +6,10 @@
     "domainId": 1735353714,
     "currency": "ETH",
     "rpc": "https://rpc.ankr.com/eth_goerli",
-    "explorer": { "name": "Connextscan", "url": "https://testnet.amarok.connextscan.io" },
+    "explorer": {
+      "tx": { "name": "Etherscan", "url": "https://goerli.etherscan.io" },
+      "nft": { "name": "Opensea", "url": "https://testnets.opensea.io/assets/goerli" }
+    },
     "api": "moralis",
     "deployments": {
       "connext": "0x99A784d082476E551E5fc918ce3d849f2b8e89B6",
@@ -22,7 +25,10 @@
     "domainId": 1735356532,
     "currency": "ETH",
     "rpc": "https://rpc.ankr.com/optimism_testnet",
-    "explorer": { "name": "Connextscan", "url": "https://testnet.amarok.connextscan.io" },
+    "explorer": {
+      "tx": { "name": "Etherescan Optimism", "url": "https://goerli-optimism.etherscan.io" },
+      "nft": { "name": "Opensea", "url": "https://testnets.opensea.io/assets/optimism-goerli" }
+    },
     "api": "alchemy",
     "deployments": {
       "connext": "0x705791AD27229dd4CCf41b6720528AfE1bcC2910",
@@ -38,7 +44,10 @@
     "domainId": 9991,
     "currency": "MATIC",
     "rpc": "https://rpc.ankr.com/polygon_mumbai",
-    "explorer": { "name": "Connextscan", "url": "https://testnet.amarok.connextscan.io" },
+    "explorer": {
+      "tx": { "name": "Etherscan", "url": "https://goerli.etherscan.io" },
+      "nft": { "name": "Opensea", "url": "https://testnets.opensea.io/assets/mumbai" }
+    },
     "api": "moralis",
     "deployments": {
       "connext": "0xfeBBcfe9a88aadefA6e305945F2d2011493B15b4",

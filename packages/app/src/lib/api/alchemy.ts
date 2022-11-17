@@ -18,6 +18,7 @@ export const getNFTsWithAlchemy = async (userAddress: string, chainId: ChainId):
   const { ownedNfts } = await alchemy.nft.getNftsForOwner(userAddress);
   return ownedNfts.map((nft) => {
     return {
+      chainId,
       contractAddress: nft.contract.address,
       tokenId: nft.tokenId,
       metadata: {

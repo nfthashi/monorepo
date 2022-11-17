@@ -9,8 +9,20 @@ export const myChakraUITheme = extendTheme(
     colors: { ...theme.colors, brand: configJsonFile.style.color.brand },
     components: {
       Button: {
+        baseStyle: {
+          fontWeight: "bold",
+          rounded: configJsonFile.style.radius,
+          shadow: configJsonFile.style.shadow,
+        },
         defaultProps: {
+          size: configJsonFile.style.size,
+          variant: "primary",
           colorScheme: "brand",
+        },
+      },
+      Select: {
+        defaultProps: {
+          size: configJsonFile.style.size,
         },
       },
     },

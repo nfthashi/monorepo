@@ -18,6 +18,7 @@ export const getNFTsWithMoralis = async (userAddress: string, chainId: ChainId):
   return result.map((nft) => {
     const data = nft.toJSON();
     return {
+      chainId,
       contractAddress: data.tokenAddress,
       tokenId: String(data.tokenId),
       metadata: {

@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
 
+import { getMinimulProxyCreationCodeHash } from "../lib/create2";
 import { ADDRESS_1 } from "./helper/constant";
 
 describe("Hashi721Bridge", function () {
@@ -23,8 +24,7 @@ describe("Hashi721Bridge", function () {
     const mintedTokenURI = `http://localhost:3000/${mintedTokenId}`;
     await wrappedHashi721.connect(owner).mint(holder.address, mintedTokenId, mintedTokenURI);
     await wrappedHashi721.connect(holder).setApprovalForAll(hashi721Bridge.address, true);
-    const Clone = await ethers.getContractFactory("TestClone");
-    const clone = await Clone.connect(signer).deploy();
+
     return {
       signer,
       owner,
@@ -37,7 +37,6 @@ describe("Hashi721Bridge", function () {
       hashi721Bridge,
       mintedTokenId,
       mintedTokenURI,
-      clone,
     };
   }
 
@@ -163,17 +162,14 @@ describe("Hashi721Bridge", function () {
 
   describe("xReceive", function () {
     it("should work when bridge: [original -> other], * 2", async function () {
-      const { WrappedHashi721, wrappedHashi721, hashi721Bridge, clone } = await fixture();
+      const { WrappedHashi721, wrappedHashi721, hashi721Bridge } = await fixture();
       const originalDomainId = anotherDomainId;
       const originalAsset = ADDRESS_1;
       const to = ADDRESS_1;
       const tokenURI = "";
       const salt = ethers.utils.solidityKeccak256(["uint32", "address"], [originalDomainId, ADDRESS_1]);
-      const deployedAssetAddress = await clone.predictDeterministicAddress(
-        wrappedHashi721.address,
-        salt,
-        hashi721Bridge.address
-      );
+      const creationCodeHash = getMinimulProxyCreationCodeHash(wrappedHashi721.address);
+      const deployedAssetAddress = ethers.utils.getCreate2Address(hashi721Bridge.address, salt, creationCodeHash);
       const deployedAsset = WrappedHashi721.attach(deployedAssetAddress);
       const firstTokenId = 0;
       const firstCallData = await hashi721Bridge.testEncodeCallData(

@@ -1,10 +1,7 @@
 import { ethers } from "ethers";
-import { id } from "ethers/lib/utils.js";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-// import networks from "../../../contracts/networks.json";
-// import { isChain } from "../../../contracts/types/chain";
-import { getNFTsWithAlchemy, getNFTsWithMoralis } from "@/lib/nft";
+import { getNFTsWithAlchemy, getNFTsWithMoralis } from "@/lib/api";
 import { NFT } from "@/types/NFT";
 
 import networkJsonFile from "../../../../contracts/network.json";
