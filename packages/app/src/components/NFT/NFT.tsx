@@ -29,13 +29,16 @@ export const NFT: React.FC<NFTProps> = ({ nft, onClick, width, height }) => {
         height={height}
         onClick={onClick}
       />
+      <Box position="absolute" bottom="1" left="1">
+        <Image src={`/assets/chains/${networkJsonFile[nft.chainId].icon}`} w="4" h="4" alt="chain" />
+      </Box>
       <Box
         position="absolute"
         top="1"
         right="1"
         py="1"
         px="2"
-        backgroundColor={configJsonFile.style.color.black.bg}
+        backgroundColor={configJsonFile.style.color.black.text.secondary}
         rounded={configJsonFile.style.radius}
         shadow={configJsonFile.style.shadow}
       >
@@ -59,24 +62,6 @@ export const NFT: React.FC<NFTProps> = ({ nft, onClick, width, height }) => {
           <Icon w={2} h={2} as={FaExternalLinkAlt} color={configJsonFile.style.color.white.text.secondary} />
         </HStack>
       </Box>
-      {nft.metadata.name && (
-        <Box
-          position="absolute"
-          bottom="1"
-          left="1"
-          py="1"
-          px="2"
-          backgroundColor={configJsonFile.style.color.black.bg}
-          rounded={configJsonFile.style.radius}
-          shadow={configJsonFile.style.shadow}
-        >
-          <Box>
-            <Text fontSize="xx-small" color={configJsonFile.style.color.white.text.secondary} textAlign={"right"}>
-              {truncate(nft.metadata.name, 12)}
-            </Text>
-          </Box>
-        </Box>
-      )}
     </Box>
   );
 };

@@ -5,6 +5,7 @@
     "name": "Ethereum Georli",
     "domainId": 1735353714,
     "currency": "ETH",
+    "icon": "ethereum.png",
     "rpc": "https://rpc.ankr.com/eth_goerli",
     "explorer": {
       "tx": { "name": "Etherscan", "url": "https://goerli.etherscan.io" },
@@ -24,6 +25,7 @@
     "name": "Optimism Georli",
     "domainId": 1735356532,
     "currency": "ETH",
+    "icon": "optimism.svg",
     "rpc": "https://rpc.ankr.com/optimism_testnet",
     "explorer": {
       "tx": { "name": "Etherescan Optimism", "url": "https://goerli-optimism.etherscan.io" },
@@ -43,6 +45,7 @@
     "name": "Polygon Mumbai",
     "domainId": 9991,
     "currency": "MATIC",
+    "icon": "polygon.svg",
     "rpc": "https://rpc.ankr.com/polygon_mumbai",
     "explorer": {
       "tx": { "name": "Etherscan", "url": "https://goerli.etherscan.io" },

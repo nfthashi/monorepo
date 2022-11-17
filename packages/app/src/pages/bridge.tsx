@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { useChainModal, useConnectModal } from "@rainbow-me/rainbowkit";
 import { NextPage } from "next";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MdSwapVerticalCircle } from "react-icons/md";
 import ReactLoading from "react-loading";
 import { useAccount } from "wagmi";
@@ -84,6 +84,12 @@ const HomePage: NextPage = () => {
     setDestinationChainId(originChainId);
     setOriginChainId(destinationChainId);
   };
+
+  useEffect(() => {
+    if (!isWalletConnected) {
+      setNFT(undefined);
+    }
+  }, [isWalletConnected]);
 
   return (
     <Layout>
