@@ -45,7 +45,7 @@
     "name": "Polygon Mumbai",
     "domainId": 9991,
     "currency": "MATIC",
-    "icon": "polygon.svg",
+    "icon": "polygon.png",
     "rpc": "https://rpc.ankr.com/polygon_mumbai",
     "explorer": {
       "tx": { "name": "Etherscan", "url": "https://goerli.etherscan.io" },

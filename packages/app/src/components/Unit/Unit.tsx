@@ -24,7 +24,7 @@ export const Unit: React.FC<UnitProps> = ({ children, header, description, learn
     >
       <Stack spacing="2">
         <Stack spacing="1">
-          <Text fontWeight={"bold"} fontSize="lg" color={configJsonFile.style.color.black.text.primary}>
+          <Text fontWeight={"bold"} fontSize="  " color={configJsonFile.style.color.black.text.primary}>
             {header}
           </Text>
           {(description || learnMore) && (

@@ -16,8 +16,8 @@ export const useErrorHandler = () => {
     console.error(description);
     toast({
       title: `Error`,
-      description: truncate(description, 100),
-      status: "info",
+      description: truncate(description, 140),
+      status: "error",
       position: "top-right",
       duration: 10000,
       isClosable: true,
