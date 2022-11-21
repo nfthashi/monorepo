@@ -14,7 +14,7 @@ import {
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import { useAddRecentTransaction, useChainModal, useConnectModal } from "@rainbow-me/rainbowkit";
+import { useChainModal, useConnectModal } from "@rainbow-me/rainbowkit";
 import { NextPage } from "next";
 import { useEffect, useState } from "react";
 import { MdOutlineSwapVerticalCircle } from "react-icons/md";
@@ -31,12 +31,12 @@ import { useConnectedChainId } from "@/hooks/useConnectedChainId";
 import { useCounterfactualBridgedNFT } from "@/hooks/useCounterfactualBridgedNFT";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { useIsWalletConnected } from "@/hooks/useIsWalletConnected";
+import { useRecentCrosschainTx } from "@/hooks/useRecentCrosschainTx";
 import { useSelectedChain } from "@/hooks/useSelectedChain";
 import { useSelectedNFTContract } from "@/hooks/useSelectedNFTContract";
-import { compareInLowerCase, delay } from "@/lib/utils";
+import { compareInLowerCase } from "@/lib/utils";
 import { NFT as NFTType } from "@/types/NFT";
 
-import { getTransferIdFromLogs } from "../../../contracts/lib/log";
 import networkJsonFile from "../../../contracts/network.json";
 import { ChainId } from "../../../contracts/types/ChainId";
 import configJsonFile from "../../config.json";
@@ -56,17 +56,18 @@ const HomePage: NextPage = () => {
   const [nftList, setNFTList] = useState<NFTType[]>([]);
   const [isNFTListLoading, setIsNFTListLoading] = useState(false);
 
-  const addRecentTransaction = useAddRecentTransaction();
   const { openConnectModal } = useConnectModal();
   const { openChainModal } = useChainModal();
   const selectNFTModalDisclosure = useDisclosure();
-  const stepModalDisclosure = useDisclosure({ defaultIsOpen: true });
+  const stepModalDisclosure = useDisclosure();
 
   const { handleError } = useErrorHandler();
   const [currentStep, isTxProcessing, { setStep, setIsTxProcessing }] = useStep({
     maxStep: steps.length,
     initialStep: 0,
   });
+
+  const { addRecentCrosschainTx } = useRecentCrosschainTx(connectedAddress);
 
   const swap = () => {
     setDestinationChainId(originChainId);
@@ -78,6 +79,18 @@ const HomePage: NextPage = () => {
       setSelectedNFT(undefined);
     }
   }, [isWalletConnected]);
+
+  useEffect(() => {
+    if (!connectedChainId) {
+      return;
+    }
+    if (connectedChainId === destinationChainId) {
+      swap();
+    } else {
+      setOriginChainId(connectedChainId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [swap, connectedChainId]);
 
   return (
     <Layout>
@@ -117,7 +130,7 @@ const HomePage: NextPage = () => {
                   rounded="full"
                   shadow="none"
                   size="xs"
-                  variant={"ghost"}
+                  variant={"unstyled"}
                   isDisabled={!!selectedNFT}
                   onClick={swap}
                 />
@@ -256,7 +269,6 @@ const HomePage: NextPage = () => {
                                   );
                                   setIsTxProcessing(true);
                                   console.log("approve tx sent", approveTx.hash);
-                                  addRecentTransaction({ hash: approveTx.hash, description: "setApprovalForAll" });
                                   await approveTx.wait();
                                   setIsTxProcessing(false);
                                 }
@@ -272,12 +284,10 @@ const HomePage: NextPage = () => {
                                 );
                                 setIsTxProcessing(true);
                                 console.log("xCall tx sent", xCallTx.hash);
-                                addRecentTransaction({ hash: xCallTx.hash, description: "xCall" });
-                                const xCallTxReciept = await xCallTx.wait();
+                                addRecentCrosschainTx(xCallTx.hash);
+                                await xCallTx.wait();
                                 setIsTxProcessing(false);
                                 setStep(3);
-                                const transferId = getTransferIdFromLogs(xCallTxReciept.logs);
-                                console.log(transferId);
                               } catch (e) {
                                 handleError(e);
                                 if (currentStep === 3) {

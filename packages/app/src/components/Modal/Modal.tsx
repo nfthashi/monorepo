@@ -26,7 +26,7 @@ export const Modal: React.FC<ModalProps> = ({ header, children, isOpen, onClose 
           <Text fontSize="md" color={configJsonFile.style.color.black.text.primary} fontWeight="bold">
             {header}
           </Text>
-          <ModalCloseButton color={configJsonFile.style.color.black.text.primary} />
+          <ModalCloseButton color={configJsonFile.style.color.black.text.primary} top="3" right="4" />
         </ModalHeader>
         <ModalBody px="6" pb="8">
           {children}

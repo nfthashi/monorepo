@@ -35,5 +35,6 @@ export const myRainbowKitTheme = {
   ...rainbowKitTheme,
   colors: {
     ...rainbowKitTheme.colors,
+    accentColor: myChakraUITheme.colors.brand[500],
   },
 };

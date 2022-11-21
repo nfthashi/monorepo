@@ -1,9 +1,26 @@
-import { Box, Container, Flex, HStack, Icon, Image, Link, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Container,
+  Flex,
+  HStack,
+  Icon,
+  IconButton,
+  Image,
+  Link,
+  Stack,
+  Text,
+  useDisclosure,
+} from "@chakra-ui/react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { FaDiscord, FaGithub, FaTwitter } from "react-icons/fa";
-import { MdArticle } from "react-icons/md";
+import { HiOutlineExternalLink } from "react-icons/hi";
+import { MdArticle, MdOutlineHistory } from "react-icons/md";
 
 import { Head } from "@/components/Head";
+import { Modal } from "@/components/Modal";
+import { useIsWalletConnected } from "@/hooks/useIsWalletConnected";
+import { useRecentCrosschainTx } from "@/hooks/useRecentCrosschainTx";
+import { truncate } from "@/lib/utils";
 
 import configJsonFile from "../../../config.json";
 
@@ -12,6 +29,10 @@ export interface LayoutProps {
 }
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
+  const { isWalletConnected, connectedAddress } = useIsWalletConnected();
+  const { recentCrosschainTxList } = useRecentCrosschainTx(connectedAddress);
+  const recentCrosschainTxModelDisclosure = useDisclosure();
+
   return (
     <Flex minHeight={"100vh"} direction={"column"} bg={configJsonFile.style.color.black.bg}>
       <Head />
@@ -21,11 +42,50 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             <Link href="/">
               <Image src={"/assets/logo.png"} alt="logo" h="12" />
             </Link>
-            <Box>
+            <HStack spacing="3">
               <ConnectButton accountStatus={"address"} showBalance={false} chainStatus={"icon"} />
-            </Box>
+              {isWalletConnected && (
+                <IconButton
+                  icon={
+                    <Icon w={6} h={6} as={MdOutlineHistory} color={configJsonFile.style.color.white.text.secondary} />
+                  }
+                  aria-label="swap"
+                  rounded="full"
+                  shadow="none"
+                  size="xs"
+                  variant={"unstyled"}
+                  isDisabled={recentCrosschainTxList.length === 0}
+                  onClick={recentCrosschainTxModelDisclosure.onOpen}
+                />
+              )}
+            </HStack>
           </HStack>
         </Box>
+        <Modal
+          header="xCall History"
+          isOpen={recentCrosschainTxModelDisclosure.isOpen}
+          onClose={recentCrosschainTxModelDisclosure.onClose}
+        >
+          <Stack spacing="2">
+            {recentCrosschainTxList.map((recentCrosschainTx) => {
+              return (
+                <HStack key={recentCrosschainTx.hash} justify={"space-between"}>
+                  <Text fontSize="xs">{truncate(recentCrosschainTx.hash, 20, 8)}</Text>
+                  <IconButton
+                    icon={<Icon as={HiOutlineExternalLink} color={configJsonFile.style.color.accent} />}
+                    aria-label="external"
+                    rounded="full"
+                    shadow="none"
+                    size="sm"
+                    variant={"ghost"}
+                    isDisabled={true}
+                    onClick={recentCrosschainTxModelDisclosure.onOpen}
+                  />
+                </HStack>
+              );
+            })}
+          </Stack>
+        </Modal>
       </Container>
       <Container maxW="lg" py="4" flex={1}>
         {children}
