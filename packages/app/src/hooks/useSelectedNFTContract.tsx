@@ -3,13 +3,13 @@ import { useSigner } from "wagmi";
 
 import { getERC721Contract } from "@/lib/contracts";
 
-export const useConnectedChainSelectedNFTContract = (address?: string) => {
+export const useSelectedNFTContract = (address?: string) => {
   const { data: signer } = useSigner();
-  const connectedChainSelectedNFTContract = useMemo(() => {
+  const selectedNFTContract = useMemo(() => {
     if (!signer || !address) {
       return;
     }
     return getERC721Contract(address, signer);
   }, [signer, address]);
-  return { connectedChainSelectedNFTContract };
+  return { selectedNFTContract };
 };

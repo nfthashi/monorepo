@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
 
-import { getMinimulProxyCreationCodeHash } from "../lib/create2";
+import { getDestinationChainNFTAddress } from "../lib/create2";
 import { ADDRESS_1 } from "./helper/constant";
 
 describe("Hashi721Bridge", function () {
@@ -167,9 +167,12 @@ describe("Hashi721Bridge", function () {
       const originalAsset = ADDRESS_1;
       const to = ADDRESS_1;
       const tokenURI = "";
-      const salt = ethers.utils.solidityKeccak256(["uint32", "address"], [originalDomainId, ADDRESS_1]);
-      const creationCodeHash = getMinimulProxyCreationCodeHash(wrappedHashi721.address);
-      const deployedAssetAddress = ethers.utils.getCreate2Address(hashi721Bridge.address, salt, creationCodeHash);
+      const deployedAssetAddress = getDestinationChainNFTAddress(
+        hashi721Bridge.address,
+        wrappedHashi721.address,
+        originalDomainId,
+        ADDRESS_1
+      );
       const deployedAsset = WrappedHashi721.attach(deployedAssetAddress);
       const firstTokenId = 0;
       const firstCallData = await hashi721Bridge.testEncodeCallData(

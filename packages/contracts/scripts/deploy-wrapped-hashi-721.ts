@@ -5,6 +5,7 @@ import path from "path";
 import networkJsonFile from "../network.json";
 import { isChainId } from "../types/ChainId";
 
+// this is normal deploy
 async function main() {
   const chainId = String(network.config.chainId);
   if (!isChainId(chainId)) {

@@ -19,7 +19,6 @@ import { NextPage } from "next";
 import { useEffect, useState } from "react";
 import { MdSwapVerticalCircle } from "react-icons/md";
 import ReactLoading from "react-loading";
-import { useAccount } from "wagmi";
 
 import { Layout } from "@/components/Layout";
 import { Modal } from "@/components/Modal";
@@ -27,15 +26,12 @@ import { NFT } from "@/components/NFT";
 import { SelectChain } from "@/components/SelectChain";
 import { Unit } from "@/components/Unit";
 import { RELAYER_FEE, SLIPPAGE } from "@/config";
-import { useConnectedChainConfig } from "@/hooks/useConnectedChainConfig";
-import { useConnectedChainDeployedHashi721BridgeContract } from "@/hooks/useConnectedChainDeployedHashi721BridgeContract";
 import { useConnectedChainId } from "@/hooks/useConnectedChainId";
-import { useConnectedChainSelectedNFTContract } from "@/hooks/useConnectedChainSelectedNFTContract";
-import { useDestinationNFT } from "@/hooks/useDestinationNFT";
+import { useCounterfactualBridgedNFT } from "@/hooks/useCounterfactualBridgedNFT";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { useIsWalletConnected } from "@/hooks/useIsWalletConnected";
-import { useSelectedChainConfig } from "@/hooks/useSelectedChainConfig";
-import { useSuccessHandler } from "@/hooks/useSuccessHandler";
+import { useSelectedChain } from "@/hooks/useSelectedChain";
+import { useSelectedNFTContract } from "@/hooks/useSelectedNFTContract";
 import { compareInLowerCase } from "@/lib/utils";
 import { NFT as NFTType } from "@/types/NFT";
 
@@ -45,24 +41,19 @@ import { ChainId } from "../../../contracts/types/ChainId";
 import configJsonFile from "../../config.json";
 
 const HomePage: NextPage = () => {
-  const { isWalletConnected } = useIsWalletConnected();
+  const { isWalletConnected, connectedAddress } = useIsWalletConnected();
   const { connectedChainId } = useConnectedChainId();
-  const { address: connectedAddress } = useAccount();
-  const { connectedChainConfig } = useConnectedChainConfig();
-  const { connectedChainDeployedHashi721BridgeContract } = useConnectedChainDeployedHashi721BridgeContract();
-
+  const { config: connectedChainConfig, deployedHashi721BridgeContract: connectedChainDeployedHashi721BridgeContract } =
+    useSelectedChain(connectedChainId);
   const [originChainId, setOriginChainId] = useState<ChainId>("5");
   const [destinationChainId, setDestinationChainId] = useState<ChainId>("420");
-
-  const { selectedChainConfig: destinationChainConfig } = useSelectedChainConfig(destinationChainId);
-
+  const { config: destinationChainConfig } = useSelectedChain(destinationChainId);
   const [selectedNFT, setSelectedNFT] = useState<NFTType>();
-  const { destinationNFT } = useDestinationNFT(selectedNFT, destinationChainId);
+  const { selectedNFTContract } = useSelectedNFTContract(selectedNFT?.contractAddress);
+  const { counterfactualBridgedNFT } = useCounterfactualBridgedNFT(originChainId, destinationChainId, selectedNFT);
 
-  const { connectedChainSelectedNFTContract } = useConnectedChainSelectedNFTContract(selectedNFT?.contractAddress);
-
-  const [nfts, setSelectedNFTs] = useState<NFTType[]>([]);
-  const [isNFTLoading, setIsNFTLoading] = useState(false);
+  const [nftList, setNFTList] = useState<NFTType[]>([]);
+  const [isNFTListLoading, setIsNFTListLoading] = useState(false);
 
   const [status, setStatus] = useState<
     | "initial"
@@ -80,7 +71,6 @@ const HomePage: NextPage = () => {
   const selectNFTModalDisclosure = useDisclosure();
 
   const { handleError } = useErrorHandler();
-  const { handleSuccess } = useSuccessHandler();
 
   const swap = () => {
     setDestinationChainId(originChainId);
@@ -147,8 +137,8 @@ const HomePage: NextPage = () => {
               <VStack>
                 <ReactLoading type={"bars"} color={configJsonFile.style.color.accent} width={24} height={24} />
               </VStack>
-              {destinationNFT && <NFT height="36" width="36" nft={destinationNFT} />}
-              {!destinationNFT && (
+              {counterfactualBridgedNFT && <NFT height="36" width="36" nft={counterfactualBridgedNFT} />}
+              {!counterfactualBridgedNFT && (
                 <Center height="36" width="36">
                   <Spinner color={configJsonFile.style.color.accent} />
                 </Center>
@@ -178,20 +168,20 @@ const HomePage: NextPage = () => {
                     {!selectedNFT && (
                       <>
                         <Button
-                          isLoading={isNFTLoading}
+                          isLoading={isNFTListLoading}
                           onClick={() => {
-                            setIsNFTLoading(true);
+                            setIsNFTListLoading(true);
                             fetch(`/api/nft?userAddress=${connectedAddress}&chainId=${connectedChainId}`)
                               .then((data) => data.json())
                               .then((data) => {
-                                setSelectedNFTs(data);
+                                setNFTList(data);
                                 selectNFTModalDisclosure.onOpen();
                               })
                               .catch((e) => {
                                 console.error(e.message);
                               })
                               .finally(() => {
-                                setIsNFTLoading(false);
+                                setIsNFTListLoading(false);
                               });
                           }}
                         >
@@ -203,7 +193,7 @@ const HomePage: NextPage = () => {
                           isOpen={selectNFTModalDisclosure.isOpen}
                         >
                           <SimpleGrid columns={2} gap={4}>
-                            {nfts.map((nft, i) => {
+                            {nftList.map((nft, i) => {
                               return (
                                 <NFT
                                   key={`list_nft_${i}`}
@@ -219,7 +209,7 @@ const HomePage: NextPage = () => {
                         </Modal>
                       </>
                     )}
-                    {selectedNFT && connectedChainSelectedNFTContract && (
+                    {selectedNFT && selectedNFTContract && (
                       <VStack>
                         <Button
                           w="full"
@@ -243,10 +233,10 @@ const HomePage: NextPage = () => {
                           onClick={async () => {
                             try {
                               const resolved = await Promise.all([
-                                connectedChainSelectedNFTContract
+                                selectedNFTContract
                                   .getApproved(selectedNFT.tokenId)
                                   .then((approved) => compareInLowerCase(connectedAddress, approved)),
-                                connectedChainSelectedNFTContract.isApprovedForAll(
+                                selectedNFTContract.isApprovedForAll(
                                   connectedAddress,
                                   connectedChainDeployedHashi721BridgeContract.address
                                 ),
@@ -254,7 +244,7 @@ const HomePage: NextPage = () => {
                               const approved = resolved.some((v) => v);
                               if (!approved) {
                                 setStatus("waitForApprovalTxSignature");
-                                const approveTx = await connectedChainSelectedNFTContract.setApprovalForAll(
+                                const approveTx = await selectedNFTContract.setApprovalForAll(
                                   connectedChainDeployedHashi721BridgeContract.address,
                                   true
                                 );
@@ -268,7 +258,7 @@ const HomePage: NextPage = () => {
                                 destinationChainConfig.domainId,
                                 RELAYER_FEE,
                                 SLIPPAGE,
-                                connectedChainSelectedNFTContract.address,
+                                selectedNFTContract.address,
                                 destinationChainConfig.deployments.hashi721Bridge,
                                 selectedNFT.tokenId,
                                 false
@@ -279,7 +269,6 @@ const HomePage: NextPage = () => {
                               const xCallTxReciept = await xCallTx.wait();
                               const transferId = getTransferIdFromLogs(xCallTxReciept.logs);
                               setSelectedNFT(undefined);
-                              handleSuccess(`TransferId: ${transferId}`);
                             } catch (e) {
                               handleError(e);
                             } finally {

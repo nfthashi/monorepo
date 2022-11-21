@@ -23,6 +23,7 @@ export const SelectChain: React.FC<SelectChain> = ({ type, value, onChange, disa
           rounded={configJsonFile.style.radius}
           boxShadow={configJsonFile.style.shadow}
           color={configJsonFile.style.color.black.text.secondary}
+          fontSize="sm"
           value={value}
           disabled={disabled}
           onChange={onChange}

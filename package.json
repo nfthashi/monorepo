@@ -8,7 +8,6 @@
   ],
   "scripts": {
     "prepare": "husky install",
-    "ci": "run-s build test lint",
     "predev": "yarn build:contracts",
     "dev": "run-p dev:*",
     "dev:app": "yarn workspace @nfthashi/app dev",
@@ -31,8 +30,5 @@
   "lint-staged": {
     "*.{ts,tsx}": "eslint --cache --fix",
     "*.--write": "prettier --write"
-  },
-  "resolutions": {
-    "@typescript-eslint/eslint-plugin": "5.42.0"
   }
 }

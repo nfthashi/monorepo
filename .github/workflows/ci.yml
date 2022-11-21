@@ -11,4 +11,6 @@ jobs:
         with:
           node-version: 14.x.x
       - run: yarn
-      - run: yarn ci
+      - run: yarn build
+      - run: yarn test
+      - run: yarn lint

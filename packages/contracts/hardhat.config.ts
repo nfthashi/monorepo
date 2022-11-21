@@ -19,7 +19,7 @@ const config: HardhatUserConfig = {
   solidity: {
     compilers: [
       {
-        version: "0.8.15",
+        version: "0.8.17",
       },
     ],
     settings: {
@@ -50,6 +50,9 @@ const config: HardhatUserConfig = {
       optimisticGoerli: process.env.ETHERSCAN_OPTIMISM_API || "",
       polygonMumbai: process.env.POLYGONSCAN_API || "",
     },
+  },
+  mocha: {
+    timeout: TIMEOUT,
   },
 };
 

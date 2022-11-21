@@ -11,3 +11,14 @@ export const getMinimulProxyCreationCodeHash = (implementation: string) => {
   );
   return ethers.utils.keccak256(creationCode);
 };
+
+export const getDestinationChainNFTAddress = (
+  factory: string,
+  implementation: string,
+  originalDomainId: number,
+  originalAsset: string
+) => {
+  const salt = ethers.utils.solidityKeccak256(["uint32", "address"], [originalDomainId, originalAsset]);
+  const creationCodeHash = getMinimulProxyCreationCodeHash(implementation);
+  return ethers.utils.getCreate2Address(factory, salt, creationCodeHash);
+};

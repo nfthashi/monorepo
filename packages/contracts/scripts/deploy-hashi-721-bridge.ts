@@ -6,6 +6,7 @@ import { TIMEOUT } from "../config";
 import networkJsonFile from "../network.json";
 import { isChainId } from "../types/ChainId";
 
+// this is deploy with oz upgrades
 async function main() {
   const chainId = String(network.config.chainId);
   if (!isChainId(chainId)) {
