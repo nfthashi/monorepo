@@ -1,13 +1,17 @@
-import { Box, BoxProps, Stack, Text } from "@chakra-ui/react";
+import { Box, BoxProps, Link, Stack, Text } from "@chakra-ui/react";
 
 import configJsonFile from "../../../config.json";
 
 export interface UnitProps extends BoxProps {
   header: string;
-  description: string;
+  description?: string;
+  learnMore?: {
+    text: string;
+    href: string;
+  };
 }
 
-export const Unit: React.FC<UnitProps> = ({ children, header, description, ...props }) => {
+export const Unit: React.FC<UnitProps> = ({ children, header, description, learnMore, ...props }) => {
   return (
     <Box
       mx="auto"
@@ -20,12 +24,25 @@ export const Unit: React.FC<UnitProps> = ({ children, header, description, ...pr
     >
       <Stack spacing="2">
         <Stack spacing="1">
-          <Text fontWeight={"bold"} fontSize="md" color={configJsonFile.style.color.black.text.primary}>
+          <Text fontWeight={"bold"} fontSize="lg" color={configJsonFile.style.color.black.text.primary}>
             {header}
           </Text>
-          <Text fontSize="sm" color={configJsonFile.style.color.black.text.secondary}>
-            {description}
-          </Text>
+          {(description || learnMore) && (
+            <Stack spacing="0">
+              {description && (
+                <Text fontSize="sm" color={configJsonFile.style.color.black.text.secondary}>
+                  {description}
+                </Text>
+              )}
+              {learnMore && (
+                <Text as={"span"} fontSize="xs" fontWeight={"bold"}>
+                  <Link href={learnMore.href} target={"_blank"} color={configJsonFile.style.color.accent}>
+                    {learnMore.text}
+                  </Link>
+                </Text>
+              )}
+            </Stack>
+          )}
         </Stack>
         <Box py="2">{children}</Box>
       </Stack>

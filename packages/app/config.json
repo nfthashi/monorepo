@@ -4,8 +4,9 @@
   "url": {
     "app": "https://nfthashi.com",
     "docs": "https://docs.nfthashi.com",
-    "github": "https://github.com/nfthashi/monorepo",
+    "twitter": "https://twitter.com/nfthashi",
     "discord": "https://discord.com/invite/dw7tBBHudE",
+    "github": "https://github.com/nfthashi/monorepo",
     "connext": "https://www.connext.network/"
   },
   "style": {

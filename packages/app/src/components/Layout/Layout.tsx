@@ -1,6 +1,6 @@
 import { Box, Container, Flex, HStack, Icon, Image, Link, Text } from "@chakra-ui/react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { FaDiscord, FaGithub } from "react-icons/fa";
+import { FaDiscord, FaGithub, FaTwitter } from "react-icons/fa";
 import { MdArticle } from "react-icons/md";
 
 import { Head } from "@/components/Head";
@@ -48,17 +48,26 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                   as={MdArticle}
                   aria-label="article"
                   color={configJsonFile.style.color.white.text.tertiary}
-                  w={6}
-                  h={6}
+                  w={5}
+                  h={5}
                 />
               </Link>
-              <Link href={configJsonFile.url.github} target={"_blank"}>
+              <Link href={configJsonFile.url.twitter} target={"_blank"}>
+                <Icon
+                  as={FaTwitter}
+                  aria-label="twitter"
+                  color={configJsonFile.style.color.white.text.tertiary}
+                  w={5}
+                  h={5}
+                />
+              </Link>
+              <Link href={configJsonFile.url.discord} target={"_blank"}>
                 <Icon
                   as={FaDiscord}
                   aria-label="discord"
                   color={configJsonFile.style.color.white.text.tertiary}
-                  w={6}
-                  h={6}
+                  w={5}
+                  h={5}
                 />
               </Link>
               <Link href={configJsonFile.url.github} target={"_blank"}>
@@ -66,8 +75,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                   as={FaGithub}
                   aria-label="github"
                   color={configJsonFile.style.color.white.text.tertiary}
-                  w={6}
-                  h={6}
+                  w={5}
+                  h={5}
                 />
               </Link>
             </HStack>

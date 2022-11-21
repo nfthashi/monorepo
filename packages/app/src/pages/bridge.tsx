@@ -17,7 +17,7 @@ import {
 import { useAddRecentTransaction, useChainModal, useConnectModal } from "@rainbow-me/rainbowkit";
 import { NextPage } from "next";
 import { useEffect, useState } from "react";
-import { MdSwapVerticalCircle } from "react-icons/md";
+import { MdOutlineSwapVerticalCircle } from "react-icons/md";
 import ReactLoading from "react-loading";
 
 import { Layout } from "@/components/Layout";
@@ -85,7 +85,12 @@ const HomePage: NextPage = () => {
 
   return (
     <Layout>
-      <Unit header={configJsonFile.name} description={configJsonFile.description} position="relative">
+      <Unit
+        header={configJsonFile.name}
+        description={"Bridge NFTs by Connext Amarok AMB"}
+        learnMore={{ text: "Learn more", href: "https://blog.connext.network/amarok-amb-update-77f142c22db3" }}
+        position="relative"
+      >
         <Flex position="absolute" top="0" right="0" p="4">
           <Text fontSize="xs" fontWeight={"bold"}>
             <Link href="https://faucet.paradigm.xyz/" target={"_blank"} color={configJsonFile.style.color.accent}>
@@ -110,10 +115,12 @@ const HomePage: NextPage = () => {
             <VStack>
               <IconButton
                 top="3.5"
-                icon={<Icon w={6} h={6} as={MdSwapVerticalCircle} />}
+                icon={<Icon w={6} h={6} as={MdOutlineSwapVerticalCircle} color="accent" />}
                 aria-label="swap"
                 rounded="full"
+                shadow="none"
                 size="xs"
+                variant={"ghost"}
                 isDisabled={!!selectedNFT}
                 onClick={swap}
               />
@@ -268,6 +275,7 @@ const HomePage: NextPage = () => {
                               setStatus("waitForBridgeTxConfirmation");
                               const xCallTxReciept = await xCallTx.wait();
                               const transferId = getTransferIdFromLogs(xCallTxReciept.logs);
+
                               setSelectedNFT(undefined);
                             } catch (e) {
                               handleError(e);
