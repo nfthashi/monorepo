@@ -1,64 +1,58 @@
-import "@nomiclabs/hardhat-etherscan";
-import "@nomiclabs/hardhat-waffle";
+import "@nomicfoundation/hardhat-toolbox";
 import "@openzeppelin/hardhat-upgrades";
-import "@typechain/hardhat";
-import "hardhat-gas-reporter";
-import "solidity-coverage";
-import "./tasks/__faucet/deploy";
-import "./tasks/cmd/deploy-bridge";
-import "./tasks/cmd/deploy-wrapped-nft-impl";
-import "./tasks/cmd/register";
-import "./tasks/cmd/upgrade-bridge";
-import "./tasks/cmd/upgrade-wrapped-nft-impl";
-import "./tasks/integration/register";
-import "./tasks/integration/deploy";
-import "./tasks/integration/upgrade-bridge";
-import "./tasks/integration/upgrade-wrapped-nft-impl";
 
 import * as dotenv from "dotenv";
 import { HardhatUserConfig } from "hardhat/config";
 
-import networks from "./networks.json";
+import { TIMEOUT } from "./config";
+import { getMnemonic } from "./lib/mnemonic";
+import { getNetworksUserConfigs } from "./lib/network";
+import networkJsonFile from "./network.json";
+import { ChainId } from "./types/ChainId";
 
 dotenv.config();
 
-const accounts = process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [];
+const mnemonic = getMnemonic();
+const networksUserConfigs = getNetworksUserConfigs(mnemonic);
 
 const config: HardhatUserConfig = {
   solidity: {
-    compilers: [{ version: "0.8.11" }, { version: "0.8.15" }],
+    compilers: [
+      {
+        version: "0.8.17",
+      },
+    ],
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 200,
+      },
+    },
   },
   networks: {
-    hardhat: process.env.FORK_GOERLI
-      ? {
-          forking: {
-            url: networks.goerli.rpc,
-          },
-        }
-      : {},
-    goerli: {
-      url: networks.goerli.rpc,
-      accounts,
-    },
-    polygonMumbai: {
-      url: networks.polygonMumbai.rpc,
-      accounts,
-    },
-    optimisticGoerli: {
-      url: networks.optimisticGoerli.rpc,
-      accounts,
-    },
-  },
-  gasReporter: {
-    enabled: process.env.REPORT_GAS !== undefined,
-    currency: "USD",
+    hardhat:
+      process.env.IS_INTEGRATION_TEST === "true"
+        ? {
+            chainId: Number(process.env.FORK_CHAIN_ID),
+            accounts: {
+              mnemonic,
+            },
+            forking: {
+              url: networkJsonFile[process.env.FORK_CHAIN_ID as ChainId].rpc,
+            },
+          }
+        : {},
+    ...networksUserConfigs,
   },
   etherscan: {
     apiKey: {
-      goerli: process.env.ETHERSCAN_API_KEY || "",
-      polygonMumbai: process.env.POLYGONSCAN_API_KEY || "",
-      optimisticGoerli: process.env.OPTIMISM_ETHERSCAN_API_KEY || "",
+      goerli: process.env.ETHERSCAN_API || "",
+      optimisticGoerli: process.env.ETHERSCAN_OPTIMISM_API || "",
+      polygonMumbai: process.env.POLYGONSCAN_API || "",
     },
+  },
+  mocha: {
+    timeout: TIMEOUT,
   },
 };
 

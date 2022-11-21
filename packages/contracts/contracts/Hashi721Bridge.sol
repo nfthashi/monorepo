@@ -1,170 +1,100 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.15;
+pragma solidity ^0.8.0;
 
+import "@openzeppelin/contracts-upgradeable/token/ERC721/utils/ERC721HolderUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/interfaces/IERC721Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/interfaces/IERC721MetadataUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/ClonesUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol";
-import {IXReceiver} from "@connext/nxtp-contracts/contracts/core/connext/interfaces/IXReceiver.sol";
 
-import "./HashiConnextAdapter.sol";
+import "./interfaces/IHashi721Bridge.sol";
 import "./interfaces/IWrappedHashi721.sol";
+import "./HashiConnextAdapter.sol";
 
-contract Hashi721Bridge is ERC165Upgradeable, HashiConnextAdapter, IXReceiver {
-  mapping(address => address) private _contracts;
-  mapping(address => uint32) private _domains;
+contract Hashi721Bridge is IHashi721Bridge, ERC721HolderUpgradeable, HashiConnextAdapter {
+  mapping(address => uint32) public originalDomainIds;
+  mapping(address => address) public originalAssets;
 
-  mapping(address => bool) private _nftAllowedList;
-  bool private _isAllowListRequired;
-  address private _nftImplementation;
+  address public wrappedHashi721Implementation;
 
-  event AllowListSet(address nftContractAddress, bool isAllowed);
-  event IsAllowListRequired(bool isAllowListRequired);
-  event NFTImplementationSet(address nftImplementation);
-
-  function xReceive(
-    bytes32 _transferId,
-    uint256 _amount,
-    address _asset,
-    address _originSender,
-    uint32 _origin,
-    bytes memory _callData
-  ) external onlySource(_originSender, _origin) returns (bytes memory) {
-    (
-      address birthChainNFTContractAddress,
-      address to,
-      uint256 tokenId,
-      uint32 birthChainDomain,
-      string memory tokenURI
-    ) = abi.decode(_callData, (address, address, uint256, uint32, string));
-
-    uint32 selfDomain = getSelfDomain();
-    if (birthChainDomain == selfDomain) {
-      IERC721Upgradeable(birthChainNFTContractAddress).safeTransferFrom(address(this), to, tokenId);
-    } else {
-      bytes32 salt = keccak256(abi.encodePacked(birthChainDomain, birthChainNFTContractAddress));
-      address processingNFTContractAddress = ClonesUpgradeable.predictDeterministicAddress(
-        _nftImplementation,
-        salt,
-        address(this)
-      );
-      if (!AddressUpgradeable.isContract(processingNFTContractAddress)) {
-        ClonesUpgradeable.cloneDeterministic(_nftImplementation, salt);
-        _contracts[processingNFTContractAddress] = birthChainNFTContractAddress;
-        _domains[processingNFTContractAddress] = birthChainDomain;
-        IWrappedHashi721(processingNFTContractAddress).initialize();
-      }
-      IWrappedHashi721(processingNFTContractAddress).mint(to, tokenId, tokenURI);
-    }
+  function initialize(address connext_, address wrappedHashi721Implementation_) external virtual initializer {
+    __ERC721Holder_init();
+    __HashiConnextAdapter_init(connext_);
+    wrappedHashi721Implementation = wrappedHashi721Implementation_;
   }
 
-  function initialize(
-    uint32 selfDomain,
-    IConnext connext,
-    address nftImplementation
-  ) public initializer {
-    __Hashi721Bridge_init(selfDomain, connext, nftImplementation);
-  }
-
-  function setIsAllowListRequired(bool isRequired) public onlyOwner {
-    _isAllowListRequired = isRequired;
-    emit IsAllowListRequired(isRequired);
-  }
-
-  function setAllowList(address nftContractAddress, bool isAllowed) public onlyOwner {
-    _nftAllowedList[nftContractAddress] = isAllowed;
-    emit AllowListSet(nftContractAddress, isAllowed);
-  }
-
-  function setNftImplementation(address nftImplementation) public onlyOwner {
-    _nftImplementation = nftImplementation;
-    emit NFTImplementationSet(nftImplementation);
-  }
-
-  function xSend(
-    address processingNFTContractAddress,
-    address from,
+  function xCall(
+    uint32 destination,
+    uint256 relayerFee,
+    uint256 slippage,
+    address asset,
     address to,
     uint256 tokenId,
-    uint32 sendToDomain,
-    bool isTokenURIIncluded
-  ) public payable {
-    _validateNFT(processingNFTContractAddress);
-    _validateAuthorization(processingNFTContractAddress, from, tokenId);
-
-    address birthChainNFTContractAddress;
-    uint32 birthChainDomain;
-    uint32 destinationDomain;
-
-    string memory tokenURI;
-    if (isTokenURIIncluded) {
-      tokenURI = IERC721MetadataUpgradeable(processingNFTContractAddress).tokenURI(tokenId);
-    }
-
-    if (_contracts[processingNFTContractAddress] == address(0x0) && _domains[processingNFTContractAddress] == 0) {
-      birthChainNFTContractAddress = processingNFTContractAddress;
-      birthChainDomain = getSelfDomain();
-      destinationDomain = sendToDomain;
-      IERC721Upgradeable(birthChainNFTContractAddress).transferFrom(from, address(this), tokenId);
-    } else {
-      birthChainNFTContractAddress = _contracts[processingNFTContractAddress];
-      birthChainDomain = _domains[processingNFTContractAddress];
-      destinationDomain = birthChainDomain;
-      IWrappedHashi721(processingNFTContractAddress).burn(tokenId);
-    }
-
-    bytes memory callData = abi.encode(birthChainNFTContractAddress, to, tokenId, birthChainDomain, tokenURI);
-    uint256 relayerFee = 0;
-    _xcall(destinationDomain, relayerFee, callData);
-  }
-
-  function isAllowListRequired() public view returns (bool) {
-    return _isAllowListRequired;
-  }
-
-  function isAllowed(address nftContractAddress) public view returns (bool) {
-    return _nftAllowedList[nftContractAddress];
-  }
-
-  function isWrappedNFT(address nftContractAddress) public view returns (bool) {
-    return _contracts[nftContractAddress] != address(0x0) && _domains[nftContractAddress] != 0;
-  }
-
-  // solhint-disable-next-line func-name-mixedcase
-  function __Hashi721Bridge_init(
-    uint32 selfDomain,
-    IConnext connext,
-    address nftImplementation
-  ) internal onlyInitializing {
-    __Ownable_init_unchained();
-    __HashiConnextAdapter_init_unchained(selfDomain, connext);
-    __Hashi721Bridge_init_unchained(nftImplementation);
-  }
-
-  // solhint-disable-next-line func-name-mixedcase
-  function __Hashi721Bridge_init_unchained(address nftImplementation) internal onlyInitializing {
-    _nftImplementation = nftImplementation;
-  }
-
-  function _validateNFT(address nftContractAddress) internal {
-    if (isAllowListRequired()) {
-      require(isWrappedNFT(nftContractAddress) || isAllowed(nftContractAddress), "Hashi721Bridge: invalid nft");
-    }
-  }
-
-  function _validateAuthorization(
-    address nftContractAddress,
-    address from,
-    uint256 tokenId
-  ) internal {
+    bool isTokenURIIgnored
+  ) external payable returns (bytes32) {
+    address currentHolder = IERC721Upgradeable(asset).ownerOf(tokenId);
     require(
-      IERC721Upgradeable(nftContractAddress).ownerOf(tokenId) == _msgSender() ||
-        IERC721Upgradeable(nftContractAddress).getApproved(tokenId) == _msgSender() ||
-        IERC721Upgradeable(nftContractAddress).isApprovedForAll(from, _msgSender()),
-      "Hashi721Bridge: invalid sender"
+      currentHolder == _msgSender() ||
+        IERC721Upgradeable(asset).getApproved(tokenId) == _msgSender() ||
+        IERC721Upgradeable(asset).isApprovedForAll(currentHolder, _msgSender()),
+      "Hashi721Bridge: msg sender is invalid "
     );
+    string memory tokenURI;
+    if (!isTokenURIIgnored) {
+      tokenURI = IERC721MetadataUpgradeable(asset).tokenURI(tokenId);
+    }
+    uint32 originalDomainId;
+    address originalAsset;
+    if (originalAssets[asset] == address(0x0) && originalDomainIds[asset] == 0) {
+      IERC721Upgradeable(asset).transferFrom(currentHolder, address(this), tokenId);
+      originalDomainId = uint32(IConnext(connext).domain());
+      originalAsset = asset;
+    } else {
+      IWrappedHashi721(asset).burn(tokenId);
+      originalDomainId = originalDomainIds[asset];
+      originalAsset = originalAssets[asset];
+    }
+    bytes memory callData = _encodeCallData(originalDomainId, originalAsset, to, tokenId, tokenURI);
+    return _xCall(destination, relayerFee, slippage, callData);
+  }
 
-    require(IERC721Upgradeable(nftContractAddress).ownerOf(tokenId) == from, "Hashi721Bridge: invalid from");
+  function _xReceive(bytes memory callData) internal override {
+    (
+      uint32 originalDomainId,
+      address originalAsset,
+      address to,
+      uint256 tokenId,
+      string memory tokenURI
+    ) = _decodeCallData(callData);
+    if (originalDomainId != uint32(IConnext(connext).domain())) {
+      bytes32 salt = keccak256(abi.encodePacked(originalDomainId, originalAsset));
+      address asset = ClonesUpgradeable.predictDeterministicAddress(wrappedHashi721Implementation, salt);
+      if (!AddressUpgradeable.isContract(asset)) {
+        ClonesUpgradeable.cloneDeterministic(wrappedHashi721Implementation, salt);
+        IWrappedHashi721(asset).initialize();
+        originalDomainIds[asset] = originalDomainId;
+        originalAssets[asset] = originalAsset;
+      }
+      IWrappedHashi721(asset).mint(to, tokenId, tokenURI);
+    } else {
+      address asset = originalAsset;
+      IERC721Upgradeable(asset).safeTransferFrom(address(this), to, tokenId);
+    }
+  }
+
+  function _encodeCallData(
+    uint32 originalDomainId,
+    address originalAsset,
+    address to,
+    uint256 tokenId,
+    string memory tokenURI
+  ) internal pure returns (bytes memory) {
+    return abi.encode(originalDomainId, originalAsset, to, tokenId, tokenURI);
+  }
+
+  function _decodeCallData(
+    bytes memory callData
+  ) internal pure returns (uint32, address, address, uint256, string memory) {
+    return abi.decode(callData, (uint32, address, address, uint256, string));
   }
 }
