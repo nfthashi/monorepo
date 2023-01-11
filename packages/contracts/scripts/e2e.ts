@@ -48,8 +48,13 @@ async function main() {
     );
     console.log("xCall sent", xCallTx.hash);
     const xCallTxReceipt = await xCallTx.wait();
-    const transferId = getTransferIdFromLogs(xCallTxReceipt.logs);
-    console.log(`https://testnet.amarok.connextscan.io/tx/${transferId}`);
+    // const xCallTxReceipt = await xCallTx.wait();
+    // try {
+    //   const transferId = getTransferIdFromLogs(xCallTxReceipt.logs);
+    //   console.log(`https://testnet.amarok.connextscan.io/tx/${transferId}`);
+    // } catch (e) {
+    //   console.log("fail to get log from contract");
+    // }
   }
 }
 

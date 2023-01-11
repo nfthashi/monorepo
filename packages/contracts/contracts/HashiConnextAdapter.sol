@@ -13,7 +13,6 @@ abstract contract HashiConnextAdapter is IXReceiver, OwnableUpgradeable {
 
   address public constant CONNEXT_ASSET_FOR_NONE = address(0x0);
   uint256 public constant CONNEXT_AMOUNT_FOR_NONE = 0;
-
   address public connext;
 
   function __HashiConnextAdapter_init(address connext_) internal onlyInitializing {

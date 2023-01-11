@@ -13,10 +13,10 @@
     },
     "api": "moralis",
     "deployments": {
-      "connext": "0x99A784d082476E551E5fc918ce3d849f2b8e89B6",
+      "connext": "0xFCa08024A6D4bCc87275b1E4A1E22B71fAD7f649",
       "faucetHashi721": "0x35de708c2355B5f02c2F5bFB800E22d4Bb40233A",
       "wrappedHashi721": "0x64D0Ce5c65E38C52EBC62B4a845715527b156FC8",
-      "hashi721Bridge": "0xF86d26409dFFC8F3BeDDb0C99E7b99A06a477161"
+      "hashi721Bridge": "0x8F5969b8Fa3727392385C5E74CF1AA91a4aC4b40"
     }
   },
   "420": {
@@ -33,10 +33,10 @@
     },
     "api": "alchemy",
     "deployments": {
-      "connext": "0x705791AD27229dd4CCf41b6720528AfE1bcC2910",
+      "connext": "0x5Ea1bb242326044699C3d81341c5f535d5Af1504",
       "faucetHashi721": "0x77E84Aa0f70383567a12af98EFcBbe8b39e847A1",
       "wrappedHashi721": "0xe6E7a22acA980066F3B5c5b06bF891A122B41720",
-      "hashi721Bridge": "0xED2B96B3Bb3834828c5b328F0Bb245a8bE7C232A"
+      "hashi721Bridge": "0xb8336251667A3c73faA7e646d3686596069c9D1C"
     }
   },
   "80001": {
@@ -53,10 +53,10 @@
     },
     "api": "moralis",
     "deployments": {
-      "connext": "0xfeBBcfe9a88aadefA6e305945F2d2011493B15b4",
+      "connext": "0x2334937846Ab2A3FCE747b32587e1A1A2f6EEC5a",
       "faucetHashi721": "0x971986437ed3adB51D6Ed7b57B5D69cDDE1E9661",
       "wrappedHashi721": "0x8a20DF841946ce2192fd0AC298d20bCB5dd134C6",
-      "hashi721Bridge": "0xf1D9FccCddD2D440dD3a2ff9454aD6E73f008429"
+      "hashi721Bridge": "0xd3F1A0782AFD768f8929343Fb44344A2a49fE343"
     }
   }
 }
