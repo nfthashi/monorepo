@@ -76,7 +76,6 @@ describe("Hashi721Bridge", function () {
       const { holder, connext, hashi721Bridge, wrappedHashi721, mintedTokenId, mintedTokenURI } = await fixture();
       const destination = anotherDomainId;
       const relayerFee = 0;
-      const slippage = 0;
       const asset = wrappedHashi721.address;
       const isTokenURIIgnored = false;
       const originalDomainId = selfDomainId;
@@ -87,19 +86,16 @@ describe("Hashi721Bridge", function () {
       const callData = await hashi721Bridge.testEncodeCallData(originalDomainId, originalAsset, to, tokenId, tokenURI);
       const delegate = holder;
       await expect(
-        hashi721Bridge
-          .connect(delegate)
-          .xCall(destination, relayerFee, slippage, asset, bridge, tokenId, isTokenURIIgnored)
+        hashi721Bridge.connect(delegate).xCall(destination, relayerFee, asset, bridge, tokenId, isTokenURIIgnored)
       )
         .to.emit(connext, "XCallCalled")
-        .withArgs(0, destination, bridge, ethers.constants.AddressZero, delegate.address, 0, slippage, callData);
+        .withArgs(0, destination, bridge, ethers.constants.AddressZero, delegate.address, 0, 0, callData);
     });
 
     it("should work when called by sender with approved, ignore token URI, bridge: [other -> original]", async function () {
       const { owner, holder, another, connext, hashi721Bridge, wrappedHashi721, mintedTokenId } = await fixture();
       const destination = anotherDomainId;
       const relayerFee = 0;
-      const slippage = 0;
       const asset = wrappedHashi721.address;
       const isTokenURIIgnored = true;
       const originalDomainId = anotherDomainId;
@@ -113,12 +109,10 @@ describe("Hashi721Bridge", function () {
       await wrappedHashi721.connect(owner).transferOwnership(hashi721Bridge.address);
       await wrappedHashi721.connect(holder).approve(delegate.address, mintedTokenId);
       await expect(
-        hashi721Bridge
-          .connect(delegate)
-          .xCall(destination, relayerFee, slippage, asset, to, mintedTokenId, isTokenURIIgnored)
+        hashi721Bridge.connect(delegate).xCall(destination, relayerFee, asset, to, mintedTokenId, isTokenURIIgnored)
       )
         .to.emit(connext, "XCallCalled")
-        .withArgs(0, destination, bridge, ethers.constants.AddressZero, delegate.address, 0, slippage, callData);
+        .withArgs(0, destination, bridge, ethers.constants.AddressZero, delegate.address, 0, 0, callData);
     });
 
     it("should work when called by sender with approvalForAll,", async function () {
@@ -126,7 +120,6 @@ describe("Hashi721Bridge", function () {
         await fixture();
       const destination = anotherDomainId;
       const relayerFee = 0;
-      const slippage = 0;
       const asset = wrappedHashi721.address;
       const isTokenURIIgnored = false;
       const originalDomainId = selfDomainId;
@@ -138,24 +131,21 @@ describe("Hashi721Bridge", function () {
       const callData = await hashi721Bridge.testEncodeCallData(originalDomainId, originalAsset, to, tokenId, tokenURI);
       await wrappedHashi721.connect(holder).setApprovalForAll(delegate.address, true);
       await expect(
-        hashi721Bridge
-          .connect(delegate)
-          .xCall(destination, relayerFee, slippage, asset, bridge, tokenId, isTokenURIIgnored)
+        hashi721Bridge.connect(delegate).xCall(destination, relayerFee, asset, bridge, tokenId, isTokenURIIgnored)
       )
         .to.emit(connext, "XCallCalled")
-        .withArgs(0, destination, bridge, ethers.constants.AddressZero, delegate.address, 0, slippage, callData);
+        .withArgs(0, destination, bridge, ethers.constants.AddressZero, delegate.address, 0, 0, callData);
     });
 
     it("should not work when msg sender is invalid", async function () {
       const { malicious, hashi721Bridge, wrappedHashi721, mintedTokenId } = await fixture();
       const relayerFee = 0;
-      const slippage = 0;
       const to = ADDRESS_1;
       const isTokenURIIgnored = false;
       await expect(
         hashi721Bridge
           .connect(malicious)
-          .xCall(anotherDomainId, relayerFee, slippage, wrappedHashi721.address, to, mintedTokenId, isTokenURIIgnored)
+          .xCall(anotherDomainId, relayerFee, wrappedHashi721.address, to, mintedTokenId, isTokenURIIgnored)
       ).to.revertedWith("Hashi721Bridge: msg sender is invalid ");
     });
   });

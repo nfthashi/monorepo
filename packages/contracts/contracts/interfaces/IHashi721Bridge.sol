@@ -7,7 +7,6 @@ interface IHashi721Bridge {
   function xCall(
     uint32 destination,
     uint256 relayerFee,
-    uint256 slippage,
     address asset,
     address to,
     uint256 tokenId,

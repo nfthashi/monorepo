@@ -46,12 +46,7 @@ abstract contract HashiConnextAdapter is IXReceiver, OwnableUpgradeable {
     return "";
   }
 
-  function _xCall(
-    uint32 destination,
-    uint256 relayerFee,
-    uint256 slippage,
-    bytes memory callData
-  ) internal returns (bytes32) {
+  function _xCall(uint32 destination, uint256 relayerFee, bytes memory callData) internal returns (bytes32) {
     address bridge = bridges[destination];
     require(bridge != address(0), "HashiConnextAdapter: bridge is invalid");
     return
@@ -61,7 +56,7 @@ abstract contract HashiConnextAdapter is IXReceiver, OwnableUpgradeable {
         CONNEXT_ASSET_FOR_NONE,
         msg.sender,
         CONNEXT_AMOUNT_FOR_NONE,
-        slippage,
+        CONNEXT_AMOUNT_FOR_NONE,
         callData
       );
   }

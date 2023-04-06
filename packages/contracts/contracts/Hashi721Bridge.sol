@@ -26,7 +26,6 @@ contract Hashi721Bridge is IHashi721Bridge, ERC721HolderUpgradeable, HashiConnex
   function xCall(
     uint32 destination,
     uint256 relayerFee,
-    uint256 slippage,
     address asset,
     address to,
     uint256 tokenId,
@@ -55,7 +54,7 @@ contract Hashi721Bridge is IHashi721Bridge, ERC721HolderUpgradeable, HashiConnex
       originalAsset = originalAssets[asset];
     }
     bytes memory callData = _encodeCallData(originalDomainId, originalAsset, to, tokenId, tokenURI);
-    return _xCall(destination, relayerFee, slippage, callData);
+    return _xCall(destination, relayerFee, callData);
   }
 
   function _xReceive(bytes memory callData) internal override {
