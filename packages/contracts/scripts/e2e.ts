@@ -38,7 +38,7 @@ async function main() {
     const isTokenURIIgnored = false;
     const xCallTx = await hashi721Bridge.xCall(destination, relayerFee, asset, to, tokenId, isTokenURIIgnored);
     console.log("xCall sent", xCallTx.hash);
-    // const xCallTxReceipt = await xCallTx.wait();
+    await xCallTx.wait();
     // const xCallTxReceipt = await xCallTx.wait();
     // try {
     //   const transferId = getTransferIdFromLogs(xCallTxReceipt.logs);
