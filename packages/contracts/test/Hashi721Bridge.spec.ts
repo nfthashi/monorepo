@@ -16,6 +16,11 @@ describe("Hashi721Bridge", function () {
     const WrappedHashi721 = await ethers.getContractFactory("WrappedHashi721");
     const wrappedHashi721 = await WrappedHashi721.connect(signer).deploy();
     await wrappedHashi721.connect(owner).initialize();
+
+    const TestInvalidERC721 = await ethers.getContractFactory("TestInvalidERC721");
+    const testInvalidERC721 = await TestInvalidERC721.connect(signer).deploy();
+    await testInvalidERC721.connect(owner).initialize();
+
     const Hashi721Bridge = await ethers.getContractFactory("TestHashi721Bridge");
     const hashi721Bridge = await Hashi721Bridge.connect(signer).deploy();
     await hashi721Bridge.connect(owner).initialize(connext.address, wrappedHashi721.address);
@@ -24,6 +29,8 @@ describe("Hashi721Bridge", function () {
     const mintedTokenURI = `http://localhost:3000/${mintedTokenId}`;
     await wrappedHashi721.connect(owner).mint(holder.address, mintedTokenId, mintedTokenURI);
     await wrappedHashi721.connect(holder).setApprovalForAll(hashi721Bridge.address, true);
+    await testInvalidERC721.connect(owner).mint(holder.address, mintedTokenId, mintedTokenURI);
+    await testInvalidERC721.connect(holder).setApprovalForAll(hashi721Bridge.address, true);
 
     return {
       signer,
@@ -34,6 +41,8 @@ describe("Hashi721Bridge", function () {
       connext,
       WrappedHashi721,
       wrappedHashi721,
+      TestInvalidERC721,
+      testInvalidERC721,
       hashi721Bridge,
       mintedTokenId,
       mintedTokenURI,
@@ -137,6 +146,19 @@ describe("Hashi721Bridge", function () {
         .withArgs(0, destination, bridge, ethers.constants.AddressZero, delegate.address, 0, 0, callData);
     });
 
+    it("should not work when asset is invalid", async function () {
+      const { holder, hashi721Bridge, testInvalidERC721, mintedTokenId } = await fixture();
+
+      const relayerFee = 0;
+      const to = ADDRESS_1;
+      const isTokenURIIgnored = false;
+      await expect(
+        hashi721Bridge
+          .connect(holder)
+          .xCall(anotherDomainId, relayerFee, testInvalidERC721.address, to, mintedTokenId, isTokenURIIgnored)
+      ).to.revertedWith("Hashi721Bridge: asset is invalid");
+    });
+
     it("should not work when msg sender is invalid", async function () {
       const { malicious, hashi721Bridge, wrappedHashi721, mintedTokenId } = await fixture();
       const relayerFee = 0;
@@ -146,7 +168,7 @@ describe("Hashi721Bridge", function () {
         hashi721Bridge
           .connect(malicious)
           .xCall(anotherDomainId, relayerFee, wrappedHashi721.address, to, mintedTokenId, isTokenURIIgnored)
-      ).to.revertedWith("Hashi721Bridge: msg sender is invalid ");
+      ).to.revertedWith("Hashi721Bridge: msg sender is invalid");
     });
   });
 

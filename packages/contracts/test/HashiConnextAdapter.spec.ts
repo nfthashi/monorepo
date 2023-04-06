@@ -180,7 +180,7 @@ describe("HashiConnextAdapter", function () {
           origin,
           callData
         )
-      ).to.revertedWith("HashiConnextAdapter: msg sender is invalid ");
+      ).to.revertedWith("HashiConnextAdapter: msg sender is invalid");
     });
 
     it("should work when method is not overridden", async function () {

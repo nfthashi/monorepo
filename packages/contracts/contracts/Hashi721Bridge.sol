@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC721/utils/ERC721HolderUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/interfaces/IERC165Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/interfaces/IERC721Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/interfaces/IERC721MetadataUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/ClonesUpgradeable.sol";
@@ -31,12 +32,14 @@ contract Hashi721Bridge is IHashi721Bridge, ERC721HolderUpgradeable, HashiConnex
     uint256 tokenId,
     bool isTokenURIIgnored
   ) external payable returns (bytes32) {
+    bool isERC721 = IERC165Upgradeable(asset).supportsInterface(type(IERC721Upgradeable).interfaceId);
+    require(isERC721, "Hashi721Bridge: asset is invalid");
     address currentHolder = IERC721Upgradeable(asset).ownerOf(tokenId);
     require(
       currentHolder == msg.sender ||
         IERC721Upgradeable(asset).getApproved(tokenId) == msg.sender ||
         IERC721Upgradeable(asset).isApprovedForAll(currentHolder, msg.sender),
-      "Hashi721Bridge: msg sender is invalid "
+      "Hashi721Bridge: msg sender is invalid"
     );
     string memory tokenURI;
     if (!isTokenURIIgnored) {
