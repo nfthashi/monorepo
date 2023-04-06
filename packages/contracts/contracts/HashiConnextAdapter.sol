@@ -41,7 +41,7 @@ abstract contract HashiConnextAdapter is IXReceiver, OwnableUpgradeable {
     require(amount == CONNEXT_AMOUNT_FOR_NONE, "HashiConnextAdapter: amount is invalid");
     address bridge = bridges[origin];
     require(bridge == originSender, "HashiConnextAdapter: bridge is invalid");
-    require(_msgSender() == connext, "HashiConnextAdapter: msg sender is invalid ");
+    require(msg.sender == connext, "HashiConnextAdapter: msg sender is invalid ");
     _xReceive(callData);
     return "";
   }
@@ -59,7 +59,7 @@ abstract contract HashiConnextAdapter is IXReceiver, OwnableUpgradeable {
         destination,
         bridge,
         CONNEXT_ASSET_FOR_NONE,
-        _msgSender(),
+        msg.sender,
         CONNEXT_AMOUNT_FOR_NONE,
         slippage,
         callData

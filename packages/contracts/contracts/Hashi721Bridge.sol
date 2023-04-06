@@ -34,9 +34,9 @@ contract Hashi721Bridge is IHashi721Bridge, ERC721HolderUpgradeable, HashiConnex
   ) external payable returns (bytes32) {
     address currentHolder = IERC721Upgradeable(asset).ownerOf(tokenId);
     require(
-      currentHolder == _msgSender() ||
-        IERC721Upgradeable(asset).getApproved(tokenId) == _msgSender() ||
-        IERC721Upgradeable(asset).isApprovedForAll(currentHolder, _msgSender()),
+      currentHolder == msg.sender ||
+        IERC721Upgradeable(asset).getApproved(tokenId) == msg.sender ||
+        IERC721Upgradeable(asset).isApprovedForAll(currentHolder, msg.sender),
       "Hashi721Bridge: msg sender is invalid "
     );
     string memory tokenURI;

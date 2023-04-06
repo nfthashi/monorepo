@@ -13,7 +13,7 @@ contract FaucetHashi721 is ERC721Upgradeable {
   }
 
   function mint() public {
-    _mint(_msgSender(), totalSupply++);
+    _mint(msg.sender, totalSupply++);
   }
 
   function tokenURI(uint256) public view override returns (string memory) {
