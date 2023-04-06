@@ -41,17 +41,12 @@ abstract contract HashiConnextAdapter is IXReceiver, OwnableUpgradeable {
     require(amount == CONNEXT_AMOUNT_FOR_NONE, "HashiConnextAdapter: amount is invalid");
     address bridge = bridges[origin];
     require(bridge == originSender, "HashiConnextAdapter: bridge is invalid");
-    require(_msgSender() == connext, "HashiConnextAdapter: msg sender is invalid ");
+    require(msg.sender == connext, "HashiConnextAdapter: msg sender is invalid");
     _xReceive(callData);
     return "";
   }
 
-  function _xCall(
-    uint32 destination,
-    uint256 relayerFee,
-    uint256 slippage,
-    bytes memory callData
-  ) internal returns (bytes32) {
+  function _xCall(uint32 destination, uint256 relayerFee, bytes memory callData) internal returns (bytes32) {
     address bridge = bridges[destination];
     require(bridge != address(0), "HashiConnextAdapter: bridge is invalid");
     return
@@ -59,9 +54,9 @@ abstract contract HashiConnextAdapter is IXReceiver, OwnableUpgradeable {
         destination,
         bridge,
         CONNEXT_ASSET_FOR_NONE,
-        _msgSender(),
+        msg.sender,
         CONNEXT_AMOUNT_FOR_NONE,
-        slippage,
+        CONNEXT_AMOUNT_FOR_NONE,
         callData
       );
   }

@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC721/utils/ERC721HolderUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/interfaces/IERC165Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/interfaces/IERC721Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/interfaces/IERC721MetadataUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/ClonesUpgradeable.sol";
@@ -16,32 +17,44 @@ contract Hashi721Bridge is IHashi721Bridge, ERC721HolderUpgradeable, HashiConnex
   mapping(address => address) public originalAssets;
 
   address public wrappedHashi721Implementation;
+  uint256 public tokenURILengthLimit;
 
-  function initialize(address connext_, address wrappedHashi721Implementation_) external virtual initializer {
+  function initialize(
+    address connext_,
+    address wrappedHashi721Implementation_,
+    uint256 _tokenURILengthLimit
+  ) external virtual initializer {
     __ERC721Holder_init();
     __HashiConnextAdapter_init(connext_);
     wrappedHashi721Implementation = wrappedHashi721Implementation_;
+    tokenURILengthLimit = _tokenURILengthLimit;
+  }
+
+  function setTokenURILengthLimit(uint256 _tokenURILengthLimit) public onlyOwner {
+    tokenURILengthLimit = _tokenURILengthLimit;
   }
 
   function xCall(
     uint32 destination,
     uint256 relayerFee,
-    uint256 slippage,
     address asset,
     address to,
     uint256 tokenId,
     bool isTokenURIIgnored
   ) external payable returns (bytes32) {
+    bool isERC721 = IERC165Upgradeable(asset).supportsInterface(type(IERC721Upgradeable).interfaceId);
+    require(isERC721, "Hashi721Bridge: asset is invalid");
     address currentHolder = IERC721Upgradeable(asset).ownerOf(tokenId);
     require(
-      currentHolder == _msgSender() ||
-        IERC721Upgradeable(asset).getApproved(tokenId) == _msgSender() ||
-        IERC721Upgradeable(asset).isApprovedForAll(currentHolder, _msgSender()),
-      "Hashi721Bridge: msg sender is invalid "
+      currentHolder == msg.sender ||
+        IERC721Upgradeable(asset).getApproved(tokenId) == msg.sender ||
+        IERC721Upgradeable(asset).isApprovedForAll(currentHolder, msg.sender),
+      "Hashi721Bridge: msg sender is invalid"
     );
     string memory tokenURI;
     if (!isTokenURIIgnored) {
       tokenURI = IERC721MetadataUpgradeable(asset).tokenURI(tokenId);
+      require(bytes(tokenURI).length <= tokenURILengthLimit, "Hashi721Bridge: token URI is invalid");
     }
     uint32 originalDomainId;
     address originalAsset;
@@ -55,7 +68,7 @@ contract Hashi721Bridge is IHashi721Bridge, ERC721HolderUpgradeable, HashiConnex
       originalAsset = originalAssets[asset];
     }
     bytes memory callData = _encodeCallData(originalDomainId, originalAsset, to, tokenId, tokenURI);
-    return _xCall(destination, relayerFee, slippage, callData);
+    return _xCall(destination, relayerFee, callData);
   }
 
   function _xReceive(bytes memory callData) internal override {

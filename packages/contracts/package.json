@@ -14,7 +14,7 @@
     "lint": "eslint '**/*.{js,ts}' --ignore-path .gitignore",
     "deploy-wrapped-hashi-721": "hardhat run scripts/deploy-wrapped-hashi-721.ts",
     "deploy-hashi-721-bridge": "hardhat run scripts/deploy-hashi-721-bridge.ts",
-    "set-brige": " hardhat run scripts/set-brige.ts",
+    "set-bridge": " hardhat run scripts/set-bridge.ts",
     "verify-contracts": " hardhat run scripts/verify-contracts.ts",
     "e2e": "hardhat run scripts/e2e.ts"
   },

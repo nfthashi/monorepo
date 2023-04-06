@@ -68,12 +68,12 @@ describe("HashiConnextAdapter", function () {
         .withArgs(anotherDomainId, bridge);
       const destination = anotherDomainId;
       const relayerFee = 0;
-      const slippage = 0;
       const callData = BYTES_ZERO;
       const expectedAsset = ethers.constants.AddressZero;
       const expectedDelegate = signer.address;
       const expectedAmount = 0;
-      await expect(hashiConnextAdapter.connect(signer).testXCall(destination, relayerFee, slippage, callData))
+      const expectedSlipage = 0;
+      await expect(hashiConnextAdapter.connect(signer).testXCall(destination, relayerFee, callData))
         .to.emit(connext, "XCallCalled")
         .withArgs(
           relayerFee,
@@ -82,7 +82,7 @@ describe("HashiConnextAdapter", function () {
           expectedAsset,
           expectedDelegate,
           expectedAmount,
-          slippage,
+          expectedSlipage,
           callData
         );
     });
@@ -91,9 +91,8 @@ describe("HashiConnextAdapter", function () {
       const { hashiConnextAdapter } = await fixture();
       const destination = anotherDomainId;
       const relayerFee = 0;
-      const slippage = 0;
       const callData = BYTES_ZERO;
-      await expect(hashiConnextAdapter.testXCall(destination, relayerFee, slippage, callData)).to.revertedWith(
+      await expect(hashiConnextAdapter.testXCall(destination, relayerFee, callData)).to.revertedWith(
         "HashiConnextAdapter: bridge is invalid"
       );
     });
@@ -181,7 +180,7 @@ describe("HashiConnextAdapter", function () {
           origin,
           callData
         )
-      ).to.revertedWith("HashiConnextAdapter: msg sender is invalid ");
+      ).to.revertedWith("HashiConnextAdapter: msg sender is invalid");
     });
 
     it("should work when method is not overridden", async function () {

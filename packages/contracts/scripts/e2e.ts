@@ -33,21 +33,12 @@ async function main() {
     }
     const destination = network.domainId;
     const relayerFee = 0;
-    const slippage = 100;
     const asset = faucetHashi721.address;
     const to = signer.address;
     const isTokenURIIgnored = false;
-    const xCallTx = await hashi721Bridge.xCall(
-      destination,
-      relayerFee,
-      slippage,
-      asset,
-      to,
-      tokenId,
-      isTokenURIIgnored
-    );
+    const xCallTx = await hashi721Bridge.xCall(destination, relayerFee, asset, to, tokenId, isTokenURIIgnored);
     console.log("xCall sent", xCallTx.hash);
-    const xCallTxReceipt = await xCallTx.wait();
+    await xCallTx.wait();
     // const xCallTxReceipt = await xCallTx.wait();
     // try {
     //   const transferId = getTransferIdFromLogs(xCallTxReceipt.logs);

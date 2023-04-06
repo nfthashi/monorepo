@@ -26,7 +26,7 @@ import { NFT } from "@/components/NFT";
 import { SelectChain } from "@/components/SelectChain";
 import { Step, steps, useStep } from "@/components/Step";
 import { Unit } from "@/components/Unit";
-import { RELAYER_FEE, SLIPPAGE } from "@/config";
+import { RELAYER_FEE } from "@/config";
 import { useConnectedChainId } from "@/hooks/useConnectedChainId";
 import { useCounterfactualBridgedNFT } from "@/hooks/useCounterfactualBridgedNFT";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
@@ -276,7 +276,6 @@ const HomePage: NextPage = () => {
                                 const xCallTx = await connectedChainDeployedHashi721BridgeContract.xCall(
                                   destinationChainConfig.domainId,
                                   RELAYER_FEE,
-                                  SLIPPAGE,
                                   selectedNFTContract.address,
                                   destinationChainConfig.deployments.hashi721Bridge,
                                   selectedNFT.tokenId,

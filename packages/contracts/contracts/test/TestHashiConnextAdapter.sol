@@ -22,8 +22,8 @@ contract TestHashiConnextAdapter is HashiConnextAdapter {
     __HashiConnextAdapter_init_unchained(connext_);
   }
 
-  function testXCall(uint32 destination, uint256 relayerFee, uint256 slippage, bytes memory callData) external {
-    _xCall(destination, relayerFee, slippage, callData);
+  function testXCall(uint32 destination, uint256 relayerFee, bytes memory callData) external {
+    _xCall(destination, relayerFee, callData);
   }
 
   function testXReceive(bytes memory callData) external {
