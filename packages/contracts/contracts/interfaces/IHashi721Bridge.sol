@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 interface IHashi721Bridge {
-  function initialize(address connext_, address wrappedHashi721Implementation_) external;
+  function initialize(address connext_, address wrappedHashi721Implementation_, uint256 _tokenURILengthLimit) external;
 
   function xCall(
     uint32 destination,

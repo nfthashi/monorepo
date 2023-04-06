@@ -17,11 +17,21 @@ contract Hashi721Bridge is IHashi721Bridge, ERC721HolderUpgradeable, HashiConnex
   mapping(address => address) public originalAssets;
 
   address public wrappedHashi721Implementation;
+  uint256 public tokenURILengthLimit;
 
-  function initialize(address connext_, address wrappedHashi721Implementation_) external virtual initializer {
+  function initialize(
+    address connext_,
+    address wrappedHashi721Implementation_,
+    uint256 _tokenURILengthLimit
+  ) external virtual initializer {
     __ERC721Holder_init();
     __HashiConnextAdapter_init(connext_);
     wrappedHashi721Implementation = wrappedHashi721Implementation_;
+    tokenURILengthLimit = _tokenURILengthLimit;
+  }
+
+  function setTokenURILengthLimit(uint256 _tokenURILengthLimit) public onlyOwner {
+    tokenURILengthLimit = _tokenURILengthLimit;
   }
 
   function xCall(
@@ -44,6 +54,7 @@ contract Hashi721Bridge is IHashi721Bridge, ERC721HolderUpgradeable, HashiConnex
     string memory tokenURI;
     if (!isTokenURIIgnored) {
       tokenURI = IERC721MetadataUpgradeable(asset).tokenURI(tokenId);
+      require(bytes(tokenURI).length <= tokenURILengthLimit, "Hashi721Bridge: token URI is invalid");
     }
     uint32 originalDomainId;
     address originalAsset;

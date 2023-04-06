@@ -21,14 +21,17 @@ describe("Hashi721Bridge", function () {
     const testInvalidERC721 = await TestInvalidERC721.connect(signer).deploy();
     await testInvalidERC721.connect(owner).initialize();
 
-    const Hashi721Bridge = await ethers.getContractFactory("TestHashi721Bridge");
-    const hashi721Bridge = await Hashi721Bridge.connect(signer).deploy();
-    await hashi721Bridge.connect(owner).initialize(connext.address, wrappedHashi721.address);
-    await hashi721Bridge.connect(owner).setBridge(anotherDomainId, bridge);
     const mintedTokenId = 0;
     const mintedTokenURI = `http://localhost:3000/${mintedTokenId}`;
+
+    const Hashi721Bridge = await ethers.getContractFactory("TestHashi721Bridge");
+    const hashi721Bridge = await Hashi721Bridge.connect(signer).deploy();
+    await hashi721Bridge.connect(owner).initialize(connext.address, wrappedHashi721.address, mintedTokenURI.length);
+    await hashi721Bridge.connect(owner).setBridge(anotherDomainId, bridge);
+
     await wrappedHashi721.connect(owner).mint(holder.address, mintedTokenId, mintedTokenURI);
     await wrappedHashi721.connect(holder).setApprovalForAll(hashi721Bridge.address, true);
+
     await testInvalidERC721.connect(owner).mint(holder.address, mintedTokenId, mintedTokenURI);
     await testInvalidERC721.connect(holder).setApprovalForAll(hashi721Bridge.address, true);
 
@@ -51,15 +54,33 @@ describe("Hashi721Bridge", function () {
 
   describe("deployments", function () {
     it("should work", async function () {
-      const { owner, holder, hashi721Bridge, wrappedHashi721, mintedTokenId } = await fixture();
+      const { owner, holder, hashi721Bridge, wrappedHashi721, mintedTokenId, mintedTokenURI } = await fixture();
       expect(await hashi721Bridge.owner()).to.eq(owner.address);
+      expect(await hashi721Bridge.tokenURILengthLimit()).to.eq(mintedTokenURI.length);
       expect(await wrappedHashi721.ownerOf(mintedTokenId)).to.eq(holder.address);
     });
 
     it("should not work when contract is already initialized", async function () {
-      const { owner, connext, wrappedHashi721, hashi721Bridge } = await fixture();
-      await expect(hashi721Bridge.connect(owner).initialize(connext.address, wrappedHashi721.address)).to.revertedWith(
-        "Initializable: contract is already initialized"
+      const { owner, connext, wrappedHashi721, hashi721Bridge, mintedTokenURI } = await fixture();
+      await expect(
+        hashi721Bridge.connect(owner).initialize(connext.address, wrappedHashi721.address, mintedTokenURI.length)
+      ).to.revertedWith("Initializable: contract is already initialized");
+    });
+  });
+
+  describe("setTokenURILengthLimit", function () {
+    it("should work", async function () {
+      const { owner, hashi721Bridge } = await fixture();
+      const newLimit = 1;
+      hashi721Bridge.connect(owner).setTokenURILengthLimit(newLimit);
+      expect(await hashi721Bridge.tokenURILengthLimit()).to.eq(newLimit);
+    });
+
+    it("should not work when caller is not the owner", async function () {
+      const { malicious, hashi721Bridge } = await fixture();
+      const newLimit = 1;
+      await expect(hashi721Bridge.connect(malicious).setTokenURILengthLimit(newLimit)).to.revertedWith(
+        "Ownable: caller is not the owner"
       );
     });
   });
@@ -169,6 +190,19 @@ describe("Hashi721Bridge", function () {
           .connect(malicious)
           .xCall(anotherDomainId, relayerFee, wrappedHashi721.address, to, mintedTokenId, isTokenURIIgnored)
       ).to.revertedWith("Hashi721Bridge: msg sender is invalid");
+    });
+
+    it("should not work when token URI is invalid", async function () {
+      const { owner, holder, hashi721Bridge, wrappedHashi721, mintedTokenId } = await fixture();
+      const relayerFee = 0;
+      const to = ADDRESS_1;
+      const isTokenURIIgnored = false;
+      await hashi721Bridge.connect(owner).setTokenURILengthLimit(0);
+      await expect(
+        hashi721Bridge
+          .connect(holder)
+          .xCall(anotherDomainId, relayerFee, wrappedHashi721.address, to, mintedTokenId, isTokenURIIgnored)
+      ).to.revertedWith("Hashi721Bridge: token URI is invalid");
     });
   });
 
